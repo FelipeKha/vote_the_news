@@ -1,2 +1,3 @@
-**/node_modules
 .DS_Store
+**/node_modules
+apps/server_and_backend/tests/data_management.test.js
