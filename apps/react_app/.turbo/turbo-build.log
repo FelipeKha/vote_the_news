@@ -1,0 +1,41 @@
+[32mvote_the_news_react:build[0m: cache hit, replaying output [2m2ea55fc99721307b[0m
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0m> vote_the_news_react@0.1.0 build
+[32mvote_the_news_react:build: [0m> react-scripts build
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0mCreating an optimized production build...
+[32mvote_the_news_react:build: [0mCompiled with warnings.
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0m[eslint] 
+[32mvote_the_news_react:build: [0msrc/components/ArticlePost.js
+[32mvote_the_news_react:build: [0m  Line 10:15:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                                                                                                 jsx-a11y/alt-text
+[32mvote_the_news_react:build: [0m  Line 31:13:  The href attribute is required for an anchor to be keyboard accessible. Provide a valid, navigable address as the href value. If you cannot provide an href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0msrc/components/Header.js
+[32mvote_the_news_react:build: [0m  Line 10:15:  The href attribute is required for an anchor to be keyboard accessible. Provide a valid, navigable address as the href value. If you cannot provide an href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+[32mvote_the_news_react:build: [0m  Line 17:13:  The href attribute is required for an anchor to be keyboard accessible. Provide a valid, navigable address as the href value. If you cannot provide an href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0msrc/components/NewArticleForm.js
+[32mvote_the_news_react:build: [0m  Line 116:13:  The href attribute is required for an anchor to be keyboard accessible. Provide a valid, navigable address as the href value. If you cannot provide an href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0mSearch for the keywords to learn more about each warning.
+[32mvote_the_news_react:build: [0mTo ignore, add // eslint-disable-next-line to the line before.
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0mFile sizes after gzip:
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0m  48.5 kB  build/static/js/main.cf691027.js
+[32mvote_the_news_react:build: [0m  1.17 kB  build/static/css/main.d2014d69.css
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0mThe project was built assuming it is hosted at /.
+[32mvote_the_news_react:build: [0mYou can control this with the homepage field in your package.json.
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0mThe build folder is ready to be deployed.
+[32mvote_the_news_react:build: [0mYou may serve it with a static server:
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0m  npm install -g serve
+[32mvote_the_news_react:build: [0m  serve -s build
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0mFind out more about deployment here:
+[32mvote_the_news_react:build: [0m
+[32mvote_the_news_react:build: [0m  https://cra.link/deployment
+[32mvote_the_news_react:build: [0m

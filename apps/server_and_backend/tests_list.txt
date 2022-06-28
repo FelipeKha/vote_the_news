@@ -1,0 +1,177 @@
+VOTE THE NEWS - TESTS LIST
+
+file_article_database.js
+- Constructor
+	1.* Parameter given not file path (test if the file path exists, and then test if the file path points to a file) OK
+	2.* FILE NOT JSON FILE EXTENSION OK
+	3.* Database file doesn't exist at specified file path returns an error OK
+	4.? File content not in json format returns an error OK, ran in specific file for now
+
+- loadAllArticlesArray
+	1. Database file exists and contains a json returns expected content OK
+    --> 2.* File content not in json format returns an error APPLY IF THE FILE CHANGE IN THE MIDDLE OF USAGE (SERVER SHUT DOWN)
+    --> 3.* Database file doesn't exist at file path returns an error
+	4.* Database not an array throw an error OK
+	5.* Database file contains not article object returns an error OK
+
+- saveAllArticlesArray
+	1.* New data not an array returns an error OK
+	2.* Data contains non article object returns an error
+    --> 3.* File content not in json format returns an error APPLY IF THE FILE CHANGE IN THE MIDDLE OF USAGE (SERVER SHUT DOWN)
+    --> 4.* Database file doesn't exist at file path returns an error
+	5. Database file exists and new data in json format save the new data OK
+
+- saveNewArticle
+	1. Article already in database returns an error OK
+	2. Article not in database saved OK
+
+- loadArticleWithID
+	1. No article with this id returns an error OK
+	2. Article with matching id is returned OK
+
+- loadArticleWithUrl
+	1. No article with this url returns an error OK
+	2. Article with matching url is returned OK
+
+- saveModifiedArticle
+	1. Modified article not an article object returns an error OK
+	2. No article with same id returns an error OK
+	3. Article with matching id is modified OK
+
+- arrayContainedInArray
+	1.* Returns an error if input not array OK
+	2.* Returns false if array not contained in array OK
+	3.* Returns true is array is contained in array OK
+
+- isArticleObject
+	1.* Returns an error if input not not an object OK
+	2.* Returns false if the object is not an article object OK
+	3.* Returns true if the object is an article object OK
+
+
+
+data_management.js
+- Constructor
+
+- getSortedArticlesArray
+	1. WHAT DO WE DO IF WE RECEIVE AN ERROR FROM THE DATABASE? WE NEED TO READ THE ERROR FROM THE DATABASE, AND CONVERT TO THE DESIRED HTTP CODE
+	2. File content not in json format returns error from loadData
+	3. Database file exists and contains a JSON returns expected content OK
+- postNewArticle
+	1. Invalid url returns an error
+	2. Article already in database throw error from saveNewArticle
+	3. Link preview failed throw an error
+- getLinkPreview
+	1. IF ERROR FROM LINK PREVIEW ERROR
+	2. Returns all the link preview items
+- addLinkPreview
+	1. Returns an error if the article does not exist in the database
+	2. Returns an error if the article already has a link preview
+	3. Save a new version of the article with the complete link preview
+- isValidUrl
+	1. Returns false for invalid url OK
+	2. Returns true for valid url OK
+- createNewArticleObject
+	1. Returns new article object with all items expected OK
+- sortArrayByPostingDate
+	1. Returns an error if input is not an array OK
+	2. Returns an error if on of the item in the array does not have a postTime key OK
+	3. Returns an error if one of the item of the input array has an invalid date OK
+	4. Returns array sorted in reverse chronological order OK
+- hasPostTimeProperty
+	1. Returns false if the input object doesn't have a postTime property OK
+	2. Returns true if the input object has a postTime property OK
+- isValidDate
+	1. Returns false if the input object doesn't have a valid postTime property OK
+	2. Returns true if the input object has a valid postTime property OK
+
+
+
+link_preview.js
+- linkPreview
+	1. Returns an error if there is an issue launching the browser
+	2. Returns an error if there is an issue opening a new page
+	3. Returns an error if there is an issue loading the url
+	4. Returns an error if there is an issue to get any of the target element
+	5. Returns an object with all the expected elements
+- getTitle
+	1. Get the expected title with Open Graph protocole
+	2. Get the expected title with the Twitter protocole
+	3. Get the expected title with the meta tag
+	4. Get the expected title with the h1 element
+	5. Get the expected title with the h2 element
+	6. Return null if no title found
+- getDescription
+	1. Get the expected description with Open Graph protocole
+	2. Get the expected description with the Twitter protocole
+	3. Get the expected description with the meta tag
+	4. Get the expected description with the first p element
+	5. Return null if no description found
+- getImg
+	1. Get the expected image with Open Graph protocole
+	2. Get the expected image with the tag rel="image_src"
+	3. Get the expected image with the Twitter protocole
+	4. Get the expected image with the img element
+	5. Return null if no image found
+- urlImageIsAccessible
+	1. Returns false if image source is not accessible
+	2. Returns true if image source is accessible
+- getDomainName
+	1. Get the expected domain name with Open Graph protocole
+	2. Get the expected domain name with the tag rel="canonical"
+	3. Return null if no domain name found
+
+ALTERNATIVE link_preview.js TESTING STRUCTURE // Having issues with getImg
+- Open Graph Protocol (port: 5000, file: nytimes-open_graph_protocol.ejs)
+	- getTitle
+		- returns expected title using the Open Graph Protocol OK
+	- getDescription
+		- returns expected description using the Open Graph Protocol OK
+	- getDomainName
+		- returns expected domain using the Open Graph Protocol OK
+- Twitter Card Tags via property (port: 5001, file: nytimes-twitter_card_tags_prop.ejs)
+	- getTitle
+		- returns expected title using the Twitter Card Tags OK
+	- getDescription
+		- returns expected description using the Twitter Card Tags OK
+	- getDomainName
+		- returns expected domain using the Twitter Card Tags OK
+- Twitter Card Tags via name (port: 5002, file: wsj-twitter_card_tags_name.ejs)
+	- getTitle
+		- returns expected title using the Twitter Card Tags OK
+	- getDescription
+		- returns expected description using the Twitter Card Tags OK
+	- getDomainName
+		- returns expected domain using the Twitter Card Tags OK
+- Other head meta data (port: 5003, file: nytimes-other_meta_data.ejs)
+	- getTitle
+		- returns expected title using the <title> element OK
+	- getDescription
+		- returns expected description using the description meta data OK
+	- getDomainName
+		- returns expected domain using the canonical property of the <link> element OK
+- Elements (port: 5004, file: wsj-element_title.ejs)
+	- getTitle
+		- returns expected title using the <h1> element OK
+	- getDescription
+		- returns expected description using the Twitter Card Tags OK
+
+
+
+
+express_server.js
+- app.get
+	1. Send the list of article posts expected
+- app.post
+	1. Save the new article with link preview if new article, and send the post back
+	2. Send message that new article already posted if this is the case
+	3. Send message that url invalid if this is the case
+
+errors.js - can we test errors?
+Can we test react too?
+
+COMMENTS:
+ADD TEST FOR CONSTRUCTORS
+SEPARATE THE ONES THAT ARE COMPORTMENT DRIVEN FROM THE ONES LINKED TO THE FILE STRUCTURE (SEPARATE IN THE TEST FILES)
+ADD TOLERANCE FOR FAILED LINK PREVIEW FOR IMAGE AND DESCRIPTION
+START TESTING WITH FILE ARTICLE DATABASE

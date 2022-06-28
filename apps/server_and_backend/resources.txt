@@ -1,0 +1,24 @@
+React app file structure
+https://www.taniarascia.com/react-architecture-directory-structure/
+
+Link Preview:
+https://andrejgajdos.com/how-to-create-a-link-preview/
+https://github.com/AndrejGajdos/link-preview-generator#readme
+
+Content Loader
+https://github.com/danilowoz/react-content-loader
+https://skeletonreact.com
+https://medium.com/front-end-weekly/react-user-experience-tactics-placeholder-loading-content-fb734da0f9ae
+https://github.com/deeayeen/medium-placeholder
+
+
+Infinite Scroll:
+https://www.pluralsight.com/guides/how-to-implement-infinite-scrolling-with-reactjs
+
+Error handling:
+https://www.slideshare.net/nzakas/enterprise-javascript-error-handling-presentation
+https://humanwhocodes.com/blog/2009/04/28/javascript-error-handling-anti-pattern/
+
+Normalisation of Database:
+https://www.studytonight.com/dbms/database-normalization.php
+

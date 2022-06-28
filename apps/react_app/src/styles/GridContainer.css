@@ -1,0 +1,15 @@
+.gridContainer {
+    display: grid;
+    grid-template-columns: 10% 80% 10%;
+    grid-template-areas:
+      "header header header"
+      ". content .";
+  }
+  
+  .subGridContainer {
+    display: grid;
+    grid-template-areas:
+      "image"
+      "overview"
+      "stats";
+  }

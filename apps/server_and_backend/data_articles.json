@@ -1,0 +1,122 @@
+[
+    {
+        "url": "https://www.nytimes.com/2022/04/28/technology/tech-uncertainty.html",
+        "id": "4f32fa73-a474-43e7-b2d5-631accd6a225",
+        "postTime": "Thu Apr 28 2022 14:30:40 GMT-0500 (Central Daylight Time)",
+        "numberOfVotes": 0,
+        "linkPreview": {
+            "title": "An Unsteady Moment for Tech",
+            "description": "The past decade has been one long party for tech. Where we go from here isn’t so clear.",
+            "domain": "www.nytimes.com",
+            "img": "https://static01.nyt.com/images/2022/04/28/autossell/Optimism-first-frame/Optimism-first-frame-square640.jpg"
+        }
+    },
+    {
+        "url": "https://www.nytimes.com/2022/04/28/technology/twitter-musk-content-moderators.html",
+        "id": "f5b31ed5-3f8a-459e-8b04-6c74db692921",
+        "postTime": "Thu Apr 28 2022 14:37:33 GMT-0500 (Central Daylight Time)",
+        "numberOfVotes": 0,
+        "linkPreview": {
+            "title": "Inside Twitter, Fears Musk Will Return Platform to Its Early Troubles",
+            "description": "Content moderators warn that Elon Musk doesn’t appear to understand the issues that he and the company will face if he drops its guardrails around speech.",
+            "domain": "www.nytimes.com",
+            "img": "https://static01.nyt.com/images/2022/04/28/business/28twitter-moderation1/merlin_205928799_05479b27-0eb8-48e6-8b77-3194925c3a54-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+        }
+    },
+    {
+        "url": "https://www.nytimes.com/2022/04/28/technology/twitter-first-quarter-earnings-elon-musk.html",
+        "id": "7a5e341b-084f-4223-9388-162f02324593",
+        "postTime": "Thu Apr 28 2022 14:47:26 GMT-0500 (Central Daylight Time)",
+        "numberOfVotes": 0,
+        "linkPreview": {
+            "title": "Twitter reports growth in revenue and users as Elon Musk prepares to take over.",
+            "description": "The social media company reported a 16 percent jump in daily active users from a year ago.",
+            "domain": "www.nytimes.com",
+            "img": "https://static01.nyt.com/images/2022/04/28/multimedia/28twitter-earnings/28twitter-earnings-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+        }
+    },
+    {
+        "url": "https://www.nytimes.com/2022/04/27/technology/personaltech/truth-social-review-trump.html",
+        "id": "1f4944e2-33d4-4e94-8e7a-4ebab797dd99",
+        "postTime": "Thu Apr 28 2022 14:54:33 GMT-0500 (Central Daylight Time)",
+        "numberOfVotes": 0,
+        "linkPreview": {
+            "title": "Truth Social Review: Trump’s Uncensored Social App Is Incomplete",
+            "description": "The Trump-backed social media app is inundated with phony accounts and features that don’t work. It also hides some posts, including those with curse words.",
+            "domain": "www.nytimes.com",
+            "img": "https://static01.nyt.com/images/2022/04/28/business/27techfix2/merlin_206014581_96399a0d-4ddf-4d73-aa3e-29a7bba633ac-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+        }
+    },
+    {
+        "url": "https://www.nytimes.com/2022/04/28/technology/snap-camera-drone-pixy.html",
+        "id": "f9ca64ac-30ed-480a-a53e-90f770c23449",
+        "postTime": "Thu Apr 28 2022 15:15:17 GMT-0500 (Central Daylight Time)",
+        "numberOfVotes": 0,
+        "linkPreview": {
+            "title": "Snap unveils a flying camera called Pixy.",
+            "description": "The drone camera is the newest hardware product from the maker of Snapchat, which previously released smart glasses known as Spectacles.",
+            "domain": "www.nytimes.com",
+            "img": "https://static01.nyt.com/images/2022/04/28/business/28economy-briefing-snapchat/28economy-briefing-snapchat-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+        }
+    },
+    {
+        "url": "https://www.nytimes.com/2022/04/29/technology/elon-musk-china-tesla.html",
+        "id": "bac3b3d3-71be-4043-82bd-8a8484486866",
+        "postTime": "Fri Apr 29 2022 10:57:07 GMT-0500 (Central Daylight Time)",
+        "numberOfVotes": 0,
+        "linkPreview": {
+            "title": "Musk’s Ties to China Could Create Headaches for Twitter",
+            "description": "Elon Musk has invested heavily in China, where officials are willing to influence or punish companies that cross political red lines.",
+            "domain": "www.nytimes.com",
+            "img": "https://static01.nyt.com/images/2022/04/28/business/00MUSK-CHINA1/00MUSK-CHINA1-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+        }
+    },
+    {
+        "url": "https://www.nytimes.com/2022/04/28/technology/amazon-earnings.html",
+        "id": "aad230d5-2599-473a-a81d-d236ba02ac70",
+        "postTime": "Fri Apr 29 2022 11:45:18 GMT-0500 (Central Daylight Time)",
+        "numberOfVotes": 0,
+        "linkPreview": {
+            "title": "Amazon reports slowing sales growth and indicates slowdown may continue.",
+            "description": "Amazon benefited from the coronavirus pandemic as people flocked to online shopping. Now, shoppers’ behavior has shifted.",
+            "domain": "www.nytimes.com",
+            "img": "https://static01.nyt.com/images/2022/04/28/business/28economy-briefing-amazon/merlin_187084398_d0ac1ef8-e682-46d1-992c-c00a7199ce07-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+        }
+    },
+    {
+        "url": "https://www.nytimes.com/2022/04/28/business/apple-earnings.html",
+        "id": "7c344251-4be5-4d36-a5ae-44321399f2d0",
+        "postTime": "Fri Apr 29 2022 14:04:58 GMT-0500 (Central Daylight Time)",
+        "numberOfVotes": 0,
+        "linkPreview": {
+            "title": "Apple’s growth slows, but still beats Wall Street’s expectations.",
+            "description": "While the company did better in its first three months of the year than many of its tech peers, it warned that Covid problems in China will be an issue.",
+            "domain": "www.nytimes.com",
+            "img": "https://static01.nyt.com/images/2022/04/28/business/28economy-briefing-apple/merlin_205647390_5c0fe4dc-7a6f-446a-9bde-f8f47af63ca1-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+        }
+    },
+    {
+        "url": "https://www.nytimes.com/2022/04/29/technology/instacart-valuation-pandemic.html",
+        "id": "b2587436-0d0e-427f-ae89-e907f5aaa748",
+        "postTime": "Fri Apr 29 2022 14:45:42 GMT-0500 (Central Daylight Time)",
+        "numberOfVotes": 0,
+        "linkPreview": {
+            "title": "Instacart Searches for a Direction as Its Pandemic Boom Fades",
+            "description": "The grocery delivery start-up changed its leadership, slashed its valuation and shifted its strategy after sales slowed.",
+            "domain": "www.nytimes.com",
+            "img": "https://static01.nyt.com/images/2022/04/15/business/00instacart1/merlin_172083885_f854cc8a-9d31-4c09-8b6e-b1965adbe468-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+        }
+    },
+    {
+        "url": "https://www.nytimes.com/2022/04/28/business/media/james-corden-leaving-cbs.html",
+        "id": "ce663bfe-72e6-4d47-aec0-9ff3960a7522",
+        "postTime": "Fri Apr 29 2022 14:49:40 GMT-0500 (Central Daylight Time)",
+        "numberOfVotes": 0,
+        "linkPreview": {
+            "title": "James Corden Says He’ll Leave His CBS Show Next Year",
+            "description": "The British-born host, who was a successful actor and comedian before joining the network’s late-night lineup, has been signaling for some time that he was considering leaving.",
+            "domain": "www.nytimes.com",
+            "img": "https://static01.nyt.com/images/2022/04/28/business/28corden/28corden-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+        }
+    }
+]

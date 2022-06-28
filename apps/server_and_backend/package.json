@@ -1,0 +1,38 @@
+{
+  "name": "server_for_vote_the_news",
+  "version": "1.0.0",
+  "description": "",
+  "main": "express_server.js",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@shelf/jest-mongodb": "^2.2.2",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.8",
+    "express": "^4.17.3",
+    "get-urls": "^11.0.0",
+    "is-base64": "^1.1.0",
+    "jest": "^28.0.3",
+    "moment": "^2.29.3",
+    "mongoose": "^6.3.3",
+    "node-fetch": "^3.2.3",
+    "puppeteer": "^13.5.2",
+    "puppeteer-extra": "^3.2.3",
+    "puppeteer-extra-plugin-stealth": "^2.9.0",
+    "uuid": "^8.3.2"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "*.json"
+    ]
+  },
+  "jest": {
+    "transform": {},
+    "preset": "@shelf/jest-mongodb"
+  }
+}
