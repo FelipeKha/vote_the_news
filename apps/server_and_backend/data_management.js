@@ -37,21 +37,16 @@ class DataManagement {
         } catch (e) {
             dataManagementErrorsHandler(e);
         }
-
+        
+        let newArticleObjectWithLinkPreview;
         try {
-            await this.addLinkPreview(newArticleSaved._id)
+            newArticleObjectWithLinkPreview = await this.addLinkPreview(newArticleSaved._id)
             console.log('Link preview added');
         } catch (e) {
             dataManagementErrorsHandler(e);
         }
 
         console.log('End of newArticle function');
-        let newArticleObjectWithLinkPreview;
-        try {
-            newArticleObjectWithLinkPreview = await this.fileDataBase.loadArticleWithID(newArticleSaved.id);
-        } catch (e) {
-            dataManagementErrorsHandler(e);
-        }
         return newArticleObjectWithLinkPreview;
     }
 
@@ -67,15 +62,19 @@ class DataManagement {
         } catch (e) {
             dataManagementErrorsHandler(e);
         }
-        if (article.linkPreview.title &&
-            article.linkPreview.description &&
-            article.linkPreview.domain &&
-            article.linkPreview.img) {
-            throw new ArticleAlreadyHasLinkPreviewError('This article already has a link preview');
+        console.log(article);
+        if (article.linkPreview) {
+            if (article.linkPreview.title &&
+                article.linkPreview.description &&
+                article.linkPreview.domain &&
+                article.linkPreview.img) {
+                throw new ArticleAlreadyHasLinkPreviewError('This article already has a link preview');
+            }
         } else {
             article.linkPreview = await this.getLinkPreview(article.url);
         }
-        await this.fileDataBase.saveModifiedArticle(article);
+        const articleSaved = await this.fileDataBase.saveModifiedArticle(article);
+        return articleSaved;
     }
 
     static isValidHttpUrl(string) {
@@ -94,7 +93,7 @@ class DataManagement {
         const id = new mongoose.Types.ObjectId;
         const newArticleObject = {
             'url': url,
-            'id': id,
+            '_id': id,
             'postTime': Date.now(),
             'numberOfVotes': 0
         }
@@ -102,7 +101,6 @@ class DataManagement {
     }
 
     static hasPostTimeProperty(objectItem) {
-        console.log(objectItem.postTime);
         const hasPostTimeProperty = Object.prototype.hasOwnProperty.call(objectItem, 'postTime');
         return hasPostTimeProperty;
     }
