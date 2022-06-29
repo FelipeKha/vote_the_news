@@ -4,13 +4,6 @@ import dataManagementErrorsHandler from './utils/dataManagementErrorsHandler.js'
 import {
     InvalidURLError,
     ArticleAlreadyHasLinkPreviewError,
-    ArticleAlreadyPostedError,
-    NoArticleWithThisIDError,
-    FilePathIsNotAFileError,
-    FileIsNotJsonExtensionError,
-    NotAnArrayError,
-    DoNotHavePostTimePropertyError,
-    InvalidDateError
 } from './errors.js';
 
 
@@ -23,7 +16,7 @@ class DataManagement {
     async getSortedArticlesArray() {
         let sortedArticlesArray;
         try {
-            const sortedArticlesArray = await this.fileDataBase.loadAllArticlesArrayBySortedDates();
+            sortedArticlesArray = await this.fileDataBase.loadAllArticlesArrayBySortedDates();
         } catch (e) {
             dataManagementErrorsHandler(e);
         }
@@ -42,14 +35,6 @@ class DataManagement {
             newArticleSaved = await this.fileDataBase.saveNewArticle(newArticleObject);
             console.log('New article saved without link preview', newArticleSaved.id);
         } catch (e) {
-            // if (e instanceof ArticleAlreadyPostedError) {
-            //     console.log(`Error at saveNewArticle: ${e.message}`);
-            //     const existingArticle = await this.fileDataBase.loadArticleWithUrl(url);
-            //     existingArticle.userMessage = e.message
-            //     return existingArticle
-            // } else {
-            //     throw e;
-            // }
             dataManagementErrorsHandler(e);
         }
 
@@ -106,9 +91,7 @@ class DataManagement {
     }
 
     static createNewArticleObject(url) {
-        // const id = uuidv4();
         const id = new mongoose.Types.ObjectId;
-        // console.log(id);
         const newArticleObject = {
             'url': url,
             'id': id,
@@ -118,29 +101,10 @@ class DataManagement {
         return newArticleObject
     }
 
-    // No longer required since Mongoose can return sorted arrays
-    // static sortArrayByPostingDate(array) {
-    //     if (!Array.isArray(array)) {
-    //         throw new NotAnArrayError('Input is not an array')
-    //     }
-    //     if (!array.every(DataManagement.hasPostTimeProperty)) {
-    //         throw new DoNotHavePostTimePropertyError('One of the object does not have a postTime property')
-    //     }
-    //     if (!array.every(DataManagement.isValidDate)) {
-    //         throw new InvalidDateError('One of the object has an invalid date')
-    //     }
-
-    //     const sortedArray = array.sort((a, b) => {
-    //         const postTimeA = new Date(a.postTime);
-    //         const postTimeB = new Date(b.postTime);
-    //         return postTimeB - postTimeA;
-    //     })
-    //     return sortedArray
-    // }
-
     static hasPostTimeProperty(objectItem) {
         console.log(objectItem.postTime);
-        return objectItem.hasOwnProperty('postTime')
+        const hasPostTimeProperty = Object.prototype.hasOwnProperty.call(objectItem, 'postTime');
+        return hasPostTimeProperty;
     }
 
     static isValidDate(objectItem) {
@@ -155,12 +119,3 @@ class DataManagement {
 
 
 export default DataManagement;
-
-// const fileDatabase = new FileDatabase('/Users/felipekharaba/Documents/Documents – Felipe’s MacBook Pro/Coding courses/Projects/server_for_vote_the_news/data_articles.json');
-// const dataManagement = new DataManagement(fileDatabase);
-// const articlesArray  = await dataManagement.getSortedArticlesArray();
-// console.log(articlesArray);
-// dataManagement.newArticle('https://www.nytimes.com/2022/04/11/technology/china-russia-propaganda.html')
-// dataManagement.getData()
-// await dataManagement.addLinkPreview("a0a1162d-8a02-4874-879d-419eabe3beb0");
-// dataManagement.newArticle('https://www.nytimes.com/2022/04/06/technology/personaltech/text-scam-spam.html');
