@@ -305,7 +305,7 @@ describe("DataManagement", () => {
 })
 
 class MockFileDatabase {
-    loadAllArticlesArrayBySortedDates() {
+    loadAllArticlesArraySortedByDates() {
         const articlesArray = [
             {
                 url: "https://www.nytimes.com/2022/04/28/technology/twitter-musk-content-moderators.html",

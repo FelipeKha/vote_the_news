@@ -8,15 +8,15 @@ import {
 
 
 class DataManagement {
-    constructor(fileDatabase, linkPreview) {
-        this.fileDataBase = fileDatabase;
+    constructor(database, linkPreview) {
+        this.database = database;
         this.linkPreview = linkPreview;
     }
 
     async getSortedArticlesArray() {
         let sortedArticlesArray;
         try {
-            sortedArticlesArray = await this.fileDataBase.loadAllArticlesArrayBySortedDates();
+            sortedArticlesArray = await this.database.loadAllArticlesArraySortedByDates();
         } catch (e) {
             dataManagementErrorsHandler(e);
         }
@@ -32,12 +32,12 @@ class DataManagement {
         let newArticleSaved;
 
         try {
-            newArticleSaved = await this.fileDataBase.saveNewArticle(newArticleObject);
+            newArticleSaved = await this.database.saveNewArticle(newArticleObject);
             console.log('New article saved without link preview', newArticleSaved.id);
         } catch (e) {
             dataManagementErrorsHandler(e);
         }
-        
+
         let newArticleObjectWithLinkPreview;
         try {
             newArticleObjectWithLinkPreview = await this.addLinkPreview(newArticleSaved._id)
@@ -58,22 +58,20 @@ class DataManagement {
     async addLinkPreview(id) {
         let article;
         try {
-            article = await this.fileDataBase.loadArticleWithID(id);
+            article = await this.database.loadArticleWithID(id);
         } catch (e) {
             dataManagementErrorsHandler(e);
         }
-        console.log(article);
-        if (article.linkPreview) {
-            if (article.linkPreview.title &&
-                article.linkPreview.description &&
-                article.linkPreview.domain &&
-                article.linkPreview.img) {
-                throw new ArticleAlreadyHasLinkPreviewError('This article already has a link preview');
-            }
+        if (Object.prototype.hasOwnProperty.call(article, 'linkPreview') &&
+            Object.prototype.hasOwnProperty.call(article.linkPreview, 'title') &&
+            Object.prototype.hasOwnProperty.call(article.linkPreview, 'description') &&
+            Object.prototype.hasOwnProperty.call(article.linkPreview, 'domain') &&
+            Object.prototype.hasOwnProperty.call(article.linkPreview, 'img')) {
+            throw new ArticleAlreadyHasLinkPreviewError('This article already has a link preview');
         } else {
             article.linkPreview = await this.getLinkPreview(article.url);
         }
-        const articleSaved = await this.fileDataBase.saveModifiedArticle(article);
+        const articleSaved = await this.database.saveModifiedArticle(article);
         return articleSaved;
     }
 

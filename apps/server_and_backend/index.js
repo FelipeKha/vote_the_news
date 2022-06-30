@@ -1,28 +1,16 @@
 import express from 'express';
 import cors from 'cors';
 
-import DataManagement from './data_management.js'
-import Database from './database.js';
-import LinkPreview from './link_preview.js'
-import { InvalidURLError } from './errors.js';
-import articleSchema from "./models/article.js";
-import catchAsync from './utils/catchAsync.js';
+import {router as articlesRouter} from './routes/articles_routes.js';
 // import ExpressError from './utils/ExpressError.js';
-
-
-const databaseUrl = 'mongodb://localhost:27017/vote-the-news';
-const databaseSchema = articleSchema;
-const fileDatabase = new Database(databaseUrl, databaseSchema);
-await fileDatabase.connectToDatabase();
-fileDatabase.associateModelToConnection();
-const linkPreview = new LinkPreview();
-const dataManagement = new DataManagement(fileDatabase, linkPreview)
 
 const app = express();
 const port = 4000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use('/', articlesRouter);
 
 // To be modified for production app
 const corsOptions = {
@@ -32,27 +20,7 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-app.get('/', catchAsync(async (req, res) => {
-    const articlesArray = await dataManagement.getSortedArticlesArray();
-    res.send(articlesArray);
-}))
 
-app.post('/', catchAsync(async (req, res) => {
-    console.log('Post request received', req.body.url);
-    const newArticleURL = req.body.url;
-    try {
-        const newArticle = await dataManagement.postNewArticle(newArticleURL);
-        // console.log(newArticle);
-        res.send(newArticle);
-    } catch (e) {
-        if (e instanceof InvalidURLError) {
-            console.log(`Error at newArticle: ${e.message}`);
-            res.send({ userMessage: e.message })
-        } else {
-            throw e
-        }
-    }
-}))
 
 // app.all('*', (req, res, next) => {
 //     next(new ExpressError('Page not found', 404));
