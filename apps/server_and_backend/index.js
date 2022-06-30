@@ -1,26 +1,17 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
-import url from 'url';
 
 import DataManagement from './data_management.js'
-import FileDatabase from './file_database.js';
 import Database from './database.js';
 import LinkPreview from './link_preview.js'
 import { InvalidURLError } from './errors.js';
-// import Article from "./models/article.js";
 import articleSchema from "./models/article.js";
 import catchAsync from './utils/catchAsync.js';
-import ExpressError from './utils/ExpressError.js';
+// import ExpressError from './utils/ExpressError.js';
 
-
-const currentDirPath = path.dirname(url.fileURLToPath(import.meta.url));
-const databaseFilePath = path.join(currentDirPath, '/data_articles.json')
 
 const databaseUrl = 'mongodb://localhost:27017/vote-the-news';
-// const databaseSchema = Article;
 const databaseSchema = articleSchema;
-// const fileDatabase = new FileDatabase(databaseFilePath);
 const fileDatabase = new Database(databaseUrl, databaseSchema);
 await fileDatabase.connectToDatabase();
 fileDatabase.associateModelToConnection();

@@ -58,16 +58,16 @@ data_management.js
 	2. File content not in json format returns error from loadData
 	3. Database file exists and contains a JSON returns expected content OK
 - postNewArticle
-	1. Invalid url returns an error
-	2. Article already in database throw error from saveNewArticle
+	1. Invalid url returns an error OK
+	2. Article already in database throw error from saveNewArticle OK
 	3. Link preview failed throw an error
 - getLinkPreview
 	1. IF ERROR FROM LINK PREVIEW ERROR
-	2. Returns all the link preview items
+	2. Returns all the link preview items OK
 - addLinkPreview
-	1. Returns an error if the article does not exist in the database
-	2. Returns an error if the article already has a link preview
-	3. Save a new version of the article with the complete link preview
+	1. Returns an error if the article does not exist in the database OK
+	2. Returns an error if the article already has a link preview OK
+	3. Save a new version of the article with the complete link preview OK
 - isValidUrl
 	1. Returns false for invalid url OK
 	2. Returns true for valid url OK

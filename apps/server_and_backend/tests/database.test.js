@@ -1,14 +1,11 @@
-// import { MongoClient as MongoClient } from 'mongodb';
 import mongoose from 'mongoose';
 
 import Database from '../database';
-// import Article from '../models/article';
 import articleSchema from '../models/article';
 import {
   ArticleAlreadyPostedError,
   NoArticleWithThisIDError,
   InvalidArticleIDError,
-  InvalidMongoUrlError,
   MongoCastError,
   MongoValidatorError,
   NoArticleWithThisUrlError
@@ -18,27 +15,6 @@ const tempMongoUrl = globalThis.__MONGO_URI__;
 
 describe('Database', () => {
   describe('connectToDatabase', () => {
-    // let database;
-    // let conn;
-    // let articleModel;
-
-    // beforeEach(async () => {
-    //   database = new Database(tempMongoUrl, articleSchema);
-    //   conn = await database.connectToDatabase();
-    //   articleModel = database.associateModelToConnection();
-    // })
-
-    // afterEach(async () => {
-    //   await articleModel.deleteMany({});
-    //   conn.close()
-    // })
-
-    // test(`returns ${InvalidMongoUrlError.name} if database url is invalid`, () => {
-    //   const invalidUrl = 'invalidUrl';
-    //   const database = new Database(invalidUrl, articleSchema);
-    //   expect(() => database.connectToDatabase()).toThrow(InvalidMongoUrlError);
-    // })
-
     test('does not returns an error if url is valid', async () => {
       const database = new Database(tempMongoUrl, articleSchema);
       const conn = await database.connectToDatabase();
@@ -115,9 +91,6 @@ describe('Database', () => {
       const identical1 = articlesAreIdenticle(contentDatabase[0], articleObject3);
       const identical2 = articlesAreIdenticle(contentDatabase[1], articleObject2);
       const identical3 = articlesAreIdenticle(contentDatabase[2], articleObject1);
-
-      // console.log(identical1, identical2, identical3);
-      // console.log(contentDatabase);
 
       const articlesIdenticalAndOrdered = identical1 && identical2 && identical3;
 
@@ -369,7 +342,7 @@ describe('Database', () => {
         }
       }
 
-      const articleDatabase1 = await database.saveModifiedArticle(modifiedArticle1);
+      await database.saveModifiedArticle(modifiedArticle1);
       const modifiedArticle1Database = await articleModel.findById(articleObject1._id)
       const identical = articlesAreIdenticle(modifiedArticle1, modifiedArticle1Database);
 
@@ -398,19 +371,6 @@ function createArticleObject(integer) {
 
 function articlesAreIdenticle(article1, article2) {
   let identical = false;
-
-  // console.log(article1._id);
-  // console.log(article2);
-
-  // console.log(article1.url === article2.url);
-  // console.log(article1._id.toString() === article2._id.toString());
-  // console.log(getPostTimeNumber(article1) === getPostTimeNumber(article2));
-  // console.log(article1.numberOfVotes === article2.numberOfVotes);
-  // console.log(article1.linkPreview.title === article2.linkPreview.title);
-  // console.log(article1.linkPreview.description === article2.linkPreview.description);
-  // console.log(article1.linkPreview.domain === article2.linkPreview.domain);
-  // console.log(article1.linkPreview.img === article2.linkPreview.img);
-
 
   if (
     article1.url === article2.url &&

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 // import Article from './models/article.js'
-import articleSchema from './models/article.js'
+// import articleSchema from './models/article.js'
 import mongoErrorsHandler from "./utils/mongoErrorsHandler.js";
 import {
     NoArticleWithThisIDError,
