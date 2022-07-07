@@ -2,28 +2,18 @@ import express from 'express';
 
 import { InvalidURLError } from '../errors.js';
 import catchAsync from '../utils/catchAsync.js';
-import DataManagement from '../data_management.js';
-import Database from '../database.js';
-import LinkPreview from '../link_preview.js'
-import articleSchema from "../models/article.js";
+import { dataManagement } from '../dataManagement_object.js';
+import isLoggedIn from '../utils/isLoggedIn.js';
+
 
 const router = express.Router();
-
-const databaseUrl = 'mongodb://localhost:27017/vote-the-news';
-const databaseSchema = articleSchema;
-const database = new Database(databaseUrl, databaseSchema);
-await database.connectToDatabase();
-database.associateModelToConnection();
-const linkPreview = new LinkPreview();
-const dataManagement = new DataManagement(database, linkPreview)
-
 
 router.get('/', catchAsync(async (req, res) => {
     const articlesArray = await dataManagement.getSortedArticlesArray();
     res.send(articlesArray);
 }))
 
-router.post('/', catchAsync(async (req, res) => {
+router.post('/', isLoggedIn, catchAsync(async (req, res) => {
     console.log('Post request received', req.body.url);
     const newArticleURL = req.body.url;
     try {

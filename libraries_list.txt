@@ -1,0 +1,15 @@
+
+cors
+eslint
+express
+express-session
+jest
+mongoose
+node-fetch
+passport
+passport-local
+passport-local-mongoose
+puppeteer
+puppeteer-extra
+puppeteer-extra-plugin-stealth
+react

@@ -10,15 +10,17 @@ import {
 
 
 class Database {
-    constructor(databaseUrl, databaseSchema) {
+    constructor(databaseUrl, articleSchema, userSchema) {
         this.databaseUrl = databaseUrl;
-        this.databaseSchema = databaseSchema;
+        this.articleSchema = articleSchema;
+        this.userSchema = userSchema;
         this.conn
         this.articleModel;
+        this.userModel;
 
         // this.conn = mongoose.createConnection(this.databaseUrl);
         // this.conn.on('error', (e) => mongoErrorsHandler(e));
-        // this.articleModel = this.conn.model('Article', this.databaseSchema);
+        // this.articleModel = this.conn.model('Article', this.articleSchema);
     }
 
     async connectToDatabase() {
@@ -32,7 +34,8 @@ class Database {
     }
 
     associateModelToConnection() {
-        this.articleModel = this.conn.model('Article', this.databaseSchema);
+        this.articleModel = this.conn.model('Article', this.articleSchema);
+        this.userModel = this.conn.model('User', this.userSchema);
         return this.articleModel;
     }
 
@@ -160,8 +163,8 @@ export default Database;
 // await database.saveNewArticle(newArticle2);
 
 // const databaseUrl = 'mongodb://localhost:27017/vote-the-news';
-// const databaseSchema = Article;
-// const database = new Database(databaseUrl, databaseSchema);
+// const articleSchema = Article;
+// const database = new Database(databaseUrl, articleSchema);
 // await database.connectToDatabase();
 
 // const newArticle2 = {
@@ -182,8 +185,8 @@ export default Database;
 // console.log(articleFoundById);
 
 // const databaseUrl = 'mongodb://localhost:27017/vote-the-news';
-// const databaseSchema = Article;
-// const database = new Database(databaseUrl, databaseSchema);
+// const articleSchema = Article;
+// const database = new Database(databaseUrl, articleSchema);
 // await database.connectToDatabase();
 // const articleObject1 = {
 //     // url: 'thisIsUrl2',
@@ -208,8 +211,8 @@ export default Database;
 //     __v: 0
 // }
 // const databaseUrl = 'mongodb://localhost:27017/vote-the-news';
-// const databaseSchema = Article;
-// const database = new Database(databaseUrl, databaseSchema);
+// const articleSchema = Article;
+// const database = new Database(databaseUrl, articleSchema);
 // await database.connectToDatabase();
 // console.log(await database.saveModifiedArticle(articleDatabase));
 
