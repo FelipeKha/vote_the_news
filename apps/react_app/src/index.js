@@ -1,10 +1,10 @@
-import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import GridContainer from './components/GridContainer';
+
+import BasicGrid from './components/BasicGrid'
 
 
 ReactDOM.render(
-  <GridContainer />,
+  <BasicGrid />,
   document.getElementById('root')
 );

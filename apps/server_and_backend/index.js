@@ -12,12 +12,11 @@ import { database } from './dataManagement_object.js';
 const app = express();
 const port = 4000;
 
-
 // To be modified for production app
 const corsOptions = {
     origin: '*',
     credentials: true,
-    optionSuccessStatus: 200,
+    optionSuccessStatus: 200
 }
 const sessionConfig = {
     secret: 'thisisnotagoodsecret',
@@ -35,15 +34,14 @@ app.use(express.json());
 app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cors(corsOptions));
 app.use('/', usersRouter);
 app.use('/', articlesRouter);
-app.use(cors(corsOptions));
+
 
 passport.use(new LocalStrategy(database.userModel.authenticate()));
 passport.serializeUser(database.userModel.serializeUser());
 passport.deserializeUser(database.userModel.deserializeUser());
-
-
 
 
 // app.all('*', (req, res, next) => {
