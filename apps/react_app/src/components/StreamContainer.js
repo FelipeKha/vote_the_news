@@ -1,7 +1,7 @@
 import React from "react";
+
 import NewArticleForm from "./NewArticleForm";
-import ArticlePost from "./ArticlePost";
-import "../styles/StreamContainer.css"
+import ImgMediaCard from "./ImgMediaCard";
 
 class StreamContainer extends React.Component {
     constructor(props) {
@@ -39,7 +39,7 @@ class StreamContainer extends React.Component {
 
     renderArticlePost(articleInfo) {
         return (
-            <ArticlePost
+            <ImgMediaCard
                 articleInfo={articleInfo}
                 key={articleInfo.id}
             />

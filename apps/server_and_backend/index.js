@@ -10,16 +10,16 @@ const port = 4000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use('/', articlesRouter);
 
 // To be modified for production app
 const corsOptions = {
     origin: '*',
     credentials: true,
-    optionSuccessStatus: 200,
+    optionSuccessStatus: 200
 }
 app.use(cors(corsOptions));
 
+app.use('/', articlesRouter);
 
 
 // app.all('*', (req, res, next) => {

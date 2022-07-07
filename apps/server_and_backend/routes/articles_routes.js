@@ -19,8 +19,12 @@ const dataManagement = new DataManagement(database, linkPreview)
 
 
 router.get('/', catchAsync(async (req, res) => {
+    console.log('REQ HEADERS');
+    console.log(req.headers);
     const articlesArray = await dataManagement.getSortedArticlesArray();
     res.send(articlesArray);
+    console.log('RES HEADERS');
+    console.log(res);
 }))
 
 router.post('/', catchAsync(async (req, res) => {
