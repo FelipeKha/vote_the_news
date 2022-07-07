@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 
 import Database from '../database';
-import articleSchema from '../models/article';
+import articleSchema from '../models/article.js';
+import userSchema from '../models/user.js'
 import {
   ArticleAlreadyPostedError,
   NoArticleWithThisIDError,
@@ -16,7 +17,7 @@ const tempMongoUrl = globalThis.__MONGO_URI__;
 describe('Database', () => {
   describe('connectToDatabase', () => {
     test('does not returns an error if url is valid', async () => {
-      const database = new Database(tempMongoUrl, articleSchema);
+      const database = new Database(tempMongoUrl, articleSchema, userSchema);
       const conn = await database.connectToDatabase();
       expect(conn.readyState).toBe(1);
       conn.close();
@@ -30,7 +31,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -59,7 +60,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -104,7 +105,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -158,7 +159,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -211,7 +212,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -249,7 +250,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -283,7 +284,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
