@@ -12,9 +12,9 @@ import SendIcon from '@mui/icons-material/Send';
 import FadeIn from 'react-fade-in/lib/FadeIn';
 
 import MyLoader from './Placeholder';
-import ImgMediaCard from './ImgMediaCard';
+import ArticleCard from './ArticleCard';
 
-class CustomizedInputBase extends React.Component {
+class NewArticlePostUrlInput extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -61,11 +61,12 @@ class CustomizedInputBase extends React.Component {
             body: JSON.stringify(bodyObject)
         }
 
-        fetch('http://localhost:4000/', requestOptions)
+        fetch('http://localhost:4000/newarticlepost', requestOptions)
             .then(res => res.json())
             .then(
                 (result) => {
-                    if (result.userMessage && result.linkPreview) {
+                    console.log(result);
+                    if (result.message && result.linkPreview) {
                         console.log(result);
                         this.setState({
                             userMessage: result.userMessage,
@@ -77,7 +78,7 @@ class CustomizedInputBase extends React.Component {
                             newArticleLoading: false,
                             lastArticlePosted: result
                         })
-                    } else if (result.userMessage) {
+                    } else if (result.message) {
                         this.setState({
                             userMessage: result.userMessage,
                             waitingForNewArticle: true
@@ -97,7 +98,7 @@ class CustomizedInputBase extends React.Component {
                     </FadeIn>
                 ) : (
                     <FadeIn>
-                        <ImgMediaCard
+                        <ArticleCard
                             articleInfo={this.state.lastArticlePosted}
                         />
                     </FadeIn>
@@ -148,4 +149,4 @@ class CustomizedInputBase extends React.Component {
     }
 }
 
-export default CustomizedInputBase;
+export default NewArticlePostUrlInput;

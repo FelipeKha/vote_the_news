@@ -157,6 +157,14 @@ class MongoValidatorError extends Error {
 }
 
 
+class NoUserOrArticleWithIDError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'NoUserOrArticleWithIDError';
+    }
+}
+
+
 export {
     ArticleAlreadyPostedError,
     InvalidURLError,
@@ -176,5 +184,6 @@ export {
     InvalidArticleIDError,
     InvalidMongoUrlError, 
     MongoCastError,
-    MongoValidatorError
+    MongoValidatorError,
+    NoUserOrArticleWithIDError,
 }

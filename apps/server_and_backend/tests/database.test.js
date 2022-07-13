@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 
 import Database from '../database';
 import articleSchema from '../models/article.js';
-import userSchema from '../models/user.js'
+import userSchema from '../models/user.js';
+import voteSchema from '../models/votes.js';
 import {
   ArticleAlreadyPostedError,
   NoArticleWithThisIDError,
@@ -17,7 +18,7 @@ const tempMongoUrl = globalThis.__MONGO_URI__;
 describe('Database', () => {
   describe('connectToDatabase', () => {
     test('does not returns an error if url is valid', async () => {
-      const database = new Database(tempMongoUrl, articleSchema, userSchema);
+      const database = new Database(tempMongoUrl, articleSchema, userSchema, voteSchema);
       const conn = await database.connectToDatabase();
       expect(conn.readyState).toBe(1);
       conn.close();
@@ -31,7 +32,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema, userSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema, voteSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -60,7 +61,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema, userSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema, voteSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -105,7 +106,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema, userSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema, voteSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -120,8 +121,7 @@ describe('Database', () => {
         {
           url: `test`,
           _id: new mongoose.Types.ObjectId,
-          postTime: 'notADate',
-          numberOfVotes: 0
+          postTime: 'notADate'
         },
         createArticleObject(1)
       ]
@@ -132,8 +132,7 @@ describe('Database', () => {
       const articleObjectValidatorError = [
         {
           _id: new mongoose.Types.ObjectId,
-          postTime: Date.now(),
-          numberOfVotes: 0
+          postTime: Date.now()
         },
         createArticleObject(1)
       ]
@@ -159,7 +158,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema, userSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema, voteSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -180,8 +179,7 @@ describe('Database', () => {
       const articleObjectCastError = {
         url: `test`,
         _id: new mongoose.Types.ObjectId,
-        postTime: 'notADate',
-        numberOfVotes: 0
+        postTime: 'notADate'
       }
       await expect(database.saveNewArticle(articleObjectCastError)).rejects.toThrow(MongoCastError);
     })
@@ -189,8 +187,7 @@ describe('Database', () => {
     test(`returns ${MongoValidatorError.name} if one of the key of the new article is missing`, async () => {
       const articleObjectValidatorError = {
         _id: new mongoose.Types.ObjectId,
-        postTime: Date.now(),
-        numberOfVotes: 0
+        postTime: Date.now()
       }
       await expect(database.saveNewArticle(articleObjectValidatorError)).rejects.toThrow(MongoValidatorError);
     })
@@ -212,7 +209,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema, userSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema, voteSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -250,7 +247,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema, userSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema, voteSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -284,7 +281,7 @@ describe('Database', () => {
     let articleModel;
 
     beforeEach(async () => {
-      database = new Database(tempMongoUrl, articleSchema, userSchema);
+      database = new Database(tempMongoUrl, articleSchema, userSchema, voteSchema);
       conn = await database.connectToDatabase();
       articleModel = database.associateModelToConnection();
     })
@@ -298,7 +295,6 @@ describe('Database', () => {
       const articleWithInvalidID = {
         _id: 'notAnID',
         url: "thisIsUrl",
-        numberOfVotes: 8,
         postTime: Date.now(),
         __v: 0
       }
@@ -313,8 +309,7 @@ describe('Database', () => {
       const invalidArticle = {
         _id: articleObject1._id,
         url: 'hereIsTheUrl',
-        numberOfVotes: 'notANumber',
-        postTime: Date.now(),
+        postTime: 'thisIsNotADateObject',
         __v: 0
       }
       await expect(database.saveModifiedArticle(invalidArticle)).rejects.toThrow(MongoCastError);
@@ -334,7 +329,6 @@ describe('Database', () => {
         url: 'aBrandNewUrlForTesting',
         _id: articleDocument1._id,
         postTime: Date.now(),
-        numberOfVotes: articleDocument1.numberOfVotes,
         linkPreview: {
           title: articleDocument1.linkPreview.title,
           description: articleDocument1.linkPreview.description,
@@ -359,7 +353,6 @@ function createArticleObject(integer) {
     url: `test${integer}`,
     _id: new mongoose.Types.ObjectId,
     postTime: Date.now(),
-    numberOfVotes: integer,
     linkPreview: {
       title: `test${integer}`,
       description: `test${integer}`,
@@ -377,7 +370,6 @@ function articlesAreIdenticle(article1, article2) {
     article1.url === article2.url &&
     article1._id.toString() === article2._id.toString() &&
     getPostTimeNumber(article1) === getPostTimeNumber(article2) &&
-    article1.numberOfVotes === article2.numberOfVotes &&
     article1.linkPreview.title === article2.linkPreview.title &&
     article1.linkPreview.description === article2.linkPreview.description &&
     article1.linkPreview.domain === article2.linkPreview.domain &&

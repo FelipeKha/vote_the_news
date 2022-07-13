@@ -22,3 +22,8 @@ https://humanwhocodes.com/blog/2009/04/28/javascript-error-handling-anti-pattern
 Normalisation of Database:
 https://www.studytonight.com/dbms/database-normalization.php
 
+
+Access Token:
+https://stackoverflow.com/questions/49819183/react-what-is-the-best-way-to-handle-login-and-authentication?answertab=trending#tab-top
+https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
+https://itnext.io/implementing-json-web-tokens-passport-js-in-a-javascript-application-with-react-b86b1f313436

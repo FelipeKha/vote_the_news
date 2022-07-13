@@ -31,10 +31,10 @@ const sessionConfig = {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors(corsOptions));
 app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cors(corsOptions));
 app.use('/', usersRouter);
 app.use('/', articlesRouter);
 

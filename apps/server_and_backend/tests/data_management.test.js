@@ -39,7 +39,7 @@ describe("DataManagement", () => {
     describe('createNewArticleObject', () => {
         test("returns new article object with expected items", () => {
             let testPassed = true;
-            const articleKeys = ['url', '_id', 'postTime', 'numberOfVotes'];
+            const articleKeys = ['url', '_id', 'postTime', 'author'];
             const newArticleUrl = 'newArticleUrl';
             const newArticle = DataManagement.createNewArticleObject(newArticleUrl);
 
@@ -54,8 +54,7 @@ describe("DataManagement", () => {
             if (
                 (typeof newArticle.url !== 'string') ||
                 (!(newArticle._id instanceof mongoose.Types.ObjectId)) ||
-                (typeof newArticle.postTime !== 'number') ||
-                (typeof newArticle.numberOfVotes !== 'number')
+                (typeof newArticle.postTime !== 'number')
             ) {
                 testPassed = false;
             }
@@ -88,7 +87,6 @@ describe("DataManagement", () => {
                     url: "https://www.nytimes.com/2022/04/28/technology/twitter-musk-content-moderators.html",
                     id: "f5b31ed5-3f8a-459e-8b04-6c74db692921",
                     postTime: "Thu Apr 28 2022 14:37:33 GMT-0500 (Central Daylight Time)",
-                    numberOfVotes: 0,
                     linkPreview: {
                         title: "Inside Twitter, Fears Musk Will Return Platform to Its Early Troubles",
                         description: "Content moderators warn that Elon Musk doesn’t appear to understand the issues that he and the company will face if he drops its guardrails around speech.",
@@ -100,7 +98,6 @@ describe("DataManagement", () => {
                     url: "https://www.nytimes.com/2022/04/28/technology/tech-uncertainty.html",
                     id: "4f32fa73-a474-43e7-b2d5-631accd6a225",
                     postTime: "Thu Apr 28 2022 14:30:40 GMT-0500 (Central Daylight Time)",
-                    numberOfVotes: 0,
                     linkPreview: {
                         title: "An Unsteady Moment for Tech",
                         description: "The past decade has been one long party for tech. Where we go from here isn’t so clear.",
@@ -195,8 +192,7 @@ describe("DataManagement", () => {
             const articleWithoutLinkPreview = {
                 url: `test`,
                 _id: new mongoose.Types.ObjectId,
-                postTime: Date.now(),
-                numberOfVotes: 0
+                postTime: Date.now()
             }
 
             const fileDataBase = new MockFileDatabase();
@@ -211,7 +207,6 @@ describe("DataManagement", () => {
                 url: articleWithoutLinkPreview.url,
                 _id: articleWithoutLinkPreview._id,
                 postTime: articleWithoutLinkPreview.postTime,
-                numberOfVotes: articleWithoutLinkPreview.numberOfVotes,
                 linkPreview: {
                     title: "Twitter reports growth in revenue and users as Elon Musk prepares to take over.",
                     description: "The social media company reported a 16 percent jump in daily active users from a year ago.",
@@ -311,7 +306,6 @@ class MockFileDatabase {
                 url: "https://www.nytimes.com/2022/04/28/technology/twitter-musk-content-moderators.html",
                 id: "f5b31ed5-3f8a-459e-8b04-6c74db692921",
                 postTime: "Thu Apr 28 2022 14:37:33 GMT-0500 (Central Daylight Time)",
-                numberOfVotes: 0,
                 linkPreview: {
                     title: "Inside Twitter, Fears Musk Will Return Platform to Its Early Troubles",
                     description: "Content moderators warn that Elon Musk doesn’t appear to understand the issues that he and the company will face if he drops its guardrails around speech.",
@@ -323,7 +317,6 @@ class MockFileDatabase {
                 url: "https://www.nytimes.com/2022/04/28/technology/tech-uncertainty.html",
                 id: "4f32fa73-a474-43e7-b2d5-631accd6a225",
                 postTime: "Thu Apr 28 2022 14:30:40 GMT-0500 (Central Daylight Time)",
-                numberOfVotes: 0,
                 linkPreview: {
                     title: "An Unsteady Moment for Tech",
                     description: "The past decade has been one long party for tech. Where we go from here isn’t so clear.",
@@ -347,8 +340,7 @@ class MockFileDatabase {
         const articleWithoutLinkPreview = {
             url: `test`,
             _id: id,
-            postTime: Date.now(),
-            numberOfVotes: 0
+            postTime: Date.now()
         }
         return articleWithoutLinkPreview;
     }
@@ -376,7 +368,6 @@ function createArticleObject(integer) {
         url: `test${integer}`,
         _id: new mongoose.Types.ObjectId,
         postTime: Date.now(),
-        numberOfVotes: integer,
         linkPreview: {
             title: `test${integer}`,
             description: `test${integer}`,

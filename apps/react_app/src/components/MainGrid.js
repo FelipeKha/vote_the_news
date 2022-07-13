@@ -4,9 +4,9 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 
-import ButtonAppBar from './ButtonAppBar';
-import ImgMediaCard from './ImgMediaCard';
-import CustomizedInputBase from './CustomizedInputBase';
+import NavAppBar from './NavAppBar';
+import ArticleCard from './ArticleCard';
+import NewArticlePostUrlInput from './NewArticlePostUrlInput';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -16,15 +16,20 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-class BasicGrid extends React.Component {
+class MainGrid extends React.Component {
   constructor(props) {
     super(props);
-    this.handleNewArticlePosted = this.handleNewArticlePosted.bind(this);
     this.state = {
       error: null,
       isLoaded: false,
+      isLoggedIn: false,
+      user: '',
       items: []
     }
+
+    this.handleNewArticlePosted = this.handleNewArticlePosted.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
+    this.handleLogout = this.handleLogout.bind(this)
   }
 
   componentDidMount() {
@@ -44,17 +49,39 @@ class BasicGrid extends React.Component {
           });
         }
       )
+
+    fetch("http://localhost:4000/isloggedin")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log('');
+        }
+      )
   }
 
   handleNewArticlePosted(newArticlesList) {
     this.setState({ items: newArticlesList })
   }
 
+  handleLogin(user) {
+    this.setState({
+      isLoggedIn: true,
+      user: user
+    });
+  }
+
+  handleLogout() {
+    this.setState({
+      isLoggedIn: false,
+      user: ''
+    });
+  }
+
   renderArticlePost(articleInfo) {
     return (
       <Grid item xs={4}>
         <Item>
-          <ImgMediaCard
+          <ArticleCard
             articleInfo={articleInfo}
             key={articleInfo.id}
           />
@@ -69,19 +96,24 @@ class BasicGrid extends React.Component {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Item>
-              <ButtonAppBar />
+              <NavAppBar
+                isLoggedIn={this.state.isLoggedIn}
+                user={this.state.user}
+                onLogin={this.handleLogin}
+                onLogout={this.handleLogout}
+              />
             </Item>
           </Grid>
           <Grid item xs={12}>
             <Item>
-              <CustomizedInputBase />
+              <NewArticlePostUrlInput />
             </Item>
           </Grid>
           {this.state.items.map((item) => this.renderArticlePost(item))}
         </Grid>
-      </Box >
+      </Box>
     );
   }
 }
 
-export default BasicGrid;
+export default MainGrid;

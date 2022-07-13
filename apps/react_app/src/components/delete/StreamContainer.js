@@ -1,7 +1,7 @@
 import React from "react";
 
 import NewArticleForm from "./NewArticleForm";
-import ImgMediaCard from "./ImgMediaCard";
+import ImgMediaCard from "../ArticleCard";
 
 class StreamContainer extends React.Component {
     constructor(props) {
