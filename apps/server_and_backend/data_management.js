@@ -23,12 +23,12 @@ class DataManagement {
         return sortedArticlesArray;
     }
 
-    async postNewArticle(url) {
+    async postNewArticle(url, authorId) {
         if (!DataManagement.isValidHttpUrl(url)) {
             throw new InvalidURLError('Invalid URL');
         }
 
-        const newArticleObject = DataManagement.createNewArticleObject(url);
+        const newArticleObject = DataManagement.createNewArticleObject(url, authorId);
         let newArticleSaved;
 
         try {
@@ -48,6 +48,16 @@ class DataManagement {
 
         console.log('End of newArticle function');
         return newArticleObjectWithLinkPreview;
+    }
+
+    async upVote(userId, articleId) {
+        let upVote;
+        try {
+            upVote = await this.database.upVote(userId, articleId);
+        } catch (e) {
+            throw e;
+        }
+        return upVote;
     }
 
     async getLinkPreview(url) {
@@ -75,6 +85,16 @@ class DataManagement {
         return articleSaved;
     }
 
+    async loadAllUserPostsArray(userId) {
+        const userPosts = await this.database.loadAllUserPostsArray(userId);
+        return userPosts;
+    }
+
+    async loadAllUserUpVotesArray(userId) {
+        const userUpVotes = await this.database.loadAllUserUpVotesArray(userId);
+        return userUpVotes;
+    }
+
     static isValidHttpUrl(string) {
         let url;
 
@@ -87,13 +107,13 @@ class DataManagement {
         return url.protocol === "http:" || url.protocol === "https:";
     }
 
-    static createNewArticleObject(url) {
+    static createNewArticleObject(url, authorId) {
         const id = new mongoose.Types.ObjectId;
         const newArticleObject = {
             'url': url,
             '_id': id,
             'postTime': Date.now(),
-            'numberOfVotes': 0
+            'author': authorId
         }
         return newArticleObject
     }

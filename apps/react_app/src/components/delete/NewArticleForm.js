@@ -1,5 +1,5 @@
 import React from "react";
-import MyLoader from "./Placeholder";
+import MyLoader from "../Placeholder";
 import FadeIn from "react-fade-in/lib/FadeIn";
 import "../styles/NewArticleForm.css"
 import ArticlePost from "./ArticlePost";

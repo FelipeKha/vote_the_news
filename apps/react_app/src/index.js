@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import BasicGrid from './components/BasicGrid'
+import MainGrid from './components/MainGrid'
 
 
 ReactDOM.render(
-  <BasicGrid />,
+  <MainGrid />,
   document.getElementById('root')
 );

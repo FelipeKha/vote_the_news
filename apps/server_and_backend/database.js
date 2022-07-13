@@ -5,18 +5,21 @@ import mongoose from "mongoose";
 import mongoErrorsHandler from "./utils/mongoErrorsHandler.js";
 import {
     NoArticleWithThisIDError,
-    NoArticleWithThisUrlError
+    NoArticleWithThisUrlError,
+    NoUserOrArticleWithIDError
 } from "./errors.js";
 
 
 class Database {
-    constructor(databaseUrl, articleSchema, userSchema) {
+    constructor(databaseUrl, articleSchema, userSchema, voteSchema) {
         this.databaseUrl = databaseUrl;
         this.articleSchema = articleSchema;
         this.userSchema = userSchema;
+        this.voteSchema = voteSchema;
         this.conn
         this.articleModel;
         this.userModel;
+        this.voteModel;
 
         // this.conn = mongoose.createConnection(this.databaseUrl);
         // this.conn.on('error', (e) => mongoErrorsHandler(e));
@@ -26,7 +29,7 @@ class Database {
     async connectToDatabase() {
         // await mongoose.connect(this.databaseUrl);
         this.conn = await mongoose.createConnection();
-        await this.conn.openUri(this.databaseUrl)
+        await this.conn.openUri(this.databaseUrl, { autoIndex: false });
         // const conn = mongoose.createConnection(this.databaseUrl, { useNewUrlParser: true });
         this.conn.on('error', (e) => mongoErrorsHandler(e));
         // conn.catch(e => console.log('got the error'));
@@ -36,6 +39,7 @@ class Database {
     associateModelToConnection() {
         this.articleModel = this.conn.model('Article', this.articleSchema);
         this.userModel = this.conn.model('User', this.userSchema);
+        this.voteModel = this.conn.model('Vote', this.voteSchema);
         return this.articleModel;
     }
 
@@ -45,7 +49,10 @@ class Database {
     }
 
     async loadAllArticlesArraySortedByDates() {
-        const articlesArray = this.articleModel.find({}).sort({ postTime: -1 });
+        const articlesArray = this.articleModel.find({})
+            .populate('author', 'username')
+            .populate('numUpVotes')
+            .sort({ postTime: -1 });
         return articlesArray;
     }
 
@@ -109,6 +116,61 @@ class Database {
             throw new NoArticleWithThisIDError('There is no article wih this url')
         }
         return article;
+    }
+
+    async upVote(userId, articleId) {
+        let upVote;
+        try {
+            upVote = await this.voteModel.findOne({ author: userId, article: articleId });
+        } catch (e) {
+            throw e;
+        }
+        if (upVote !== null) {
+            let newUpVoteStatus
+            upVote.status ? newUpVoteStatus = false : newUpVoteStatus = true;
+            const updatedUpVote = await this.voteModel.findByIdAndUpdate(
+                upVote._id,
+                { status: newUpVoteStatus },
+                { new: true }
+            )
+            return updatedUpVote;
+        } else {
+            const articleCount = await this.articleModel.countDocuments({_id: articleId});
+            const userCount = await this.userModel.countDocuments({_id: userId});
+            if (articleCount !== 0 && userCount !==0) {
+                const newUpVoteDocument = new this.voteModel({
+                    status: true,
+                    author: userId,
+                    article: articleId
+                })
+                let newUpVote;
+                try {
+                    newUpVote = await newUpVoteDocument.save();
+                } catch (e) {
+                    throw e;
+                }
+                return newUpVote;
+            } else {
+                throw new NoUserOrArticleWithIDError('No article and/or user with id provided');
+            }
+
+        }
+    }
+
+    async loadAllUserPostsArray(userId) {
+        const userPosts = await this.userModel.findById(userId)
+            .populate('articlesPosted');
+        return userPosts;
+    }
+
+    async loadAllUserUpVotesArray(userId) {
+        const userUpVotes = await this.userModel.findById(userId)
+            .populate({
+                path: 'articlesUpVoted',
+                populate: { path: 'article' }
+            });
+        console.log(userUpVotes);
+        return userUpVotes;
     }
 }
 

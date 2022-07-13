@@ -7,22 +7,22 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 
-class SignUpForm extends React.Component {
+class SignInFormDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             open: false,
             username: '',
-            email: '',
             password: ''
         };
 
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleChangeUsernameField = this.handleChangeUsernameField.bind(this);
-        this.handleChangeEmailField = this.handleChangeEmailField.bind(this);
         this.handleChangePasswordField = this.handleChangePasswordField.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.signInUser = this.signInUser.bind(this);
+        this.handleLogin = this.handleLogin.bind(this)
     }
 
     handleClickOpen = () => {
@@ -37,10 +37,6 @@ class SignUpForm extends React.Component {
         this.setState({ username: event.target.value });
     }
 
-    handleChangeEmailField(event) {
-        this.setState({ email: event.target.value });
-    }
-
     handleChangePasswordField(event) {
         this.setState({ password: event.target.value });
     }
@@ -48,13 +44,16 @@ class SignUpForm extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         this.handleClose();
-        this.signUpNewUser();
+        this.signInUser();
     }
 
-    signUpNewUser() {
+    handleLogin(user) {
+        this.props.onLogin(user);
+    }
+
+    signInUser() {
         const bodyObject = {
             username: this.state.username,
-            email: this.state.email,
             password: this.state.password
         }
 
@@ -66,25 +65,30 @@ class SignUpForm extends React.Component {
             body: JSON.stringify(bodyObject)
         }
 
-        fetch('http://localhost:4000/')
+        fetch('http://localhost:4000/login', requestOptions)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    if(result.message ==='successfully logged in') {
+                        this.handleLogin(result.user);
+                    }
+                }
+            )
     }
 
     render() {
         return (
             <div>
                 <Button color="inherit" onClick={this.handleClickOpen}>
-                    Sign Up
+                    Sign In
                 </Button>
                 <Dialog open={this.state.open} onClose={this.handleClose} fullWidth>
                     <form onSubmit={this.handleSubmit}>
-                        <DialogTitle>Sign UP</DialogTitle>
+                        <DialogTitle>Sign In</DialogTitle>
                         <DialogContent>
                             <Box>
                                 <div>
                                     <TextField id="username" type="text" label="Username" variant="outlined" margin="dense" onChange={this.handleChangeUsernameField} fullWidth />
-                                </div>
-                                <div>
-                                    <TextField id="email" type="email" label="Email" variant="outlined" margin="dense" onChange={this.handleChangeEmailField} fullWidth />
                                 </div>
                                 <div>
                                     <TextField id="password" type="password" label="Password" variant="outlined" margin="dense" onChange={this.handleChangePasswordField} fullWidth />
@@ -93,7 +97,7 @@ class SignUpForm extends React.Component {
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={this.handleClose}>Cancel</Button>
-                            <Button type="submit" >Sign Up</Button>
+                            <Button type="submit" >Sign In</Button>
                         </DialogActions>
                     </form>
                 </Dialog>
@@ -102,4 +106,4 @@ class SignUpForm extends React.Component {
     }
 }
 
-export default SignUpForm;
+export default SignInFormDialog;
