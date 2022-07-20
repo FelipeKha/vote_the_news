@@ -8,8 +8,9 @@ import isLoggedIn from '../utils/middleware.js';
 
 const router = express.Router();
 
-router.get('/', catchAsync(async (req, res) => {
-    const articlesArray = await dataManagement.getSortedArticlesArray();
+router.post('/', catchAsync(async (req, res) => {
+    const lastPostTime = req.body.lastPostTime;
+    const articlesArray = await dataManagement.getSortedArticlesArray(lastPostTime);
     res.send(articlesArray);
 }))
 
@@ -42,7 +43,7 @@ router.post('/:id/vote', isLoggedIn, catchAsync(async (req, res) => {
             upVote: upVote,
             message: 'Upvote saved'
         })
-    } catch(e) {
+    } catch (e) {
         throw e;
     }
 }))

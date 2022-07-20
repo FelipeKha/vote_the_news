@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import NavAppBar from './NavAppBar';
 import ArticleCard from './ArticleCard';
@@ -22,9 +23,13 @@ class MainGrid extends React.Component {
     this.state = {
       error: null,
       isLoaded: false,
+      loading: false,
       isLoggedIn: false,
       user: '',
-      items: []
+      articlesArray: [],
+      lastPostTime: "",
+      allArticlesLoaded: false,
+      prevY: 0
     }
 
     this.handleNewArticlePosted = this.handleNewArticlePosted.bind(this);
@@ -33,14 +38,52 @@ class MainGrid extends React.Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:4000/")
+    this.getArticles();
+
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 1.0
+    }
+
+    const observer = new IntersectionObserver(
+      this.handleIntObs.bind(this),
+      options
+    )
+
+    observer.observe(this.loadingRef)
+  }
+
+  getArticles() {
+    this.setState({ loading: true })
+
+    const bodyObject = {
+      lastPostTime: this.state.lastPostTime
+    }
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(bodyObject)
+    }
+
+    fetch("http://localhost:4000/", requestOptions)
       .then(res => res.json())
       .then(
         (result) => {
-          this.setState({
-            isLoaded: true,
-            items: result
-          });
+          if (result.length !== 0) {
+            this.setState({
+              isLoaded: true,
+              articlesArray: [...this.state.articlesArray, ...result]
+            });
+            const lastPostTime = result[result.length - 1].postTime;
+            this.setState({ lastPostTime: lastPostTime });
+          } else {
+            this.setState({ allArticlesLoaded: true });
+          }
+          this.setState({ loading: false });
         },
         (error) => {
           this.setState({
@@ -50,17 +93,20 @@ class MainGrid extends React.Component {
         }
       )
 
-    fetch("http://localhost:4000/isloggedin")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log('');
-        }
-      )
+  }
+
+  handleIntObs(entries, observer) {
+    const y = entries[0].boundingClientRect.y;
+    if (this.state.prevY > y) {
+      if (this.state.allArticlesLoaded === false) {
+        this.getArticles()
+      }
+    }
+    this.setState({ prevY: y })
   }
 
   handleNewArticlePosted(newArticlesList) {
-    this.setState({ items: newArticlesList })
+    this.setState({ articlesArray: newArticlesList })
   }
 
   handleLogin(user) {
@@ -79,7 +125,10 @@ class MainGrid extends React.Component {
 
   renderArticlePost(articleInfo) {
     return (
-      <Grid item xs={4}>
+      <Grid
+        item
+        xs={12} sm={6} md={4} lg={3} xl={2}
+      >
         <Item>
           <ArticleCard
             articleInfo={articleInfo}
@@ -93,7 +142,10 @@ class MainGrid extends React.Component {
   render() {
     return (
       <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
+        <Grid
+          container
+          spacing={2}
+        >
           <Grid item xs={12}>
             <Item>
               <NavAppBar
@@ -109,8 +161,23 @@ class MainGrid extends React.Component {
               <NewArticlePostUrlInput />
             </Item>
           </Grid>
-          {this.state.items.map((item) => this.renderArticlePost(item))}
+          {this.state.articlesArray.map((article) => this.renderArticlePost(article))}
         </Grid>
+        <div
+          ref={loadingRef => (this.loadingRef = loadingRef)}
+        >
+          {this.state.loading &&
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: 2
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          }
+        </div>
       </Box>
     );
   }

@@ -7,6 +7,10 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import Stack from '@mui/material/Stack';
+import Link from '@mui/material/Link';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+
 
 function handleClick() {
   console.log('upvote to come');
@@ -14,14 +18,25 @@ function handleClick() {
 
 function ArticleCard(props) {
   return (
-    <Card sx={{ maxWidth: 345 }}>
-      <Typography
-        color="text.primary"
-        variant="body2"
-        align="left"
+    <Card
+    >
+      <Box
+        display="flex"
+        justifyContent="flex-start"
       >
-        {props.articleInfo.author.username}
-      </Typography>
+        <Button
+          size="small"
+
+          sx={{
+            textTransform: "none",
+            padding: "0",
+            justifyContent: "flex-start",
+            color: "rgba(0, 0, 0, 0.6)"
+          }}
+        >
+          {props.articleInfo.author.username}
+        </Button>
+      </Box>
       <Typography
         color="text.secondary"
         variant="body2"
@@ -30,31 +45,38 @@ function ArticleCard(props) {
       >
         {props.articleInfo.postTime}
       </Typography>
-      <CardMedia
-        component="img"
-        alt="green iguana"
-        height="140"
-        image={props.articleInfo.linkPreview.img}
-      />
-      <CardContent>
-        <Typography
-          variant="h6"
-          component="div"
-          align="left"
-          lineHeight={1.4}
-          marginBottom={1}
-        >
-          {props.articleInfo.linkPreview.title}
-        </Typography>
-        <Typography
-          gutterBottom
-          variant="body2"
-          color="text.secondary"
-          align="left"
-          lineHeight={1.2}
-        >
-          {props.articleInfo.linkPreview.description}
-        </Typography>
+      <Link
+        href={props.articleInfo.url}
+        underline="none"
+        target="_blank"
+        rel="noopener"
+      >
+        <CardMedia
+          component="img"
+          alt="green iguana"
+          height="140"
+          image={props.articleInfo.linkPreview.img}
+        />
+        <CardContent>
+          <Typography
+            variant="h6"
+            component="div"
+            color="text.primary"
+            align="left"
+            lineHeight={1.4}
+            marginBottom={1}
+          >
+            {props.articleInfo.linkPreview.title}
+          </Typography>
+          <Typography
+            gutterBottom
+            variant="body2"
+            color="text.secondary"
+            align="left"
+            lineHeight={1.2}
+          >
+            {props.articleInfo.linkPreview.description}
+          </Typography>
           <Typography
             variant="overline"
             color="text.secondary"
@@ -63,7 +85,8 @@ function ArticleCard(props) {
           >
             {props.articleInfo.linkPreview.domain}
           </Typography>
-      </CardContent>
+        </CardContent>
+      </Link>
       <Divider variant="middle" />
       <Stack
         direction="row"
@@ -82,10 +105,15 @@ function ArticleCard(props) {
           color="text.secondary"
           variant="body2"
         >
-          {props.articleInfo.numberOfVotes} votes
+          {props.articleInfo.numUpVotes}
+          {(props.articleInfo.numUpVotes === 0 ||
+            props.articleInfo.numUpVotes === 1) ?
+            <> vote</>
+            : <> votes</>
+          }
         </Typography>
       </Stack>
-    </Card>
+    </Card >
   );
 }
 

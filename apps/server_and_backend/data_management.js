@@ -13,10 +13,10 @@ class DataManagement {
         this.linkPreview = linkPreview;
     }
 
-    async getSortedArticlesArray() {
+    async getSortedArticlesArray(lastPostTime) {
         let sortedArticlesArray;
         try {
-            sortedArticlesArray = await this.database.loadAllArticlesArraySortedByDates();
+            sortedArticlesArray = await this.database.loadArticlesArrayInfiniteScroll(lastPostTime);
         } catch (e) {
             dataManagementErrorsHandler(e);
         }

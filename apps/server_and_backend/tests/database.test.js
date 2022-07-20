@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import Database from '../database';
 import articleSchema from '../models/article.js';
 import userSchema from '../models/user.js';
-import voteSchema from '../models/votes.js';
+import voteSchema from '../models/vote.js';
 import {
   ArticleAlreadyPostedError,
   NoArticleWithThisIDError,
