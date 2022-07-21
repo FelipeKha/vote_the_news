@@ -64,13 +64,13 @@ class Database {
                 .populate('author', 'username')
                 .populate('numUpVotes')
                 .sort({ postTime: -1 })
-                .limit(20);
+                .limit(7);
         } else {
             articlesArray = this.articleModel.find({ postTime: { $lt: lastPostTime } })
                 .populate('author', 'username')
                 .populate('numUpVotes')
                 .sort({ postTime: -1 })
-                .limit(20);
+                .limit(7);
         }
         return articlesArray;
     }

@@ -14,7 +14,7 @@ const port = 4000;
 
 // To be modified for production app
 const corsOptions = {
-    origin: '*',
+    origin: 'http://localhost:3000',
     credentials: true,
     optionSuccessStatus: 200
 }
