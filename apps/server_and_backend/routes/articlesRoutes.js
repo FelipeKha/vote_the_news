@@ -4,6 +4,7 @@ import { InvalidURLError } from '../errors.js';
 import catchAsync from '../utils/catchAsync.js';
 import { dataManagement } from '../dataManagement_object.js';
 import isLoggedIn from '../utils/middleware.js';
+import { verifyUser } from '../authenticate.js';
 
 
 const router = express.Router();
@@ -14,7 +15,7 @@ router.post('/', catchAsync(async (req, res) => {
     res.send(articlesArray);
 }))
 
-router.post('/newarticlepost', isLoggedIn, catchAsync(async (req, res) => {
+router.post('/newarticlepost', verifyUser, catchAsync(async (req, res) => {
     console.log('Post request received', req.body.url);
     const newArticleURL = req.body.url;
     console.log(req.user._id);
@@ -33,7 +34,7 @@ router.post('/newarticlepost', isLoggedIn, catchAsync(async (req, res) => {
     }
 }))
 
-router.post('/:id/vote', isLoggedIn, catchAsync(async (req, res) => {
+router.post('/:id/vote', verifyUser, catchAsync(async (req, res) => {
     console.log('New vote');
     const { id } = req.params;
     const userId = req.user._id;

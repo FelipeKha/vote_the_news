@@ -1,109 +1,128 @@
-import * as React from 'react';
+import React, { useState, useContext } from 'react';
+
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import Chip from '@mui/material/Chip';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
-class SignInFormDialog extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            open: false,
-            username: '',
-            password: ''
-        };
+import { UserContext } from '../context/UserContext';
 
-        this.handleClickOpen = this.handleClickOpen.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleChangeUsernameField = this.handleChangeUsernameField.bind(this);
-        this.handleChangePasswordField = this.handleChangePasswordField.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.signInUser = this.signInUser.bind(this);
-        this.handleLogin = this.handleLogin.bind(this)
-    }
+function SignInFormDialog() {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState("")
+    const [openDialog, setOpenDialog] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [userContext, setUserContext] = useContext(UserContext);
 
-    handleClickOpen = () => {
-        this.setState({ open: true });
-    };
+    function formSubmitHandler(e) {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setError("");
 
-    handleClose() {
-        this.setState({ open: false });
-    };
+        const genericErrorMessage = "Something went wrong, please try again."
 
-    handleChangeUsernameField(event) {
-        this.setState({ username: event.target.value });
-    }
-
-    handleChangePasswordField(event) {
-        this.setState({ password: event.target.value });
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();
-        this.handleClose();
-        this.signInUser();
-    }
-
-    handleLogin(user) {
-        this.props.onLogin(user);
-    }
-
-    signInUser() {
-        const bodyObject = {
-            username: this.state.username,
-            password: this.state.password
-        }
-
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bodyObject)
-        }
-
-        fetch('http://localhost:4000/login', requestOptions)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    if(result.message ==='successfully logged in') {
-                        this.handleLogin(result.user);
+        fetch(
+            'http://localhost:4000/login',
+            {
+                method: 'POST',
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: email,
+                    password: password
+                })
+            }
+        )
+            .then(async response => {
+                setIsSubmitting(false);
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        setError("Please fill in all fields correcly.");
+                    } else if (response.status === 401) {
+                        setError("Invalid email and password combination.");
+                    } else {
+                        setError(genericErrorMessage);
                     }
+                } else {
+                    const data = await response.json();
+                    setUserContext(oldValues => {
+                        return { ...oldValues, token: data.token };
+                    })
+                    setOpenSnackbar(true);
                 }
-            )
+            })
+            .catch(err => {
+                setIsSubmitting(false);
+                setError(genericErrorMessage);
+            })
     }
 
-    render() {
-        return (
-            <div>
-                <Button color="inherit" onClick={this.handleClickOpen}>
-                    Sign In
-                </Button>
-                <Dialog open={this.state.open} onClose={this.handleClose} fullWidth>
-                    <form onSubmit={this.handleSubmit}>
-                        <DialogTitle>Sign In</DialogTitle>
-                        <DialogContent>
-                            <Box>
-                                <div>
-                                    <TextField id="username" type="text" label="Username" variant="outlined" margin="dense" onChange={this.handleChangeUsernameField} fullWidth />
-                                </div>
-                                <div>
-                                    <TextField id="password" type="password" label="Password" variant="outlined" margin="dense" onChange={this.handleChangePasswordField} fullWidth />
-                                </div>
-                            </Box>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={this.handleClose}>Cancel</Button>
-                            <Button type="submit" >Sign In</Button>
-                        </DialogActions>
-                    </form>
-                </Dialog>
-            </div>
-        );
-    }
+    return (
+        <div>
+            <Chip
+                label="Sign In"
+                variant="outlined"
+                sx={{
+                    borderColor: "white",
+                    color: "white"
+                }}
+                onClick={() => setOpenDialog(true)}
+            />
+            <Dialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                fullWidth>
+                <form onSubmit={formSubmitHandler}>
+                    <DialogTitle>Sign In</DialogTitle>
+                    <DialogContent>
+                        <Box>
+                            {error && <Alert severity="error">{error}</Alert>}
+                            <div>
+                                <TextField
+                                    id="username"
+                                    type="text"
+                                    label="Email"
+                                    variant="outlined"
+                                    margin="dense"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    fullWidth />
+                            </div>
+                            <div>
+                                <TextField
+                                    id="password"
+                                    type="password"
+                                    label="Password"
+                                    variant="outlined"
+                                    margin="dense"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    fullWidth />
+                            </div>
+                        </Box>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? "Signing In..." : "Sign In"}
+                        </Button>
+                    </DialogActions>
+                </form>
+            </Dialog>
+        </div>
+    );
 }
 
 export default SignInFormDialog;

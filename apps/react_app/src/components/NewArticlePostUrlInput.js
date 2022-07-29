@@ -1,152 +1,105 @@
-import * as React from 'react';
-import Paper from '@mui/material/Paper';
-import InputBase from '@mui/material/InputBase';
-import IconButton from '@mui/material/IconButton';
+import React, { useContext, useState } from 'react';
 
 import Button from '@mui/material/Button';
-
-import LinkIcon from '@mui/icons-material/Link';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import LinkIcon from '@mui/icons-material/Link';
+import Paper from '@mui/material/Paper';
 import SendIcon from '@mui/icons-material/Send';
 
-import FadeIn from 'react-fade-in/lib/FadeIn';
-
-import MyLoader from './Placeholder';
 import ArticleCard from './ArticleCard';
+import ArticleCardSkeleton from './ArticleCardSkeleton';
+import { UserContext } from '../context/UserContext';
 
-class NewArticlePostUrlInput extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: '',
-            waitingForNewArticle: true,
-            thereIsMessageForUser: false,
-            userMessage: '',
-            newArticleLoading: true,
-            lastArticlePosted: {}
-        };
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.pasteClipboardContentInInput = this.pasteClipboardContentInInput.bind(this)
-    }
+function NewArticlePostUrlInput() {
+    const [userContext, setUserContext] = useContext(UserContext);
+    const [articleUrl, setArticleUrl] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState("");
+    const [articlePosted, setArticlePosted] = useState({})
 
-    handleChange(event) {
-        this.setState({ value: event.target.value });
-    }
+    function formSubmitHandler(e) {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setError("");
 
-    handleSubmit(event) {
-        event.preventDefault();
-        this.setState({
-            waitingForNewArticle: false,
-            newArticleLoading: true
-        })
-        this.sendNewArticleURL();
-    }
+        const genericErrorMessage = "Something went wrong, please try again."
 
-    handleNewPost(newArticlesList) {
-        this.props.onArticlePosted(newArticlesList);
-    }
-
-    sendNewArticleURL() {
-        const bodyObject = {
-            url: this.state.value
-        }
-
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bodyObject)
-        }
-
-        fetch('http://localhost:4000/newarticlepost', requestOptions)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    console.log(result);
-                    if (result.message && result.linkPreview) {
-                        console.log(result);
-                        this.setState({
-                            userMessage: result.userMessage,
-                            newArticleLoading: false,
-                            lastArticlePosted: result
-                        })
-                    } else if (result.linkPreview) {
-                        this.setState({
-                            newArticleLoading: false,
-                            lastArticlePosted: result
-                        })
-                    } else if (result.message) {
-                        this.setState({
-                            userMessage: result.userMessage,
-                            waitingForNewArticle: true
-                        })
-                    }
-                    // this.handleNewPost(result);
-                }
-            )
-    }
-
-    renderNewArticlePostPreview() {
-        if (!this.state.waitingForNewArticle) {
-            return (
-                this.state.newArticleLoading ? (
-                    <FadeIn>
-                        <MyLoader />
-                    </FadeIn>
-                ) : (
-                    <FadeIn>
-                        <ArticleCard
-                            articleInfo={this.state.lastArticlePosted}
-                        />
-                    </FadeIn>
-                )
-            )
-        }
-    }
-
-    renderUserMessage() {
-        return (
-            <span className="userMessage">{this.state.userMessage}</span>
+        fetch(
+            'http://localhost:4000/newarticlepost',
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${userContext.token}`
+                },
+                body: JSON.stringify({ url: articleUrl })
+            }
         )
+            .then(async response => {
+                if (response.ok) {
+                    const data = await response.json();
+                    setArticlePosted(data);
+                    setIsSubmitting(false);
+                } else {
+                    setError("There was an error.")
+                }
+            })
+            .catch(err => {
+                setError(genericErrorMessage);
+                setIsSubmitting(false)
+            })
     }
 
-    async pasteClipboardContentInInput() {
+
+    async function pasteClipboardContentInInput() {
         const clipboardContent = await navigator.clipboard.readText();
-        this.setState({ value: clipboardContent });
+        setArticleUrl(clipboardContent);
     }
 
 
-    render() {
-        return (
-            <>
-                <Paper
-                    component="form"
-                    sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
-                    onSubmit={this.handleSubmit}
-                >
-                    <LinkIcon sx={{ p: '10px' }} aria-label="menu" />
-                    <InputBase
-                        sx={{ ml: 1, flex: 1 }}
-                        placeholder="Paste article's url here"
-                        inputProps={{ 'aria-label': 'search google maps' }}
-                        value={this.state.value}
-                        onChange={this.handleChange}
-                    />
-                    <IconButton sx={{ p: '10px' }} aria-label="search" onClick={this.pasteClipboardContentInInput}>
-                        <ContentPasteIcon />
-                    </IconButton>
-                    <Button type="submit" variant="contained" endIcon={<SendIcon />} >
-                        Post
-                    </Button>
-                </Paper>
-                {this.renderUserMessage()}
-                {this.renderNewArticlePostPreview()}
-            </>
-        );
-    }
+    return (
+        <>
+            <Paper
+                component="form"
+                sx={{
+                    p: '2px 4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginTop: "30px"
+                }}
+                onSubmit={formSubmitHandler}
+            >
+                <LinkIcon sx={{ p: '10px' }} aria-label="menu" />
+                <InputBase
+                    sx={{ ml: 1, flex: 1 }}
+                    placeholder="Paste article's url here"
+                    inputProps={{ 'aria-label': 'search google maps' }}
+                    value={articleUrl}
+                    onChange={e => setArticleUrl(e.target.value)}
+                />
+                <IconButton sx={{ p: '10px' }} aria-label="search" onClick={pasteClipboardContentInInput}>
+                    <ContentPasteIcon />
+                </IconButton>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={isSubmitting}
+                    endIcon={<SendIcon />} >
+                    Post
+                </Button>
+            </Paper>
+            {isSubmitting &&
+                <ArticleCardSkeleton />
+            }
+            {Object.keys(articlePosted).length !== 0 &&
+                <ArticleCard articleInfo={articlePosted} />
+            }
+        </>
+    );
 }
 
 export default NewArticlePostUrlInput;

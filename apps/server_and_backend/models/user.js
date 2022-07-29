@@ -1,17 +1,36 @@
 import mongoose from "mongoose";
 import passportLocalMongoose from 'passport-local-mongoose';
 
+const Session = new mongoose.Schema({
+    refreshToken: {
+        type: String,
+        default: ""
+    }
+})
+
 const userSchema = new mongoose.Schema(
     {
-        email: {
+        firstName: {
+            type: String
+        },
+        lastName: {
+            type: String
+        },
+        nameDisplayed: {
             type: String,
-            required: true,
             unique: true
         },
         signUpTime: {
             type: Date,
             default: Date.now,
             required: true
+        },
+        authStrategy: {
+            type: String,
+            default: "local"
+        },
+        refreshToken: {
+            type: [Session]
         }
     },
     {
@@ -19,6 +38,13 @@ const userSchema = new mongoose.Schema(
         toObject: { virtuals: true }
     }
 )
+
+userSchema.set("toJSON", {
+    transform: (doc, ret, options) => {
+        delete ret.refreshToken;
+        return ret;
+    }
+})
 
 userSchema.virtual('articlesPosted', {
     ref: 'Article',

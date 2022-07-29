@@ -2,11 +2,14 @@ import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import passport from 'passport';
-import LocalStrategy from 'passport-local';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 
-import { router as articlesRouter } from './routes/articles_routes.js';
-import { router as usersRouter } from './routes/users_routes.js';
-import { database } from './dataManagement_object.js';
+import { } from "./strategies/LocalStrategy.js";
+import { } from "./strategies/JwtStrategy.js";
+import { } from "./authenticate.js"
+import { router as articlesRouter } from './routes/articlesRoutes.js';
+import { router as usersRouter } from './routes/usersRoutes.js';
 // import ExpressError from './utils/ExpressError.js';
 
 const app = express();
@@ -14,7 +17,7 @@ const port = 4000;
 
 // To be modified for production app
 const corsOptions = {
-    origin: '*',
+    origin: 'http://localhost:3000',
     credentials: true,
     optionSuccessStatus: 200
 }
@@ -31,17 +34,13 @@ const sessionConfig = {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(cookieParser("thisisnotagoodsecret"));
 app.use(cors(corsOptions));
 app.use(session(sessionConfig));
 app.use(passport.initialize());
-app.use(passport.session());
 app.use('/', usersRouter);
 app.use('/', articlesRouter);
-
-
-passport.use(new LocalStrategy(database.userModel.authenticate()));
-passport.serializeUser(database.userModel.serializeUser());
-passport.deserializeUser(database.userModel.deserializeUser());
 
 
 // app.all('*', (req, res, next) => {

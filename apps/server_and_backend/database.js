@@ -51,7 +51,7 @@ class Database {
 
     async loadAllArticlesArraySortedByDates() {
         const articlesArray = this.articleModel.find({})
-            .populate('author', 'username')
+            .populate('author', 'nameDisplayed')
             .populate('numUpVotes')
             .sort({ postTime: -1 });
         return articlesArray;
@@ -61,13 +61,13 @@ class Database {
         let articlesArray
         if (lastPostTime === '') {
             articlesArray = this.articleModel.find({})
-                .populate('author', 'username')
+                .populate('author', 'nameDisplayed')
                 .populate('numUpVotes')
                 .sort({ postTime: -1 })
                 .limit(20);
         } else {
             articlesArray = this.articleModel.find({ postTime: { $lt: lastPostTime } })
-                .populate('author', 'username')
+                .populate('author', 'nameDisplayed')
                 .populate('numUpVotes')
                 .sort({ postTime: -1 })
                 .limit(20);
