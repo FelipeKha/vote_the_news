@@ -29,3 +29,7 @@ Access Token:
 https://stackoverflow.com/questions/49819183/react-what-is-the-best-way-to-handle-login-and-authentication?answertab=trending#tab-top
 https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
 https://itnext.io/implementing-json-web-tokens-passport-js-in-a-javascript-application-with-react-b86b1f313436
+https://www.codingdeft.com/posts/react-authentication-mern-node-passport-express-mongo/
+
+https://jazzfuel.com/best-jazz-albums/
+https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-pieces/

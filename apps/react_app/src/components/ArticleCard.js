@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
+
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -11,22 +12,45 @@ import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 
+import { UserContext } from "../context/UserContext";
 
-function handleClick() {
-  console.log('upvote to come');
-}
+
 
 function ArticleCard(props) {
+  const [userContext, setUserContext] = useContext(UserContext);
+
+  function fetchUpVote() {
+    fetch(
+      `http://localhost:4000/${props.articleInfo._id}/vote`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userContext.token}`
+        }
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          console.log("upvoted");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
   return (
     <Card
     >
+    {console.log(props)}
       <Box
         display="flex"
         justifyContent="flex-start"
       >
         <Button
           size="small"
-
           sx={{
             textTransform: "none",
             padding: "0",
@@ -34,7 +58,7 @@ function ArticleCard(props) {
             color: "rgba(0, 0, 0, 0.6)"
           }}
         >
-          {props.articleInfo.author.username}
+          {props.articleInfo.author.nameDisplayed}
         </Button>
       </Box>
       <Typography
@@ -99,7 +123,7 @@ function ArticleCard(props) {
           variant="outlined"
           icon={<HowToVoteIcon />}
           label="+Vote"
-          onClick={handleClick}
+          onClick={fetchUpVote}
         />
         <Typography
           color="text.secondary"

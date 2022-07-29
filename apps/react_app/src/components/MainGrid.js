@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -24,8 +25,6 @@ class MainGrid extends React.Component {
       error: null,
       isLoaded: false,
       loading: false,
-      isLoggedIn: false,
-      user: '',
       articlesArray: [],
       lastPostTime: "",
       allArticlesLoaded: false,
@@ -33,8 +32,6 @@ class MainGrid extends React.Component {
     }
 
     this.handleNewArticlePosted = this.handleNewArticlePosted.bind(this);
-    this.handleLogin = this.handleLogin.bind(this);
-    this.handleLogout = this.handleLogout.bind(this)
   }
 
   componentDidMount() {
@@ -63,6 +60,7 @@ class MainGrid extends React.Component {
 
     const requestOptions = {
       method: 'POST',
+      credentials: "include",
       headers: {
         'Content-Type': 'application/json'
       },
@@ -109,20 +107,6 @@ class MainGrid extends React.Component {
     this.setState({ articlesArray: newArticlesList })
   }
 
-  handleLogin(user) {
-    this.setState({
-      isLoggedIn: true,
-      user: user
-    });
-  }
-
-  handleLogout() {
-    this.setState({
-      isLoggedIn: false,
-      user: ''
-    });
-  }
-
   renderArticlePost(articleInfo) {
     return (
       <Grid
@@ -148,12 +132,7 @@ class MainGrid extends React.Component {
         >
           <Grid item xs={12}>
             <Item>
-              <NavAppBar
-                isLoggedIn={this.state.isLoggedIn}
-                user={this.state.user}
-                onLogin={this.handleLogin}
-                onLogout={this.handleLogout}
-              />
+              <NavAppBar />
             </Item>
           </Grid>
           <Grid item xs={12}>

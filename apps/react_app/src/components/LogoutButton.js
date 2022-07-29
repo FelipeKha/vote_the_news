@@ -1,36 +1,47 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
+import React, { useContext } from 'react';
 
+import IconButton from '@mui/material/IconButton';
+import LogoutIcon from '@mui/icons-material/Logout';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 
+import { UserContext } from '../context/UserContext';
 
+function LogoutButton(props) {
+    const [userContext, setUserContext] = useContext(UserContext);
 
-class LogoutButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-        this.handleLogout = this.handleLogout.bind(this);
-    }
-
-    handleLogout() {
-        this.props.onLogout();
-    }
-
-    handleClick() {
-        fetch("http://localhost:4000/logout")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    if (result.message === 'successfully logged out') {
-                        this.handleLogout();
-                    }
+    function logoutHandler() {
+        fetch(
+            'http://localhost:4000/logout',
+            {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${userContext.token}`
                 }
-            )
-    }
-    render() {
-        return (
-            <Button color="inherit" onClick={this.handleClick}>Logout</Button>
+            }
         )
+            .then(async response => {
+                setUserContext(oldValues => {
+                    return { ...oldValues, details: undefined, token: null };
+                })
+                window.localStorage.setItem("logout", Date.now());
+            })
     }
+
+    return (
+        <MenuItem key="center" onClick={logoutHandler}>
+            <IconButton
+                size="large"
+                aria-label="show 17 new notifications"
+                color="inherit"
+            >
+                <LogoutIcon />
+            </IconButton>
+            <Typography textAlign="center">Logout</Typography>
+        </MenuItem>
+    )
 }
 
-export default LogoutButton
+export default LogoutButton;
