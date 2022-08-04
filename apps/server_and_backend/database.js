@@ -75,6 +75,69 @@ class Database {
         return articlesArray;
     }
 
+    async loadMyArticlesArray(userId, lastPostTime) {
+        let articlesArray
+        if (lastPostTime === '') {
+            articlesArray = this.articleModel.find({ author: userId })
+                .populate('author', 'nameDisplayed')
+                .populate('numUpVotes')
+                .sort({ postTime: -1 })
+                .limit(20);
+        } else {
+            articlesArray = this.articleModel.find({ author: userId, postTime: { $lt: lastPostTime } })
+                .populate('author', 'nameDisplayed')
+                .populate('numUpVotes')
+                .sort({ postTime: -1 })
+                .limit(20);
+        }
+        return articlesArray;
+    }
+
+    async loadMyVotesArray(userId, lastPostTime) {
+        let votesArray
+        if (lastPostTime === '') {
+            votesArray = this.voteModel.find({
+                author: userId,
+                status: true
+            })
+                .populate({
+                    path: 'article',
+                    populate: [
+                        {
+                            path: 'author',
+                            select: 'nameDisplayed'
+                        },
+                        {
+                            path: 'numUpVotes'
+                        }
+                    ]
+                })
+                .sort({ postTime: -1 })
+                .limit(20);
+        } else {
+            votesArray = this.voteModel.find({
+                author: userId,
+                status: true,
+                postTime: { $lt: lastPostTime }
+            })
+                .populate({
+                    path: 'article',
+                    populate: [
+                        {
+                            path: 'author',
+                            select: 'nameDisplayed'
+                        },
+                        {
+                            path: 'numUpVotes'
+                        }
+                    ]
+                })
+                .sort({ postTime: -1 })
+                .limit(20);
+        }
+        return votesArray;
+    }
+
     async saveAllArticlesArray(newArticleArray) {
         await this.articleModel.deleteMany({});
         try {
@@ -190,6 +253,10 @@ class Database {
             });
         console.log(userUpVotes);
         return userUpVotes;
+    }
+
+    async deleteArticle(id) {
+        const articleDeleted = await this.articleModel.findByIdAndDelete(id)
     }
 }
 

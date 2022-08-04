@@ -12,7 +12,7 @@ import TextField from '@mui/material/TextField';
 
 import { UserContext } from '../context/UserContext';
 
-function SignUpFormDialog() {
+function SignUpFormDialog(props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [open, setOpen] = useState(false);
@@ -69,6 +69,7 @@ function SignUpFormDialog() {
                     setUserContext(oldValues => {
                         return { ...oldValues, token: data.token };
                     })
+                    props.openSuccessAlertHandler(`Welcome ${data.username}!`);
                 }
             })
             .catch(err => {

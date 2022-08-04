@@ -44,7 +44,6 @@ function ArticleCard(props) {
   return (
     <Card
     >
-    {console.log(props)}
       <Box
         display="flex"
         justifyContent="flex-start"

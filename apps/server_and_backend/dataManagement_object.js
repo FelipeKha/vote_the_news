@@ -6,6 +6,7 @@ import userSchema from './models/user.js';
 import voteSchema from './models/vote.js';
 
 const databaseUrl = 'mongodb://localhost:27017/vote-the-news';
+// const databaseUrl = process.env.CONNECTIONSTRING;
 const database = new Database(
     databaseUrl,
     articleSchema,

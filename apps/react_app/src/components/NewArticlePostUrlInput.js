@@ -5,20 +5,27 @@ import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
 import LinkIcon from '@mui/icons-material/Link';
+import MuiAlert from '@mui/material/Alert';
 import Paper from '@mui/material/Paper';
 import SendIcon from '@mui/icons-material/Send';
+import Snackbar from '@mui/material/Snackbar';
 
 import ArticleCard from './ArticleCard';
 import ArticleCardSkeleton from './ArticleCardSkeleton';
 import { UserContext } from '../context/UserContext';
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function NewArticlePostUrlInput() {
     const [userContext, setUserContext] = useContext(UserContext);
     const [articleUrl, setArticleUrl] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
-    const [articlePosted, setArticlePosted] = useState({})
+    const [articlePosted, setArticlePosted] = useState({});
+    const [openErrorAlert, setOpenErrorAlert] = useState(false);
+    const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
 
     function formSubmitHandler(e) {
         e.preventDefault();
@@ -40,17 +47,26 @@ function NewArticlePostUrlInput() {
             }
         )
             .then(async response => {
+                setIsSubmitting(false);
+                const data = await response.json();
                 if (response.ok) {
-                    const data = await response.json();
                     setArticlePosted(data);
-                    setIsSubmitting(false);
+                    setOpenSuccessAlert(true);
                 } else {
-                    setError("There was an error.")
+                    if (response.status === 401) {
+                        console.log(`Setting error to: ${data.message}`);
+                        setError(data.message)
+                        setOpenErrorAlert(true);
+                    } else {
+                        setError(genericErrorMessage)
+                        setOpenErrorAlert(true);
+                    }
                 }
             })
             .catch(err => {
+                setIsSubmitting(false);
                 setError(genericErrorMessage);
-                setIsSubmitting(false)
+                setOpenErrorAlert(true);
             })
     }
 
@@ -59,6 +75,15 @@ function NewArticlePostUrlInput() {
         const clipboardContent = await navigator.clipboard.readText();
         setArticleUrl(clipboardContent);
     }
+
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSuccessAlert(false);
+        setOpenErrorAlert(false);
+    };
 
 
     return (
@@ -69,7 +94,7 @@ function NewArticlePostUrlInput() {
                     p: '2px 4px',
                     display: 'flex',
                     alignItems: 'center',
-                    marginTop: "30px"
+                    marginTop: "80px"
                 }}
                 onSubmit={formSubmitHandler}
             >
@@ -98,6 +123,16 @@ function NewArticlePostUrlInput() {
             {Object.keys(articlePosted).length !== 0 &&
                 <ArticleCard articleInfo={articlePosted} />
             }
+            <Snackbar open={openSuccessAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+                <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                    New article posted!
+                </Alert>
+            </Snackbar>
+            <Snackbar open={openErrorAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+                <Alert onClose={handleCloseAlert} severity="error" sx={{ width: '100%' }}>
+                    {error}
+                </Alert>
+            </Snackbar>
         </>
     );
 }

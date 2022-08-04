@@ -1,14 +1,13 @@
-import * as React from 'react';
+import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
 
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
 import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
 
-import NavAppBar from './NavAppBar';
 import ArticleCard from './ArticleCard';
-import NewArticlePostUrlInput from './NewArticlePostUrlInput';
+import { UserContext } from '../context/UserContext';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -18,148 +17,194 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-class MainGrid extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null,
-      isLoaded: false,
-      loading: false,
-      articlesArray: [],
-      lastPostTime: "",
-      allArticlesLoaded: false,
-      prevY: 0
-    }
+let fetchCalled = 0;
+let useEffectCalled = 0;
+let observerTrigger = 0;
+let renderNb = 0;
 
-    this.handleNewArticlePosted = this.handleNewArticlePosted.bind(this);
-  }
+function MainGrid(props) {
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [articlesArray, setArticlesArray] = useState([]);
+  const [lastPostTime, setLastPostTime] = useState("");
+  const [allArticlesLoaded, setAllArticlesLoaded] = useState(false);
+  const [prevY, setPrevY] = useState(0);
+  const [userContext, setUserContext] = useContext(UserContext);
+  const [lastArticleCard, setLastArticleCard] = useState(null)
+  const ref = useRef();
 
-  componentDidMount() {
-    this.getArticles();
-
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 1.0
-    }
-
-    const observer = new IntersectionObserver(
-      this.handleIntObs.bind(this),
-      options
-    )
-
-    observer.observe(this.loadingRef)
-  }
-
-  getArticles() {
-    this.setState({ loading: true })
-
-    const bodyObject = {
-      lastPostTime: this.state.lastPostTime
-    }
-
-    const requestOptions = {
-      method: 'POST',
-      credentials: "include",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(bodyObject)
-    }
-
-    fetch("http://localhost:4000/", requestOptions)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          if (result.length !== 0) {
-            this.setState({
-              isLoaded: true,
-              articlesArray: [...this.state.articlesArray, ...result]
-            });
-            const lastPostTime = result[result.length - 1].postTime;
-            this.setState({ lastPostTime: lastPostTime });
-          } else {
-            this.setState({ allArticlesLoaded: true });
-          }
-          this.setState({ loading: false });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
-
-  }
-
-  handleIntObs(entries, observer) {
-    const y = entries[0].boundingClientRect.y;
-    if (this.state.prevY > y) {
-      if (this.state.allArticlesLoaded === false) {
-        this.getArticles()
+  const observer = useRef(
+    new IntersectionObserver((entries) => {
+      const first = entries[0];
+      if (first.isIntersecting) {
+        observerTrigger++;
+        console.log(`observer triggered ${observerTrigger}`);
+        // console.log(articlesArray);
+        // const newLastPostTime = articlesArray[articlesArray.length - 1].postTime;
+        // setLastPostTime(newLastPostTime);
+        fetchArticlesArray();
       }
-    }
-    this.setState({ prevY: y })
-  }
+    })
+  );
 
-  handleNewArticlePosted(newArticlesList) {
-    this.setState({ articlesArray: newArticlesList })
-  }
+  function fetchArticlesArray() {
+    fetchCalled++
+    console.log(`fetchArticlesArray called ${fetchCalled}`);
+    console.log(lastPostTime);
 
-  renderArticlePost(articleInfo) {
-    return (
-      <Grid
-        item
-        xs={12} sm={6} md={4} lg={3} xl={2}
-      >
-        <Item>
-          <ArticleCard
-            articleInfo={articleInfo}
-            key={articleInfo.id}
-          />
-        </Item>
-      </Grid>
-    );
-  }
+    setLoading(true);
 
-  render() {
-    return (
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid
-          container
-          spacing={2}
-        >
-          <Grid item xs={12}>
-            <Item>
-              <NavAppBar />
-            </Item>
-          </Grid>
-          <Grid item xs={12}>
-            <Item>
-              <NewArticlePostUrlInput />
-            </Item>
-          </Grid>
-          {this.state.articlesArray.map((article) => this.renderArticlePost(article))}
-        </Grid>
-        <div
-          ref={loadingRef => (this.loadingRef = loadingRef)}
-        >
-          {this.state.loading &&
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                marginTop: 2
-              }}
-            >
-              <CircularProgress />
-            </Box>
+    fetch(
+      `http://localhost:4000/${props.pageDisplayed}`,
+      {
+        method: 'POST',
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userContext.token}`
+
+        },
+        body: JSON.stringify({ lastPostTime: lastPostTime })
+      }
+    )
+      .then(async response => {
+        if (response.ok) {
+          const data = await response.json();
+          if (data.length !== 0) {
+            setIsLoaded(true);
+            setArticlesArray(oldValues => {
+              return [...oldValues, ...data];
+            })
           }
-        </div>
-      </Box>
+          // console.log(articlesArray);
+          const newLastPostTime = data[data.length - 1].postTime;
+          setLastPostTime(newLastPostTime);
+          console.log(newLastPostTime);
+          console.log(lastPostTime);
+        } else {
+          setAllArticlesLoaded(true);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        setIsLoaded(true);
+        setError(err);
+      })
+  }
+
+  function handleNewArticlePosted(newArticlesList) {
+    setArticlesArray(newArticlesList)
+  }
+
+  function renderArticlePost(articleInfo) {
+    return (
+      <Item>
+        <ArticleCard
+          articleInfo={articleInfo}
+          key={articleInfo.id}
+        />
+      </Item>
     );
   }
+
+  useEffect(() => {
+    useEffectCalled++
+    console.log(`useEffect called ${useEffectCalled}`);
+    console.log(`lastPostTime: ${lastPostTime}`);
+    fetchArticlesArray();
+    console.log(`lastPostTime: ${lastPostTime}`);
+  },
+    []
+  )
+
+  // useEffect(() => {
+  //   setArticlesArray([])
+  //   fetchArticlesArray();
+  //   console.log("Second useEffect ran");
+  // },
+  //   [props.pageDisplayed]
+  // )
+
+
+  // useEffect(() => {
+  //   const currentElement = ref.current;
+  //   const currentObserver = observer.current;
+
+  //   if (currentElement) {
+  //     currentObserver.observe(currentElement);
+  //   }
+
+  //   return () => {
+  //     if (currentElement) {
+  //       currentObserver.unobserve(currentElement);
+  //     }
+  //   };
+  // }, [ref]);
+
+  useEffect(() => {
+    const currentElement = lastArticleCard;
+    const currentObserver = observer.current;
+
+    if (currentElement) {
+      currentObserver.observe(currentElement);
+    }
+
+    return () => {
+      if (currentElement) {
+        currentObserver.unobserve(currentElement);
+      }
+    };
+  }, [lastArticleCard]);
+
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+    {console.log(lastPostTime)}
+      <Grid
+        container
+        spacing={2}
+      >
+        {articlesArray.map((article, i) => {
+          return i === articlesArray.length - 1 ? (
+            <Grid
+              item
+              xs={12} sm={6} md={4} lg={3} xl={2}
+              key={article._id}
+              ref={setLastArticleCard}
+            >
+              {renderArticlePost(article)}
+            </Grid>
+
+          ) : (
+            <Grid
+              item
+              xs={12} sm={6} md={4} lg={3} xl={2}
+              key={article._id}
+            >
+              {renderArticlePost(article)}
+            </Grid>
+
+          )
+        })}
+      </Grid>
+      <div
+      >
+        {loading &&
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginTop: 2
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        }
+      </div>
+    </Box>
+  );
 }
 
 export default MainGrid;
+
+// https://stackoverflow.com/questions/58341787/intersectionobserver-with-react-hooks

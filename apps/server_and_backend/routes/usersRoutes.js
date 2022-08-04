@@ -10,8 +10,6 @@ import isLoggedIn from '../utils/middleware.js';
 const router = express.Router();
 
 router.post('/signup', catchAsync(async (req, res) => {
-    console.log(req.body);
-    console.log(await database.userModel.find());
     if (!req.body.firstName || !req.body.lastName) {
         res.statusCode = 500;
         res.send({
@@ -39,7 +37,7 @@ router.post('/signup', catchAsync(async (req, res) => {
                             res.send(err);
                         } else {
                             res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-                            res.send({ success: true, token });
+                            res.send({ success: true, token, username: user.nameDisplayed });
                         }
                     })
                 }
@@ -60,7 +58,7 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
                     res.send(err);
                 } else {
                     res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-                    res.send({ success: true, token });
+                    res.send({ success: true, token, username: user.nameDisplayed });
                 }
             })
         },

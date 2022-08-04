@@ -4,6 +4,7 @@ import dataManagementErrorsHandler from './utils/dataManagementErrorsHandler.js'
 import {
     InvalidURLError,
     ArticleAlreadyHasLinkPreviewError,
+    DomainNotInWhiteListError
 } from './errors.js';
 
 
@@ -21,6 +22,30 @@ class DataManagement {
             dataManagementErrorsHandler(e);
         }
         return sortedArticlesArray;
+    }
+
+    async getMyArticlesArray(userId, lastPostTime) {
+        let articlesArray;
+        try {
+            articlesArray = await this.database.loadMyArticlesArray(userId, lastPostTime);
+        } catch (e) {
+            dataManagementErrorsHandler(e);
+        }
+        return articlesArray;
+    }
+
+    async getMyVotesArray(userId, lastPostTime) {
+        let votesArray;
+        try {
+            votesArray = await this.database.loadMyVotesArray(userId, lastPostTime);
+        } catch (e) {
+            dataManagementErrorsHandler(e);
+        }
+        const articlesArray = [];
+        for (let vote of votesArray) {
+            articlesArray.push(vote.article);
+        }
+        return articlesArray;
     }
 
     async postNewArticle(url, authorId) {
@@ -43,7 +68,12 @@ class DataManagement {
             newArticleObjectWithLinkPreview = await this.addLinkPreview(newArticleSaved._id)
             console.log('Link preview added');
         } catch (e) {
-            dataManagementErrorsHandler(e);
+            if (e instanceof DomainNotInWhiteListError){
+                this.database.deleteArticle(newArticleSaved._id);
+                throw e;
+            } else {
+                dataManagementErrorsHandler(e);
+            }
         }
 
         console.log('End of newArticle function');
