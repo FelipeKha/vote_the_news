@@ -32,6 +32,7 @@ function MainGrid(props) {
   const [prevY, setPrevY] = useState(0);
   const [userContext, setUserContext] = useContext(UserContext);
   const [lastArticleCard, setLastArticleCard] = useState(null)
+  const [shouldFetch, setShouldFetch] = useState(false)
   const ref = useRef();
 
   const observer = useRef(
@@ -43,12 +44,13 @@ function MainGrid(props) {
         // console.log(articlesArray);
         // const newLastPostTime = articlesArray[articlesArray.length - 1].postTime;
         // setLastPostTime(newLastPostTime);
-        fetchArticlesArray();
+        // fetchArticlesArray();
+        setShouldFetch(true)
       }
     })
   );
 
-  function fetchArticlesArray() {
+  function fetchArticlesArray(lastPostTimeInput) {
     fetchCalled++
     console.log(`fetchArticlesArray called ${fetchCalled}`);
     console.log(lastPostTime);
@@ -65,7 +67,7 @@ function MainGrid(props) {
           Authorization: `Bearer ${userContext.token}`
 
         },
-        body: JSON.stringify({ lastPostTime: lastPostTime })
+        body: JSON.stringify({ lastPostTime: lastPostTimeInput })
       }
     )
       .then(async response => {
@@ -76,16 +78,15 @@ function MainGrid(props) {
             setArticlesArray(oldValues => {
               return [...oldValues, ...data];
             })
+            const newLastPostTime = data[data.length - 1].postTime;
+            console.log('newLastPostTime:', newLastPostTime);
+            setLastPostTime(newLastPostTime);
+          } else {
+            console.log('No more articles');
+            setAllArticlesLoaded(true);
           }
-          // console.log(articlesArray);
-          const newLastPostTime = data[data.length - 1].postTime;
-          setLastPostTime(newLastPostTime);
-          console.log(newLastPostTime);
-          console.log(lastPostTime);
-        } else {
-          setAllArticlesLoaded(true);
+          setLoading(false);
         }
-        setLoading(false);
       })
       .catch(err => {
         setIsLoaded(true);
@@ -112,7 +113,7 @@ function MainGrid(props) {
     useEffectCalled++
     console.log(`useEffect called ${useEffectCalled}`);
     console.log(`lastPostTime: ${lastPostTime}`);
-    fetchArticlesArray();
+    fetchArticlesArray(lastPostTime);
     console.log(`lastPostTime: ${lastPostTime}`);
   },
     []
@@ -143,6 +144,7 @@ function MainGrid(props) {
   // }, [ref]);
 
   useEffect(() => {
+    console.log(lastPostTime);
     const currentElement = lastArticleCard;
     const currentObserver = observer.current;
 
@@ -155,11 +157,20 @@ function MainGrid(props) {
         currentObserver.unobserve(currentElement);
       }
     };
-  }, [lastArticleCard]);
+  }, [lastArticleCard, lastPostTime]);
+
+  useEffect(() => {
+    console.log(`useEffect shouldFetch: ${lastPostTime}`);
+    if (shouldFetch) {
+      fetchArticlesArray(lastPostTime);
+    }
+  },
+    [shouldFetch, lastPostTime]
+  )
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-    {console.log(lastPostTime)}
+      {console.log(lastPostTime)}
       <Grid
         container
         spacing={2}
@@ -169,7 +180,7 @@ function MainGrid(props) {
             <Grid
               item
               xs={12} sm={6} md={4} lg={3} xl={2}
-              key={article._id}
+              key={article._id + `${i}`}
               ref={setLastArticleCard}
             >
               {renderArticlePost(article)}
@@ -179,7 +190,7 @@ function MainGrid(props) {
             <Grid
               item
               xs={12} sm={6} md={4} lg={3} xl={2}
-              key={article._id}
+              key={article._id + `${i}`}
             >
               {renderArticlePost(article)}
             </Grid>

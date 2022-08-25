@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+ vtn-react-app:
+  build:
+   context: .
+  ports:
+   - 3000:3000
+  environment:
+   - SERVER_PORT=3000
+  volumes:
+   - ./:/react_app

@@ -18,6 +18,7 @@ class DataManagement {
         let sortedArticlesArray;
         try {
             sortedArticlesArray = await this.database.loadArticlesArrayInfiniteScroll(lastPostTime);
+            console.log(sortedArticlesArray);
         } catch (e) {
             dataManagementErrorsHandler(e);
         }
