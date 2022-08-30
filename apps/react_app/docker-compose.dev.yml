@@ -8,5 +8,5 @@ services:
    - 3000:3000
   environment:
    - SERVER_PORT=3000
-  volumes:
-   - ./:/react_app
+  # volumes:
+  #  - ./:/react_app

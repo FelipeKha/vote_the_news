@@ -4,6 +4,9 @@ import isBase64 from 'is-base64';
 import pluginStealth from 'puppeteer-extra-plugin-stealth';
 import puppeteer from 'puppeteer-extra';
 
+import path from "path";
+import url from "url";
+
 import domainsAndLogos from './logos/domainsAndLogos.js';
 import { DomainNotInWhiteListError } from "./errors.js";
 
@@ -18,11 +21,19 @@ class LinkPreview {
 
         const params = {
             headless: true,
-            args: [...puppeteerArgs]
+            // args: [...puppeteerArgs]
+            args: ['--no-sandbox']
         };
-        if (executablePath) {
-            params["executablePath"] = executablePath
-        }
+
+        const currentDirPath = path.dirname(url.fileURLToPath(import.meta.url));
+        const chromiumPath = path.join(currentDirPath, '/node_modules/puppeteer/.local-chromium/mac-970485/chrome-mac/Chromium.app/Contents/MacOS/Chromium');
+        // if (executablePath) {
+        //     params["executablePath"] = executablePath
+        // }
+        params["executablePath"] = 'google-chrome-unstable';
+
+
+        console.log(puppeteer.executablePath());
 
         const browser = await puppeteer.launch(params);
         const page = await browser.newPage();
