@@ -31,5 +31,9 @@ https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication
 https://itnext.io/implementing-json-web-tokens-passport-js-in-a-javascript-application-with-react-b86b1f313436
 https://www.codingdeft.com/posts/react-authentication-mern-node-passport-express-mongo/
 
+Run Puppeteer in Docker:
+https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md
+
+
 https://jazzfuel.com/best-jazz-albums/
 https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-pieces/

@@ -1,17 +1,38 @@
 import express from 'express';
 
-import { InvalidURLError } from '../errors.js';
 import catchAsync from '../utils/catchAsync.js';
-import { dataManagement } from '../dataManagement_object.js';
 import isLoggedIn from '../utils/middleware.js';
+import {
+    InvalidURLError,
+    DomainNotInWhiteListError
+} from '../errors.js';
+import { dataManagement } from '../dataManagement_object.js';
 import { verifyUser } from '../authenticate.js';
 
 
 const router = express.Router();
 
-router.post('/', catchAsync(async (req, res) => {
+router.post('/allarticles', catchAsync(async (req, res) => {
     const lastPostTime = req.body.lastPostTime;
+    console.log(lastPostTime);
     const articlesArray = await dataManagement.getSortedArticlesArray(lastPostTime);
+    res.statusCode = 200;
+    res.send(articlesArray);
+}))
+
+router.post('/myarticles', verifyUser, catchAsync(async (req, res) => {
+    const lastPostTime = req.body.lastPostTime;
+    const userId = req.user._id;
+    const articlesArray = await dataManagement.getMyArticlesArray(userId, lastPostTime);
+    res.statusCode = 200;
+    res.send(articlesArray);
+}))
+
+router.post('/myvotes', verifyUser, catchAsync(async (req, res) => {
+    const lastPostTime = req.body.lastPostTime;
+    const userId = req.user._id;
+    const articlesArray = await dataManagement.getMyVotesArray(userId, lastPostTime);
+    res.statusCode = 200;
     res.send(articlesArray);
 }))
 
@@ -27,7 +48,11 @@ router.post('/newarticlepost', verifyUser, catchAsync(async (req, res) => {
     } catch (e) {
         if (e instanceof InvalidURLError) {
             console.log(`Error at newArticle: ${e.message}`);
-            res.status(401).send({ message: e.message })
+            res.statusCode = 401;
+            res.send({ message: e.message });
+        } else if (e instanceof DomainNotInWhiteListError) {
+            res.statusCode = 401;
+            res.send({ message: e.message });
         } else {
             throw e
         }
@@ -48,5 +73,6 @@ router.post('/:id/vote', verifyUser, catchAsync(async (req, res) => {
         throw e;
     }
 }))
+
 
 export { router };

@@ -6,7 +6,8 @@ function dataManagementErrorsHandler(e) {
         e.name === 'MongoValidatorError' ||
         e.name === 'InvalidArticleIDError' ||
         e.name === 'MongoCastError' ||
-        e.name === 'ArticleAlreadyHasLinkPreviewError'
+        e.name === 'ArticleAlreadyHasLinkPreviewError' ||
+        e.name === 'DomainNotInWhiteListError'
     ) {
         throw e;
     } else if (e.name !== '') {

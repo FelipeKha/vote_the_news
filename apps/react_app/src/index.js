@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import MainGrid from './components/MainGrid';
+import App from './components/App';
 import { UserProvider } from './context/UserContext';
 
 
 ReactDOM.render(
   <UserProvider>
-    <MainGrid />
+    <App />
   </UserProvider>,
   document.getElementById('root')
 );

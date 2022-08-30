@@ -1,9 +1,14 @@
-import puppeteer from 'puppeteer-extra';
-import pluginStealth from 'puppeteer-extra-plugin-stealth';
-import isBase64 from 'is-base64';
-import getUrls from 'get-urls';
 import fetch from 'node-fetch';
+import getUrls from 'get-urls';
+import isBase64 from 'is-base64';
+import pluginStealth from 'puppeteer-extra-plugin-stealth';
+import puppeteer from 'puppeteer-extra';
 
+import path from "path";
+import url from "url";
+
+import domainsAndLogos from './logos/domainsAndLogos.js';
+import { DomainNotInWhiteListError } from "./errors.js";
 
 class LinkPreview {
     async linkPreview(
@@ -16,11 +21,19 @@ class LinkPreview {
 
         const params = {
             headless: true,
-            args: [...puppeteerArgs]
+            // args: [...puppeteerArgs]
+            args: ['--no-sandbox']
         };
-        if (executablePath) {
-            params["executablePath"] = executablePath
-        }
+
+        const currentDirPath = path.dirname(url.fileURLToPath(import.meta.url));
+        const chromiumPath = path.join(currentDirPath, '/node_modules/puppeteer/.local-chromium/mac-970485/chrome-mac/Chromium.app/Contents/MacOS/Chromium');
+        // if (executablePath) {
+        //     params["executablePath"] = executablePath
+        // }
+        params["executablePath"] = 'google-chrome-unstable';
+
+
+        console.log(puppeteer.executablePath());
 
         const browser = await puppeteer.launch(params);
         const page = await browser.newPage();
@@ -30,13 +43,18 @@ class LinkPreview {
         // await page.exposeFunction("urlImageIsAccessible", this.urlImageIsAccessible);
 
         const obj = {};
-        obj.title = await this.getTitle(page);
-        obj.description = await this.getDescription(page);
         obj.domain = await this.getDomainName(page, uri);
-        obj.img = await this.getImg(page, uri);
+        if (LinkPreview.checkDomainWhiteList(obj.domain)) {
+            obj.title = await this.getTitle(page);
+            obj.description = await this.getDescription(page);
+            obj.img = await this.getImg(page, uri);
+            await browser.close()
+            return obj
+        } else {
+            await browser.close()
+            throw new DomainNotInWhiteListError(`"${obj.domain}" not in the domain white list.`)
+        }
 
-        await browser.close()
-        return obj
     }
 
     async getTitle(page) {
@@ -210,6 +228,11 @@ class LinkPreview {
         });
         return domainName != null ? new URL(domainName).hostname : new URL(uri).hostname;
     }
+
+    static checkDomainWhiteList(domain) {
+        const domainLower = domain.toLowerCase();
+        return domainsAndLogos.hasOwnProperty(domainLower);
+    }
 }
 
 
@@ -227,3 +250,5 @@ export default LinkPreview;
 // const imgUrl = 'https://static01.nyt.com/images/2022/05/11/business/10ipod/10ipod-videoSixteenByNine3000.jpg'
 // const imgUrl = 'https://static01.nyt.com/images/2022/05/11/business/10ipod/10ipod-articleLarge.jpg?quality=75&auto=webp&disable=upscale'
 // console.log(await linkPreview.urlImageIsAccessible(imgUrl));
+
+// console.log(LinkPreview.checkDomainWhiteList("www.nytimes.com"));
