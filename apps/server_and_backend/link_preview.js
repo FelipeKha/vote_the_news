@@ -4,9 +4,6 @@ import isBase64 from 'is-base64';
 import pluginStealth from 'puppeteer-extra-plugin-stealth';
 import puppeteer from 'puppeteer-extra';
 
-import path from "path";
-import url from "url";
-
 import domainsAndLogos from './logos/domainsAndLogos.js';
 import { DomainNotInWhiteListError } from "./errors.js";
 
@@ -25,8 +22,6 @@ class LinkPreview {
             args: ['--no-sandbox']
         };
 
-        const currentDirPath = path.dirname(url.fileURLToPath(import.meta.url));
-        const chromiumPath = path.join(currentDirPath, '/node_modules/puppeteer/.local-chromium/mac-970485/chrome-mac/Chromium.app/Contents/MacOS/Chromium');
         // if (executablePath) {
         //     params["executablePath"] = executablePath
         // }
