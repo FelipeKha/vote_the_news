@@ -37,9 +37,12 @@ function NavAppBar(props) {
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const [successMessage, setSuccessMessage] = useState("")
 
+  const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
+  const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me"
+
   const verifyUser = useCallback(() => {
     fetch(
-      'http://localhost:4000/refreshToken',
+      refreshTokenUrl,
       {
         method: "POST",
         credentials: "include",
@@ -65,7 +68,7 @@ function NavAppBar(props) {
 
   const fetchUserDetails = useCallback(() => {
     fetch(
-      'http://localhost:4000/me',
+      userDetailsUrl,
       {
         method: "GET",
         credentials: "include",

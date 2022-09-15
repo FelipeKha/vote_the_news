@@ -15,13 +15,14 @@ import Box from '@mui/material/Box';
 import { UserContext } from "../context/UserContext";
 
 
-
 function ArticleCard(props) {
   const [userContext, setUserContext] = useContext(UserContext);
 
+  const fetchVoteUrl = process.env.REACT_APP_SERVER_URL + `${props.articleInfo._id}/vote`
+
   function fetchUpVote() {
     fetch(
-      `http://localhost:4000/${props.articleInfo._id}/vote`,
+      fetchVoteUrl,
       {
         method: "POST",
         credentials: "include",

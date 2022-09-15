@@ -57,8 +57,10 @@ function MainGrid(props) {
 
     setLoading(true);
 
+    const fetchArticlesArrayUrl = process.env.REACT_APP_SERVER_URL + `${props.pageDisplayed}`
+
     fetch(
-      `http://localhost:4000/${props.pageDisplayed}`,
+      fetchArticlesArrayUrl,
       {
         method: 'POST',
         credentials: "include",

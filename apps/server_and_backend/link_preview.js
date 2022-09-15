@@ -25,7 +25,9 @@ class LinkPreview {
         // if (executablePath) {
         //     params["executablePath"] = executablePath
         // }
-        params["executablePath"] = 'google-chrome-unstable';
+
+        params["executablePath"] = process.env.PUPPETEER_EXECUTABLE_PATH;
+        // params["executablePath"] = 'google-chrome-unstable';
 
 
         console.log(puppeteer.executablePath());

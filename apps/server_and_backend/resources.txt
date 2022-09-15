@@ -34,6 +34,9 @@ https://www.codingdeft.com/posts/react-authentication-mern-node-passport-express
 Run Puppeteer in Docker:
 https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md
 
+Environment variables:
+https://www.twilio.com/blog/working-with-environment-variables-in-node-js-html
+https://create-react-app.dev/docs/adding-custom-environment-variables/
 
 https://jazzfuel.com/best-jazz-albums/
 https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-pieces/

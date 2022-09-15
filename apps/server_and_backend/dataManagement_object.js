@@ -1,12 +1,16 @@
-import DataManagement from './data_management.js';
-import Database from './database.js';
-import LinkPreview from './link_preview.js'
+import * as dotenv from 'dotenv';
+
 import articleSchema from "./models/article.js";
+import Database from './database.js';
+import DataManagement from './data_management.js';
+import LinkPreview from './link_preview.js'
 import userSchema from './models/user.js';
 import voteSchema from './models/vote.js';
 
-// const databaseUrl = 'mongodb://localhost:27017/vote-the-news';
-const databaseUrl = process.env.CONNECTIONSTRING;
+dotenv.config();
+
+const databaseUrl = process.env.MONGO_CONNECTION_STRING;
+// const databaseUrl = process.env.CONNECTIONSTRING;
 const database = new Database(
     databaseUrl,
     articleSchema,
