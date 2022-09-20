@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { spyOn } from 'jest-mock';
 
-import DataManagement from '../data_management';
+import ArticleManagement from '../article_management';
 import assert, { AssertionError } from 'node:assert';
 import {
     InvalidURLError,
@@ -11,28 +11,28 @@ import {
 } from '../errors';
 
 
-describe("DataManagement", () => {
+describe("ArticleManagement", () => {
     describe("isValidDate", () => {
         test("returns false if the input object has an invalid date in its postTime property", () => {
             const invalidDate = { "postTime": "notADate" };
-            expect(DataManagement.isValidDate(invalidDate)).toBe(false);
+            expect(ArticleManagement.isValidDate(invalidDate)).toBe(false);
         })
 
         test("returns true if the input object has a valid date in its postTime property", () => {
             const invalidDate = { "postTime": Date() };
-            expect(DataManagement.isValidDate(invalidDate)).toBe(true);
+            expect(ArticleManagement.isValidDate(invalidDate)).toBe(true);
         })
     })
 
     describe('hasPostTimeProperty', () => {
         test("returns false if the input object doesn't have a postTime property", () => {
             const noPostTimeProperty = { test: "no post time" };
-            expect(DataManagement.hasPostTimeProperty(noPostTimeProperty)).toBe(false);
+            expect(ArticleManagement.hasPostTimeProperty(noPostTimeProperty)).toBe(false);
         })
 
         test("returns true if the input object has a postTime property", () => {
             const withPostTimeProperty = { postTime: "no post time" };
-            expect(DataManagement.hasPostTimeProperty(withPostTimeProperty)).toBe(true);
+            expect(ArticleManagement.hasPostTimeProperty(withPostTimeProperty)).toBe(true);
         })
     })
 
@@ -41,7 +41,7 @@ describe("DataManagement", () => {
             let testPassed = true;
             const articleKeys = ['url', '_id', 'postTime', 'author'];
             const newArticleUrl = 'newArticleUrl';
-            const newArticle = DataManagement.createNewArticleObject(newArticleUrl);
+            const newArticle = ArticleManagement.createNewArticleObject(newArticleUrl);
 
             const newArticleKeys = Object.keys(newArticle);
 
@@ -66,12 +66,12 @@ describe("DataManagement", () => {
     describe('isValidHttpUrl', () => {
         test('returns false if input is an invalid url', () => {
             const invalidUrl = 'notAnUrl';
-            expect(DataManagement.isValidHttpUrl(invalidUrl)).toBe(false);
+            expect(ArticleManagement.isValidHttpUrl(invalidUrl)).toBe(false);
         })
 
         test('returns true if input is a valid url', () => {
             const validUrl = 'https://www.lemonde.fr';
-            expect(DataManagement.isValidHttpUrl(validUrl)).toBe(true);
+            expect(ArticleManagement.isValidHttpUrl(validUrl)).toBe(true);
         })
     })
 
@@ -80,7 +80,7 @@ describe("DataManagement", () => {
             let testPassed = true
             const fileDataBase = new MockFileDatabase();
             const linkPreview = new MockLinkPreview();
-            const dataManagement = new DataManagement(fileDataBase, linkPreview);
+            const articleManagement = new ArticleManagement(fileDataBase, linkPreview);
 
             const expectedResult = [
                 {
@@ -107,7 +107,7 @@ describe("DataManagement", () => {
                 }
             ];
 
-            const articleArray = await dataManagement.getSortedArticlesArray();
+            const articleArray = await articleManagement.getSortedArticlesArray();
 
             try {
                 assert.deepStrictEqual(articleArray, expectedResult);
@@ -129,7 +129,7 @@ describe("DataManagement", () => {
             const url = 'https://www.nytimes.com/2022/06/29/technology/crypto-crash-divide.html';
             const fileDataBase = new MockFileDatabase();
             const linkPreview = new MockLinkPreview();
-            const dataManagement = new DataManagement(fileDataBase, linkPreview);
+            const articleManagement = new ArticleManagement(fileDataBase, linkPreview);
 
             const linkPreviewExpected = {
                 "title": "Twitter reports growth in revenue and users as Elon Musk prepares to take over.",
@@ -138,7 +138,7 @@ describe("DataManagement", () => {
                 "img": "https://static01.nyt.com/images/2022/04/28/multimedia/28twitter-earnings/28twitter-earnings-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
             };
 
-            const linkPreviewFromMock = await dataManagement.getLinkPreview(url);
+            const linkPreviewFromMock = await articleManagement.getLinkPreview(url);
 
             try {
                 assert.deepStrictEqual(linkPreviewExpected, linkPreviewFromMock);
@@ -159,13 +159,13 @@ describe("DataManagement", () => {
             const nonExistingId = 'nonExistingId';
             const fileDataBase = new MockFileDatabase();
             const linkPreview = new MockLinkPreview();
-            const dataManagement = new DataManagement(fileDataBase, linkPreview);
+            const articleManagement = new ArticleManagement(fileDataBase, linkPreview);
 
             const spy = spyOn(fileDataBase, 'loadArticleWithID').mockImplementation(() => {
                 throw new NoArticleWithThisIDError();
             })
 
-            await expect(dataManagement.addLinkPreview(nonExistingId)).rejects.toThrow(NoArticleWithThisIDError);
+            await expect(articleManagement.addLinkPreview(nonExistingId)).rejects.toThrow(NoArticleWithThisIDError);
 
             spy.mockRestore();
         })
@@ -175,13 +175,13 @@ describe("DataManagement", () => {
             const articleWithLinkPreview = createArticleObject(1);
             const fileDataBase = new MockFileDatabase();
             const linkPreview = new MockLinkPreview();
-            const dataManagement = new DataManagement(fileDataBase, linkPreview);
+            const articleManagement = new ArticleManagement(fileDataBase, linkPreview);
 
             const spy = spyOn(fileDataBase, 'loadArticleWithID').mockImplementation(() => {
                 return articleWithLinkPreview;
             })
 
-            await expect(dataManagement.addLinkPreview(articleWithLinkPreview._id)).rejects.toThrow(ArticleAlreadyHasLinkPreviewError);
+            await expect(articleManagement.addLinkPreview(articleWithLinkPreview._id)).rejects.toThrow(ArticleAlreadyHasLinkPreviewError);
 
             spy.mockRestore();
 
@@ -197,7 +197,7 @@ describe("DataManagement", () => {
 
             const fileDataBase = new MockFileDatabase();
             const linkPreview = new MockLinkPreview();
-            const dataManagement = new DataManagement(fileDataBase, linkPreview);
+            const articleManagement = new ArticleManagement(fileDataBase, linkPreview);
 
             const spy = spyOn(fileDataBase, 'loadArticleWithID').mockImplementation(() => {
                 return articleWithoutLinkPreview;
@@ -215,7 +215,7 @@ describe("DataManagement", () => {
                 }
             }
 
-            const articleResult = await dataManagement.addLinkPreview(articleWithoutLinkPreview._id);
+            const articleResult = await articleManagement.addLinkPreview(articleWithoutLinkPreview._id);
 
             try {
                 assert.deepStrictEqual(expectedArticle, articleResult);
@@ -240,27 +240,27 @@ describe("DataManagement", () => {
             const invalidUrl = 'invalidUrl';
             const fileDataBase = new MockFileDatabase();
             const linkPreview = new MockLinkPreview();
-            const dataManagement = new DataManagement(fileDataBase, linkPreview);
+            const articleManagement = new ArticleManagement(fileDataBase, linkPreview);
 
-            await expect(dataManagement.postNewArticle(invalidUrl)).rejects.toThrow(InvalidURLError);
+            await expect(articleManagement.postNewArticle(invalidUrl)).rejects.toThrow(InvalidURLError);
         })
 
         test(`returns ${ArticleAlreadyPostedError.name} if article with same url already posted`, async () => {
             const alreadyPostedUrl = 'https://www.nytimes.com/2022/06/23/technology/0-5-selfie.html';
             const fileDataBase = new MockFileDatabase();
             const linkPreview = new MockLinkPreview();
-            const dataManagement = new DataManagement(fileDataBase, linkPreview);
+            const articleManagement = new ArticleManagement(fileDataBase, linkPreview);
 
-            await expect(dataManagement.postNewArticle(alreadyPostedUrl)).rejects.toThrow(ArticleAlreadyPostedError);
+            await expect(articleManagement.postNewArticle(alreadyPostedUrl)).rejects.toThrow(ArticleAlreadyPostedError);
         })
 
         test(`returns ${ArticleAlreadyPostedError.name} if article with same url already posted`, async () => {
             const alreadyPostedUrl = 'https://www.nytimes.com/2022/06/23/technology/0-5-selfie.html';
             const fileDataBase = new MockFileDatabase();
             const linkPreview = new MockLinkPreview();
-            const dataManagement = new DataManagement(fileDataBase, linkPreview);
+            const articleManagement = new ArticleManagement(fileDataBase, linkPreview);
 
-            await expect(dataManagement.postNewArticle(alreadyPostedUrl)).rejects.toThrow(ArticleAlreadyPostedError);
+            await expect(articleManagement.postNewArticle(alreadyPostedUrl)).rejects.toThrow(ArticleAlreadyPostedError);
         })
 
         test('returns expected article object', async () => {
@@ -272,13 +272,13 @@ describe("DataManagement", () => {
 
             const fileDataBase = new MockFileDatabase();
             const linkPreview = new MockLinkPreview();
-            const dataManagement = new DataManagement(fileDataBase, linkPreview);
+            const articleManagement = new ArticleManagement(fileDataBase, linkPreview);
 
             const spy = spyOn(fileDataBase, 'saveModifiedArticle').mockImplementation(() => {
                 return articleExpected;
             })
 
-            const articleResult = await dataManagement.postNewArticle(url);
+            const articleResult = await articleManagement.postNewArticle(url);
 
             try {
                 assert.deepStrictEqual(articleExpected, articleResult);

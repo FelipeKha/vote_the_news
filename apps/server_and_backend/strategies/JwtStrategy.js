@@ -2,7 +2,7 @@ import passport from "passport";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { ExtractJwt } from "passport-jwt";
 
-import { database } from "../dataManagement_object.js";
+import { database } from "../articleManagement_object.js";
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

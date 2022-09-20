@@ -258,6 +258,33 @@ class Database {
     async deleteArticle(id) {
         const articleDeleted = await this.articleModel.findByIdAndDelete(id)
     }
+
+    createNewUserDocument(
+        firstName, 
+        lastName,
+        nameDisplayed,
+        username,
+        password
+    ) {
+        const userDocument = new this.userModel({
+            firstName: firstName,
+            lastName: lastName,
+            nameDisplayed: nameDisplayed,
+            username: username,
+            password: password
+        });
+        return userDocument;
+    }
+
+    async saveUser(userDocument) {
+        const user = await userDocument.save();
+        return user;
+    }
+
+    async loadUserWithId(userId) {
+        const user = await this.userModel.findById(userId);
+        return user;
+    }
 }
 
 export default Database;

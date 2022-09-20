@@ -8,11 +8,15 @@ import domainsAndLogos from './logos/domainsAndLogos.js';
 import { DomainNotInWhiteListError } from "./errors.js";
 
 class LinkPreview {
+    constructor(executablePath) {
+        this.executablePath = executablePath;
+    }
+
     async linkPreview(
         uri,
         puppeteerArgs = [],
         puppeteerAgent = 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
-        executablePath
+        executablePath = this.executablePath
     ) {
         puppeteer.use(pluginStealth());
 

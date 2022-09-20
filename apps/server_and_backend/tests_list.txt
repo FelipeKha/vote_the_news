@@ -50,7 +50,7 @@ file_article_database.js
 
 
 
-data_management.js
+article_management.js
 - Constructor
 
 - getSortedArticlesArray

@@ -1,6 +1,6 @@
 # Vote The News
 
-[Vote The News (VTN)](PASTEURLHERE.COM) is a web application to share and vote press articles. The user post an article by submitting its url, and the application will create a card with an overview of the article. Users can then consult the article cards, click the cards to consult the articles on their publisher's website, and vote for their favorite articles.
+[Vote The News (VTN)](PASTEURLHERE.COM) is a web application to share and vote press articles. The user posts an article by submitting its url, and the application will create a card with an overview of the article. Users can then consult the article cards, click the cards to consult the articles on their publisher's website, and vote for their favorite articles.
 
 I built VTN as a student project on my path to becoming a developer. VTN is built entirely with JavaScript. [Here](https://www.linkedin.com/in/felipe-kharaba-11481444/) is the link to my LinkedIn profile if you want to know more about me.
 
@@ -8,11 +8,11 @@ I would like to express my deep gratitude to my friend [Adrien Vaschalde](https:
 
 ## Run VTN locally
 
-In your terminal, clone the project with the command 'git clone https://github.com/FelipeKha/vote_the_news.git'.
-Then run 'npm install' to install all the libraries required for the project.
-Finally, run 'docker-compose -f docker-compose.yml up --build' to build the docker and start the containers.
+In your terminal, clone the project with the command `git clone https://github.com/FelipeKha/vote_the_news.git`.
+Then run `npm install` to install all the libraries required for the project.
+Finally, run `docker-compose -f docker-compose.yml up --build` to build the docker and start the containers.
 
-You can open your browser at 'http://localhost:3000/' to visual the web app.
+You can open your browser at `http://localhost:3000/` to visual the web app.
 
 ## VTN functionalities (ADD EXPLANATION FOR HOW TO FOR EACH FUNCTIONALITY)
 
@@ -48,18 +48,18 @@ Authentication with [**passport**](https://www.npmjs.com/package/passport) with 
 - Database
 We use a Mongo database, and use [**mongoose**](https://www.npmjs.com/package/mongoose) to Create, Read, Update and Delete (CRUD). The data is structured in four schemas (article, user, vote and session for authentication). The schemas are crossed referenced on certain items so that that we can populate related data between schemas (e.g. get the autor of a post). We also use some built in mongoose functionalities to order results or limit the number of requests.
 - Web scrapping
-In order to get the article's card element, we use a slightly modified version of [Andrej Gajdos's link preview generator] (https://github.com/AndrejGajdos/link-preview-generator).
+In order to get the article's card element, we use a slightly modified version of [Andrej Gajdos's link preview generator](https://github.com/AndrejGajdos/link-preview-generator).
  - We use [**puppeteer-extra**](https://www.npmjs.com/package/puppeteer-extra) to open the article in a browser (Chromium in local, Chrome when in production). We also use [**puppeteer-extra-plugin-stealth**](https://www.npmjs.com/package/puppeteer-extra-plugin-stealth) to prevent detection of headless mode.
  - Once the browser is open, we look for the article cards elements (title, description, image, etc) by inspecting the meta data for Open Graph tags, then Twitter tags, and finally page elements. For the image, we use [**get-urls**](https://www.npmjs.com/package/get-urls) to extra the urls from tags or element scrapping output, [**is-base64**](https://www.npmjs.com/package/is-base64) to check if the url is a base64 string, and [**node-fetch**](https://www.npmjs.com/package/node-fetch) to check that the image url sends a response.
 - Tools
- - [**dotenv**](https://www.npmjs.com/package/dotenv) is used to load environment variables from the '.env' file.
+ - [**dotenv**](https://www.npmjs.com/package/dotenv) is used to load environment variables from the `.env` file.
  - [**eslint**](https://www.npmjs.com/package/eslint) is used to lint the code.
  - [**jest**](https://www.npmjs.com/package/jest) is used for testing.
  - [**nodemon**](https://www.npmjs.com/package/nodemon) is used to automatically restart the server upon saving of files.
 
 ### VTN react app
 - Web app
-The front end of the web app is built with [**react**](https://www.npmjs.com/package/react). We are using [**@mui/material**](https://www.npmjs.com/package/@mui/material) (Material UI) elements. We also implemented an infinite scroll using the 'IntersectionObserver' API in order to load progressively the article cards.
+The front end of the web app is built with [**react**](https://www.npmjs.com/package/react). We are using [**@mui/material**](https://www.npmjs.com/package/@mui/material) (Material UI) elements. We also implemented an infinite scroll using the `IntersectionObserver` API in order to load progressively the article cards.
 
 ## VTN potential improvements and additional functionalies
 ### Potential improvements
