@@ -53,10 +53,10 @@ class UserManagement {
     async saveNewRefreshToken(user, refreshToken) {
         const refreshTokenIndex = UserManagement.getRefreshTokenIndex(user, refreshToken);
         if (refreshTokenIndex !== -1) {
-            const { token, newRefreshToken } = UserManagement.getNewTokens(user._id);
+            const { token: newToken, refreshToken: newRefreshToken } = UserManagement.getNewTokens(user._id);
             user.refreshToken[refreshTokenIndex] = { refreshToken: newRefreshToken };
             const updatedUser = await this.database.saveUser(user);
-            return { updatedUser, token, newRefreshToken };
+            return { updatedUser, newToken, newRefreshToken };
         }
     }
 

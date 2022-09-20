@@ -16,6 +16,7 @@ import voteSchema from './models/vote.js';
 import { } from "./strategies/LocalStrategy.js";
 import { } from "./strategies/JwtStrategy.js";
 import { } from "./authenticate.js"
+import { database } from './database_object.js';
 import { router as articlesRouter } from './routes/articlesRoutes.js';
 import { router as usersRouter } from './routes/usersRoutes.js';
 // import ExpressError from './utils/ExpressError.js';
@@ -26,24 +27,29 @@ const app = express();
 const port = process.env.SERVER_PORT;
 
 const osPlatform = process.platform;
+console.log("OS platform:", osPlatform);
 
 let corsOrigin;
 let databaseUrl;
 let puppeteerExecutablePath;
 if (osPlatform === 'darwin') {
     corsOrigin = process.env.CORS_ORIGINS;
-    databaseUrl = process.env.MONGO_CONNECTION_STRING;
-    puppeteerExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+    databaseUrl = process.env.MONGO_CONNECTION_STRING_LOCAL;
+    puppeteerExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH_LOCAL;
+} else if (osPlatform === 'linux') {
+    corsOrigin = process.env.CORS_ORIGINS;
+    databaseUrl = process.env.MONGO_CONNECTION_STRING_DOCKER;
+    puppeteerExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH_DOCKER;
 }
 
-const database = new Database(
-    databaseUrl,
-    articleSchema,
-    userSchema,
-    voteSchema
-);
-await database.connectToDatabase();
-database.associateModelToConnection();
+// const database = new Database(
+//     databaseUrl,
+//     articleSchema,
+//     userSchema,
+//     voteSchema
+// );
+// await database.connectToDatabase();
+// database.associateModelToConnection();
 
 const linkPreview = new LinkPreview(puppeteerExecutablePath);
 const articleManagement = new ArticleManagement(database, linkPreview);
@@ -55,8 +61,11 @@ const corsOptions = {
     credentials: true,
     optionSuccessStatus: 200
 }
+
+const sessionSecret = process.env.SESSION_SECRET;
+
 const sessionConfig = {
-    secret: 'thisisnotagoodsecret',
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -69,7 +78,7 @@ const sessionConfig = {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(cookieParser("thisisnotagoodsecret"));
+app.use(cookieParser(sessionSecret));
 app.use(cors(corsOptions));
 app.use(session(sessionConfig));
 app.use(passport.initialize());
@@ -91,4 +100,4 @@ app.listen(port, () => {
     console.log(`Listening port ${port}`);
 })
 
-export {database, articleManagement, userManagement};
+export { articleManagement, userManagement };

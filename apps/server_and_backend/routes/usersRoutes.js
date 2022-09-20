@@ -97,17 +97,18 @@ router.post('/login', passport.authenticate('local'), async (req, res, next) => 
 })
 
 router.post("/refreshToken", async (req, res, next) => {
+    const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
     const { signedCookies = {} } = req;
     const { refreshToken } = signedCookies;
     if(refreshToken) {
         try {
-            const payload = jwt.verify(refreshToken, "thisisnotagoodsecret");
+            const payload = jwt.verify(refreshToken, refreshTokenSecret);
             const userId = payload._id;
 
             const user = await userManagement.loadUserWithId(userId);
-            const { updatedUser, token, newRefreshToken } = await userManagement.saveNewRefreshToken(user, refreshToken);
+            const { updatedUser, newToken, newRefreshToken } = await userManagement.saveNewRefreshToken(user, refreshToken);
             res.cookie("refreshToken", newRefreshToken, COOKIE_OPTIONS);
-            res.send({ success: true, token });
+            res.send({ success: true, newToken });
         } catch (e) {
             throw e;
         }

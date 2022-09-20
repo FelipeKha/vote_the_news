@@ -10,7 +10,16 @@ import voteSchema from './models/vote.js';
 
 dotenv.config();
 
-const databaseUrl = process.env.MONGO_CONNECTION_STRING;
+const osPlatform = process.platform;
+
+let databaseUrl;
+
+if (osPlatform === 'darwin') {
+    databaseUrl = process.env.MONGO_CONNECTION_STRING_LOCAL;
+} else if (osPlatform === 'linux') {
+    databaseUrl = process.env.MONGO_CONNECTION_STRING_DOCKER;
+}
+
 // const databaseUrl = process.env.CONNECTIONSTRING;
 const database = new Database(
     databaseUrl,
@@ -20,8 +29,8 @@ const database = new Database(
 );
 await database.connectToDatabase();
 database.associateModelToConnection();
-const linkPreview = new LinkPreview();
-const articleManagement = new ArticleManagement(database, linkPreview)
-const userManagement = new UserManagement(database);
+// const linkPreview = new LinkPreview();
+// const articleManagement = new ArticleManagement(database, linkPreview)
+// const userManagement = new UserManagement(database);
 
-export { database, articleManagement, userManagement };
+export { database };

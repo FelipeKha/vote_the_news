@@ -36,10 +36,10 @@ function NavAppBar(props) {
   const [infoMessage, setInfoMessage] = useState("")
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const [successMessage, setSuccessMessage] = useState("")
-
+  
   const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
   const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me"
-
+  
   const verifyUser = useCallback(() => {
     fetch(
       refreshTokenUrl,
@@ -53,7 +53,7 @@ function NavAppBar(props) {
         if (response.ok) {
           const data = await response.json();
           setUserContext(oldValues => {
-            return { ...oldValues, token: data.token };
+            return { ...oldValues, token: data.newToken };
           })
         } else {
           setUserContext(oldValues => {
