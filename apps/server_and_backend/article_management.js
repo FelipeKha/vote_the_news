@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import dataManagementErrorsHandler from './utils/dataManagementErrorsHandler.js';
+import articleManagementErrorsHandler from './utils/articleManagementErrorsHandler.js';
 import {
     InvalidURLError,
     ArticleAlreadyHasLinkPreviewError,
@@ -8,7 +8,7 @@ import {
 } from './errors.js';
 
 
-class DataManagement {
+class ArticleManagement {
     constructor(database, linkPreview) {
         this.database = database;
         this.linkPreview = linkPreview;
@@ -18,9 +18,8 @@ class DataManagement {
         let sortedArticlesArray;
         try {
             sortedArticlesArray = await this.database.loadArticlesArrayInfiniteScroll(lastPostTime);
-            console.log(sortedArticlesArray);
         } catch (e) {
-            dataManagementErrorsHandler(e);
+            articleManagementErrorsHandler(e);
         }
         return sortedArticlesArray;
     }
@@ -30,7 +29,7 @@ class DataManagement {
         try {
             articlesArray = await this.database.loadMyArticlesArray(userId, lastPostTime);
         } catch (e) {
-            dataManagementErrorsHandler(e);
+            articleManagementErrorsHandler(e);
         }
         return articlesArray;
     }
@@ -40,7 +39,7 @@ class DataManagement {
         try {
             votesArray = await this.database.loadMyVotesArray(userId, lastPostTime);
         } catch (e) {
-            dataManagementErrorsHandler(e);
+            articleManagementErrorsHandler(e);
         }
         const articlesArray = [];
         for (let vote of votesArray) {
@@ -50,18 +49,18 @@ class DataManagement {
     }
 
     async postNewArticle(url, authorId) {
-        if (!DataManagement.isValidHttpUrl(url)) {
+        if (!ArticleManagement.isValidHttpUrl(url)) {
             throw new InvalidURLError('Invalid URL');
         }
 
-        const newArticleObject = DataManagement.createNewArticleObject(url, authorId);
+        const newArticleObject = ArticleManagement.createNewArticleObject(url, authorId);
         let newArticleSaved;
 
         try {
             newArticleSaved = await this.database.saveNewArticle(newArticleObject);
             console.log('New article saved without link preview', newArticleSaved.id);
         } catch (e) {
-            dataManagementErrorsHandler(e);
+            articleManagementErrorsHandler(e);
         }
 
         let newArticleObjectWithLinkPreview;
@@ -73,7 +72,7 @@ class DataManagement {
                 this.database.deleteArticle(newArticleSaved._id);
                 throw e;
             } else {
-                dataManagementErrorsHandler(e);
+                articleManagementErrorsHandler(e);
             }
         }
 
@@ -101,7 +100,7 @@ class DataManagement {
         try {
             article = await this.database.loadArticleWithID(id);
         } catch (e) {
-            dataManagementErrorsHandler(e);
+            articleManagementErrorsHandler(e);
         }
         if (Object.prototype.hasOwnProperty.call(article, 'linkPreview') &&
             Object.prototype.hasOwnProperty.call(article.linkPreview, 'title') &&
@@ -163,6 +162,4 @@ class DataManagement {
     }
 }
 
-
-
-export default DataManagement;
+export default ArticleManagement;

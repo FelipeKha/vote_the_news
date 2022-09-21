@@ -30,8 +30,17 @@ function SignUpFormDialog(props) {
 
         const genericErrorMessage = "Something went wrong, please try again.";
 
+        // const signUpUrl = process.env.REACT_APP_SERVER_URL + "signup";
+
+        let signUpUrl;
+        if (process.env.REACT_APP_RUNNING_IN_DIGITAL_OCEAN === 'true') {
+            signUpUrl = process.env.REACT_APP_SERVER_URL_DIGITAL_OCEAN + "signup";
+        } else {
+            signUpUrl = process.env.REACT_APP_SERVER_URL_LOCAL + "signup";
+        }
+
         fetch(
-            'http://localhost:4000/signup',
+            signUpUrl,
             {
                 method: 'POST',
                 credentials: "include",

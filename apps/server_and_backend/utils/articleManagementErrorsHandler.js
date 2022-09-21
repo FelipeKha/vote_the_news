@@ -1,4 +1,4 @@
-function dataManagementErrorsHandler(e) {
+function articleManagementErrorsHandler(e) {
     if (
         e.name === 'InvalidMongoUrlError' ||
         e.name === 'ArticleAlreadyPostedError' ||
@@ -17,4 +17,4 @@ function dataManagementErrorsHandler(e) {
     }
 }
 
-export default dataManagementErrorsHandler;
+export default articleManagementErrorsHandler;

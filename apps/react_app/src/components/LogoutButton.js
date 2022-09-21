@@ -12,9 +12,18 @@ import { UserContext } from '../context/UserContext';
 function LogoutButton(props) {
     const [userContext, setUserContext] = useContext(UserContext);
 
+    // const logoutUrl = process.env.REACT_APP_SERVER_URL + "logout";
+
+    let logoutUrl;
+    if (process.env.REACT_APP_RUNNING_IN_DIGITAL_OCEAN === 'true') {
+        logoutUrl = process.env.REACT_APP_SERVER_URL_DIGITAL_OCEAN + "logout";
+    } else {
+        logoutUrl = process.env.REACT_APP_SERVER_URL_LOCAL + "logout";
+    }
+
     function logoutHandler() {
         fetch(
-            'http://localhost:4000/logout',
+            logoutUrl,
             {
                 method: "GET",
                 credentials: "include",

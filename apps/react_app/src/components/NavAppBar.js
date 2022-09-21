@@ -37,9 +37,22 @@ function NavAppBar(props) {
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const [successMessage, setSuccessMessage] = useState("")
 
+  let refreshTokenUrl;
+  let userDetailsUrl
+  if (process.env.REACT_APP_RUNNING_IN_DIGITAL_OCEAN === 'true') {
+    refreshTokenUrl = process.env.REACT_APP_SERVER_URL_DIGITAL_OCEAN + "refreshToken";
+    userDetailsUrl = process.env.REACT_APP_SERVER_URL_DIGITAL_OCEAN + "me"
+  } else {
+    refreshTokenUrl = process.env.REACT_APP_SERVER_URL_LOCAL + "refreshToken";
+    userDetailsUrl = process.env.REACT_APP_SERVER_URL_LOCAL + "me"
+  }
+
+  // const refreshTokenUrl = props.serverUrl + "refreshToken";
+  // const userDetailsUrl = props.serverUrl + "me"
+
   const verifyUser = useCallback(() => {
     fetch(
-      'http://localhost:4000/refreshToken',
+      refreshTokenUrl,
       {
         method: "POST",
         credentials: "include",
@@ -50,7 +63,7 @@ function NavAppBar(props) {
         if (response.ok) {
           const data = await response.json();
           setUserContext(oldValues => {
-            return { ...oldValues, token: data.token };
+            return { ...oldValues, token: data.newToken };
           })
         } else {
           setUserContext(oldValues => {
@@ -65,7 +78,7 @@ function NavAppBar(props) {
 
   const fetchUserDetails = useCallback(() => {
     fetch(
-      'http://localhost:4000/me',
+      userDetailsUrl,
       {
         method: "GET",
         credentials: "include",

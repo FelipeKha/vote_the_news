@@ -57,8 +57,18 @@ function MainGrid(props) {
 
     setLoading(true);
 
+    // const fetchArticlesArrayUrl = process.env.REACT_APP_SERVER_URL + `${props.pageDisplayed}`
+    // const fetchArticlesArrayUrl = props.serverUrl + `${props.pageDisplayed}`
+
+    let fetchArticlesArrayUrl;
+    if (process.env.REACT_APP_RUNNING_IN_DIGITAL_OCEAN === 'true') {
+      fetchArticlesArrayUrl = process.env.REACT_APP_SERVER_URL_DIGITAL_OCEAN + `${props.pageDisplayed}`;
+    } else {
+      fetchArticlesArrayUrl = process.env.REACT_APP_SERVER_URL_LOCAL + `${props.pageDisplayed}`;
+    }
+
     fetch(
-      `http://localhost:4000/${props.pageDisplayed}`,
+      fetchArticlesArrayUrl,
       {
         method: 'POST',
         credentials: "include",

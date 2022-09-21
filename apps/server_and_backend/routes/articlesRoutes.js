@@ -6,7 +6,7 @@ import {
     InvalidURLError,
     DomainNotInWhiteListError
 } from '../errors.js';
-import { dataManagement } from '../dataManagement_object.js';
+import { articleManagement } from '../index.js';
 import { verifyUser } from '../authenticate.js';
 
 
@@ -15,7 +15,7 @@ const router = express.Router();
 router.post('/allarticles', catchAsync(async (req, res) => {
     const lastPostTime = req.body.lastPostTime;
     console.log(lastPostTime);
-    const articlesArray = await dataManagement.getSortedArticlesArray(lastPostTime);
+    const articlesArray = await articleManagement.getSortedArticlesArray(lastPostTime);
     res.statusCode = 200;
     res.send(articlesArray);
 }))
@@ -23,7 +23,7 @@ router.post('/allarticles', catchAsync(async (req, res) => {
 router.post('/myarticles', verifyUser, catchAsync(async (req, res) => {
     const lastPostTime = req.body.lastPostTime;
     const userId = req.user._id;
-    const articlesArray = await dataManagement.getMyArticlesArray(userId, lastPostTime);
+    const articlesArray = await articleManagement.getMyArticlesArray(userId, lastPostTime);
     res.statusCode = 200;
     res.send(articlesArray);
 }))
@@ -31,7 +31,7 @@ router.post('/myarticles', verifyUser, catchAsync(async (req, res) => {
 router.post('/myvotes', verifyUser, catchAsync(async (req, res) => {
     const lastPostTime = req.body.lastPostTime;
     const userId = req.user._id;
-    const articlesArray = await dataManagement.getMyVotesArray(userId, lastPostTime);
+    const articlesArray = await articleManagement.getMyVotesArray(userId, lastPostTime);
     res.statusCode = 200;
     res.send(articlesArray);
 }))
@@ -42,7 +42,7 @@ router.post('/newarticlepost', verifyUser, catchAsync(async (req, res) => {
     console.log(req.user._id);
     const authorId = req.user._id
     try {
-        const newArticle = await dataManagement.postNewArticle(newArticleURL, authorId);
+        const newArticle = await articleManagement.postNewArticle(newArticleURL, authorId);
         // console.log(newArticle);
         res.send(newArticle);
     } catch (e) {
@@ -64,7 +64,7 @@ router.post('/:id/vote', verifyUser, catchAsync(async (req, res) => {
     const { id } = req.params;
     const userId = req.user._id;
     try {
-        const upVote = await dataManagement.upVote(userId, id);
+        const upVote = await articleManagement.upVote(userId, id);
         res.status(200).send({
             upVote: upVote,
             message: 'Upvote saved'

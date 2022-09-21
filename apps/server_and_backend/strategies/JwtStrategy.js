@@ -2,11 +2,13 @@ import passport from "passport";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { ExtractJwt } from "passport-jwt";
 
-import { database } from "../dataManagement_object.js";
+import { database } from "../database_object.js";
+
+const jwtSecret = process.env.JWT_SECRET;
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: 'thisisnotagoodsecret'
+    secretOrKey: jwtSecret
 }
 
 passport.use(
