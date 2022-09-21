@@ -12,7 +12,6 @@ const COOKIE_OPTIONS = {
 }
 
 const jwtSecret = process.env.JWT_SECRET
-console.log(jwtSecret);
 
 function getToken(user) {
     const token = jwt.sign(user, jwtSecret, {

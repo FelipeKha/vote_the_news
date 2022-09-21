@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import express from 'express';
+import os, { type } from 'os';
 import passport from 'passport';
 import session from 'express-session';
 
@@ -29,18 +30,25 @@ const port = process.env.SERVER_PORT;
 const osPlatform = process.platform;
 console.log("OS platform:", osPlatform);
 
-let corsOrigin;
+const corsOrigin = getCorsOriginsArray();
+
 let databaseUrl;
 let puppeteerExecutablePath;
-if (osPlatform === 'darwin') {
-    corsOrigin = process.env.CORS_ORIGINS;
-    databaseUrl = process.env.MONGO_CONNECTION_STRING_LOCAL;
-    puppeteerExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH_LOCAL;
-} else if (osPlatform === 'linux') {
-    corsOrigin = process.env.CORS_ORIGINS;
+if (process.env.RUNNING_IN_DIGITAL_OCEAN === 'true') {
     databaseUrl = process.env.MONGO_CONNECTION_STRING_DOCKER;
     puppeteerExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH_DOCKER;
+} else if (process.env.RUNNING_IN_DIGITAL_OCEAN === 'true') {
+    databaseUrl = process.env.MONGO_CONNECTION_STRING_DOCKER;
+    puppeteerExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH_DOCKER;
+} else {
+    databaseUrl = process.env.MONGO_CONNECTION_STRING_LOCAL;
+    puppeteerExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH_LOCAL;
 }
+
+// console.log("IP address:", os.networkInterfaces());
+console.log(getIpAddress());
+console.log("Running in docker container: ", process.env.RUNNING_IN_DOCKER_CONTAINER);
+console.log("Running in digital ocean: ", process.env.RUNNING_IN_DIGITAL_OCEAN);
 
 // const database = new Database(
 //     databaseUrl,
@@ -73,6 +81,38 @@ const sessionConfig = {
         expires: Date.now() + eval(process.env.WEEK_IN_MILISECONDS),
         maxAge: eval(process.env.WEEK_IN_MILISECONDS)
     }
+}
+
+function getIpAddress() {
+    const networkInterfaces = os.networkInterfaces();
+    const results = {};
+    for (let key of Object.keys(networkInterfaces)) {
+        for (let network of networkInterfaces[key]) {
+            const familyV4Value = typeof network.family === 'string' ? "IPv4" : 4;
+            if (network.family === familyV4Value && !network.internal) {
+                if (!results[key]) {
+                    results[key] = [];
+                }
+                results[key].push(network.address);
+            }
+        }
+    }
+    return results;
+}
+
+function getCorsOriginsArray() {
+    const reactAppPort = process.env.REACT_APP_PORT
+    const IpAddressesObject = getIpAddress();
+    let corsOriginsArray = [];
+    for (let key of Object.keys(IpAddressesObject)) {
+        for (let item of IpAddressesObject[key]) {
+            const origin = "http://" + item + ":" + reactAppPort;
+            corsOriginsArray.push(origin);
+        }
+    }
+    const localHost3000Url = process.env.LOCAL_HOST_3000_URL;
+    corsOriginsArray.push(localHost3000Url);
+    return corsOriginsArray;
 }
 
 app.use(express.urlencoded({ extended: true }));

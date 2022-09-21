@@ -27,7 +27,14 @@ function SignInFormDialog(props) {
 
         const genericErrorMessage = "Something went wrong, please try again."
 
-        const loginUrl = process.env.REACT_APP_SERVER_URL + "login";
+        // const loginUrl = process.env.REACT_APP_SERVER_URL + "login";
+
+        let loginUrl;
+        if (process.env.REACT_APP_RUNNING_IN_DIGITAL_OCEAN === 'true') {
+            loginUrl = process.env.REACT_APP_SERVER_URL_DIGITAL_OCEAN + "login";
+        } else {
+            loginUrl = process.env.REACT_APP_SERVER_URL_LOCAL + "login";
+        }
 
         fetch(
             loginUrl,

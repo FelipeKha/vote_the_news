@@ -40,14 +40,16 @@ class UserManagement {
 
     async logoutUser(userId, refreshToken) {
         const user = await this.database.loadUserWithId(userId);
-        const refreshTokenIndex = UserManagement.getRefreshTokenIndex(user, refreshToken);
-        // const refreshTokenIndex = user.refreshToken.findIndex(
-        //     item => item.refreshToken === refreshToken
-        // )
-        if (refreshTokenIndex !== -1) {
-            user.refreshToken.id(user.refreshToken[refreshTokenIndex]._id).remove()
+        if (user) {
+            const refreshTokenIndex = UserManagement.getRefreshTokenIndex(user, refreshToken);
+            // const refreshTokenIndex = user.refreshToken.findIndex(
+            //     item => item.refreshToken === refreshToken
+            // )
+            if (refreshTokenIndex !== -1) {
+                user.refreshToken.id(user.refreshToken[refreshTokenIndex]._id).remove()
+            }
+            const userSaved = await this.database.saveUser(user);
         }
-        const userSaved = await this.database.saveUser(user);
     }
 
     async saveNewRefreshToken(user, refreshToken) {

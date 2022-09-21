@@ -37,6 +37,9 @@ https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md
 Environment variables:
 https://www.twilio.com/blog/working-with-environment-variables-in-node-js-html
 https://create-react-app.dev/docs/adding-custom-environment-variables/
+https://stackoverflow.com/questions/50640200/conditionally-detecting-whether-a-node-server-is-running-inside-a-docker-contain
+https://www.digitalocean.com/community/questions/how-to-pass-environment-variables-to-a-docker-container
+
 
 https://jazzfuel.com/best-jazz-albums/
 https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-pieces/

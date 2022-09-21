@@ -36,10 +36,20 @@ function NavAppBar(props) {
   const [infoMessage, setInfoMessage] = useState("")
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const [successMessage, setSuccessMessage] = useState("")
-  
-  const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
-  const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me"
-  
+
+  let refreshTokenUrl;
+  let userDetailsUrl
+  if (process.env.REACT_APP_RUNNING_IN_DIGITAL_OCEAN === 'true') {
+    refreshTokenUrl = process.env.REACT_APP_SERVER_URL_DIGITAL_OCEAN + "refreshToken";
+    userDetailsUrl = process.env.REACT_APP_SERVER_URL_DIGITAL_OCEAN + "me"
+  } else {
+    refreshTokenUrl = process.env.REACT_APP_SERVER_URL_LOCAL + "refreshToken";
+    userDetailsUrl = process.env.REACT_APP_SERVER_URL_LOCAL + "me"
+  }
+
+  // const refreshTokenUrl = props.serverUrl + "refreshToken";
+  // const userDetailsUrl = props.serverUrl + "me"
+
   const verifyUser = useCallback(() => {
     fetch(
       refreshTokenUrl,

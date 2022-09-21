@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 FROM node:16-slim
-ENV NODE_ENV=production
+ENV NODE_ENV=production RUNNING_IN_DOCKER_CONTAINER=true
 
 RUN apt-get update && apt-get -yq upgrade
 #  && apt-get install \
