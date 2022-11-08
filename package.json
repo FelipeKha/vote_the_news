@@ -1,0 +1,24 @@
+{
+  "name": "vote_the_news",
+  "version": "1.0.0",
+  "description": "[Vote The News (VTN)](PASTEURLHERE.COM) is a web application to share and vote press articles. The user posts an article by submitting its url, and the application will create a card with an overview of the article. Users can then consult the article cards, click the cards to consult the articles on their publisher's website, and vote for their favorite articles.",
+  "main": "index.js",
+  "scripts": {
+    "start": "docker-compose --env-file ./config/.dockerlocal.env  -f docker-compose.yml up --build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FelipeKha/vote_the_news.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FelipeKha/vote_the_news/issues"
+  },
+  "homepage": "https://github.com/FelipeKha/vote_the_news#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3"
+  }
+}

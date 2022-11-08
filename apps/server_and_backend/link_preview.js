@@ -26,15 +26,15 @@ class LinkPreview {
             args: ['--no-sandbox']
         };
 
-        // if (executablePath) {
-        //     params["executablePath"] = executablePath
-        // }
+        if (executablePath) {
+            params["executablePath"] = executablePath
+        }
 
         // params["executablePath"] = process.env.PUPPETEER_EXECUTABLE_PATH;
         // params["executablePath"] = 'google-chrome-unstable';
 
 
-        console.log(puppeteer.executablePath());
+        console.log("Puppeteer executable path: ", puppeteer.executablePath());
 
         const browser = await puppeteer.launch(params);
         const page = await browser.newPage();

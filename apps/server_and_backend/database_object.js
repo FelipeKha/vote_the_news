@@ -12,17 +12,11 @@ dotenv.config();
 
 const osPlatform = process.platform;
 
-let databaseUrl;
-
-if (osPlatform === 'darwin') {
-    databaseUrl = process.env.MONGO_CONNECTION_STRING_LOCAL;
-} else if (osPlatform === 'linux') {
-    databaseUrl = process.env.MONGO_CONNECTION_STRING_DOCKER;
-}
+console.log("Mongo string: ", process.env.MONGO_CONNECTION_STRING);
 
 // const databaseUrl = process.env.CONNECTIONSTRING;
 const database = new Database(
-    databaseUrl,
+    process.env.MONGO_CONNECTION_STRING,
     articleSchema,
     userSchema,
     voteSchema

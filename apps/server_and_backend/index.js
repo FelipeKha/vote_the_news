@@ -32,26 +32,13 @@ console.log("OS platform:", osPlatform);
 
 const corsOrigin = getCorsOriginsArray();
 
-let databaseUrl;
-let puppeteerExecutablePath;
-if (process.env.RUNNING_IN_DIGITAL_OCEAN === 'true') {
-    databaseUrl = process.env.MONGO_CONNECTION_STRING_DOCKER;
-    puppeteerExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH_DOCKER;
-} else if (process.env.RUNNING_IN_DIGITAL_OCEAN === 'true') {
-    databaseUrl = process.env.MONGO_CONNECTION_STRING_DOCKER;
-    puppeteerExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH_DOCKER;
-} else {
-    databaseUrl = process.env.MONGO_CONNECTION_STRING_LOCAL;
-    puppeteerExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH_LOCAL;
-}
-
 // console.log("IP address:", os.networkInterfaces());
-console.log(getIpAddress());
-console.log("Running in docker container: ", process.env.RUNNING_IN_DOCKER_CONTAINER);
-console.log("Running in digital ocean: ", process.env.RUNNING_IN_DIGITAL_OCEAN);
+// console.log(getIpAddress());
+// console.log("Running in docker container: ", process.env.RUNNING_IN_DOCKER_CONTAINER);
+// console.log("Running in digital ocean: ", process.env.RUNNING_IN_DIGITAL_OCEAN);
 
 // const database = new Database(
-//     databaseUrl,
+//     process.env.MONGO_CONNECTION_STRING,
 //     articleSchema,
 //     userSchema,
 //     voteSchema
@@ -59,7 +46,7 @@ console.log("Running in digital ocean: ", process.env.RUNNING_IN_DIGITAL_OCEAN);
 // await database.connectToDatabase();
 // database.associateModelToConnection();
 
-const linkPreview = new LinkPreview(puppeteerExecutablePath);
+const linkPreview = new LinkPreview(process.env.PUPPETEER_EXECUTABLE_PATH);
 const articleManagement = new ArticleManagement(database, linkPreview);
 const userManagement = new UserManagement(database);
 
