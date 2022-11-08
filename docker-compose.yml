@@ -7,6 +7,9 @@ services:
   ports:
    - 4000:4000
    - 9229:9229
+  env_file:
+    # - ./config/dockerlocal.env
+    - ./config/digitalocean.env
   environment:
    - SERVER_PORT=4000
    - CONNECTIONSTRING=mongodb://mongo:27017/vote-the-news
@@ -27,6 +30,9 @@ services:
    context: "./apps/react_app"
   ports:
    - 3000:3000
+  env_file:
+    # - ./config/dockerlocal.env
+    - ./config/digitalocean.env
   environment:
    - SERVER_PORT=3000
 

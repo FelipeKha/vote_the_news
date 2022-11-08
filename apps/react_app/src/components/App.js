@@ -13,14 +13,14 @@ function App() {
     // console.log(pageDisplayed);
 
 
-    function getServerUrl() {
-        if (process.env.REACT_APP_RUNNING_IN_DIGITAL_OCEAN === 'true') {
-            setServerUrl(process.env.REACT_APP_SERVER_URL_DIGITAL_OCEAN);
-        } else {
-            setServerUrl(process.env.REACT_APP_SERVER_URL_LOCAL);
-        }
-        console.log("Here is the server url", serverUrl);
-    }
+    // function getServerUrl() {
+    //     if (process.env.REACT_APP_RUNNING_IN_DIGITAL_OCEAN === 'true') {
+    //         setServerUrl(process.env.REACT_APP_SERVER_URL_DIGITAL_OCEAN);
+    //     } else {
+    //         setServerUrl(process.env.REACT_APP_SERVER_URL_LOCAL);
+    //     }
+    //     console.log("Here is the server url", serverUrl);
+    // }
 
     function allArticlesHandler() {
         setPageDisplayed("allarticles");
@@ -34,12 +34,12 @@ function App() {
         setPageDisplayed("myvotes");
     }
 
-    useEffect(() => {
-        console.log("useEffect in App");
-        getServerUrl();
-    },
-        [getServerUrl, serverUrl]
-    )
+    // useEffect(() => {
+    //     console.log("useEffect in App");
+    //     getServerUrl();
+    // },
+    //     [getServerUrl, serverUrl]
+    // )
 
     return (
         <>
@@ -47,12 +47,12 @@ function App() {
                 allArticlesHandler={allArticlesHandler}
                 myArticlesHandler={myArticlesHandler}
                 myVotesHandler={myVotesHandler}
-                serverUrl={serverUrl}
+                // serverUrl={serverUrl}
             />
             <NewArticlePostUrlInput />
             <MainGrid
                 pageDisplayed={pageDisplayed}
-                serverUrl={serverUrl}
+                // serverUrl={serverUrl}
             />
         </>
     )

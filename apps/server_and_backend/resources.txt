@@ -40,6 +40,15 @@ https://create-react-app.dev/docs/adding-custom-environment-variables/
 https://stackoverflow.com/questions/50640200/conditionally-detecting-whether-a-node-server-is-running-inside-a-docker-contain
 https://www.digitalocean.com/community/questions/how-to-pass-environment-variables-to-a-docker-container
 
+Get IP address:
+https://stackoverflow.com/questions/3653065/get-local-ip-address-in-node-js
+
+Digital Ocean pass env var to Docker container:
+https://www.digitalocean.com/community/questions/how-to-pass-environment-variables-to-a-docker-container
+
+
 
 https://jazzfuel.com/best-jazz-albums/
 https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-pieces/
+
+docker compose -f docker-compose.yml up --build -e "RUNNING_IN_DIGITAL_OCEAN=true" -e "REACT_APP_RUNNING_IN_DIGITAL_OCEAN=true"
