@@ -98,7 +98,8 @@ function getCorsOriginsArray() {
         }
     }
     const localHost3000Url = process.env.LOCAL_HOST_3000_URL;
-    corsOriginsArray.push(localHost3000Url);
+    const digitalOcean3000Url = process.env.DIGITAL_OCEAN_3000_URL;
+    corsOriginsArray.push(localHost3000Url, digitalOcean3000Url);
     console.log("CORS origins: ", corsOriginsArray);
     return corsOriginsArray;
 }
