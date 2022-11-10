@@ -46,7 +46,17 @@ https://stackoverflow.com/questions/3653065/get-local-ip-address-in-node-js
 Digital Ocean pass env var to Docker container:
 https://www.digitalocean.com/community/questions/how-to-pass-environment-variables-to-a-docker-container
 
+Start mongo shell in docker container:
+https://stackoverflow.com/questions/32944729/how-to-start-a-mongodb-shell-in-docker-container
 
+Serve React App with Express:
+https://levelup.gitconnected.com/how-to-render-react-app-using-express-server-in-node-js-a428ec4dfe2b
+
+Docker multistage react app build:
+https://medium.com/geekculture/dockerizing-a-react-application-with-multi-stage-docker-build-4a5c6ca68166
+
+Purging docker:
+https://www.digitalocean.com/community/tutorials/how-to-remove-docker-images-containers-and-volumes
 
 https://jazzfuel.com/best-jazz-albums/
 https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-pieces/
