@@ -30,8 +30,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push
-
-    setps:
+    steps:
       - name: Deploy to DigitalOCean droplet via SSH action
         uses: appleboy/ssh-action@master
         with: 
