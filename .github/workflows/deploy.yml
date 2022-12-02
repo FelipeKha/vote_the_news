@@ -56,8 +56,8 @@ jobs:
   build_and_push:
     runs-on: ubuntu-latest
     steps:
-      # - name: Checkout files
-      #   uses: actions/checkout@v3
+      - name: Checkout files
+        uses: actions/checkout@v3
       - name: Build container image
         run: docker compose build
       - name: Tag the image with the fully qualified destination path
