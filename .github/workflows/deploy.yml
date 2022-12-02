@@ -24,8 +24,10 @@ jobs:
         run: doctl registry login --expiry-seconds 600
       - name: Remove old images
         run: if [ ! -z "$doctl registry repository list | grep "$(echo $IMAGE_NAME)")"]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
+      - name: Tag the image with the fully qualified destination path
+        run: docker tag vote_the_news-vtn-server registry.digitalocean.com/felipedocr/vote_the_news-vtn-server
       - name: Push image to DigitalOcean Container Registry
-        run: docker push "vote_the_news-vtn-server"
+        run: docker push registry.digitalocean.com/felipedocr/vote_the_news-vtn-server
     
   deploy:
     runs-on: ubuntu-latest
