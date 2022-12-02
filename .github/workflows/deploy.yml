@@ -40,7 +40,7 @@ jobs:
             key:  ${{ secrets.SSH_KEY }}
             passphrase: ${{ secrets.SSH_PASSPHRASE }}
             envs: IMAGE_NAME,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
-            script:
+            script: |
               docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
               docker stop $(echo $IMAGE_NAME)
               docker rm $(echo $IMAGE_NAME)
