@@ -54,11 +54,27 @@ https://levelup.gitconnected.com/how-to-render-react-app-using-express-server-in
 
 Docker multistage react app build:
 https://medium.com/geekculture/dockerizing-a-react-application-with-multi-stage-docker-build-4a5c6ca68166
+https://medium.com/bb-tutorials-and-thoughts/how-to-serve-react-application-with-nginx-and-docker-9c51ac2c50ba
 
 Purging docker:
 https://www.digitalocean.com/community/tutorials/how-to-remove-docker-images-containers-and-volumes
 
+Solve Forbidded 403 issue:
+https://linuxhint.com/fix-nginx-403-forbidden/
+
+CD from GitHub to Digital Ocean:
+    Configure the SSH, and register it in GitHub:
+https://medium.com/swlh/how-to-deploy-your-application-to-digital-ocean-using-github-actions-and-save-up-on-ci-cd-costs-74b7315facc2
+    Digital Ocean GitHub for tuto:
+https://github.com/mvkaran/openmct-tutorial/blob/completed/.github/workflows/stage.yml
+    Explanation CI/CD:
+https://codememoirs.com/automatic-deployment-digitalocean-github-actions
+    Potential working solution with CLI commands:
+https://thaoth.dev/Full-CI-CD-with-Docker-GitHub-Actions-DigitalOcean-Droplets-Container-Registry/
+
+
 https://jazzfuel.com/best-jazz-albums/
 https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-pieces/
+
 
 docker compose -f docker-compose.yml up --build -e "RUNNING_IN_DIGITAL_OCEAN=true" -e "REACT_APP_RUNNING_IN_DIGITAL_OCEAN=true"
