@@ -4,79 +4,83 @@ on:
   push:
     branches: [main]
 
-env:
-  REGISTRY: "registry.digitalocean.com/felipedocr"
-  IMAGE_NAME: "vtn_image"
+# First attempt: build and push image to DigitalOcean Container Registry, and deploy to Droplet - failed at push due to quota exceeded
+# env:
+#   REGISTRY: "registry.digitalocean.com/felipedocr"
+#   IMAGE_NAME: "vtn_image"
 
+# jobs:
+#   build_and_push:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout files
+#         uses: actions/checkout@v3
+#       - name: Build container image
+#         run: docker compose build
+#       - name: Install doctl
+#         uses: digitalocean/action-doctl@v2
+#         with:
+#           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+#       - name: Log in to DigitalOcean Container Registry with short-lived credentials
+#         run: doctl registry login --expiry-seconds 600
+#       - name: Remove old images
+#         run: if [ ! -z "$doctl registry repository list | grep "$(echo $IMAGE_NAME)")"]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
+#       - name: Tag the image with the fully qualified destination path
+#         run: docker tag vote_the_news-vtn-react-app registry.digitalocean.com/felipedocr/vote_the_news-vtn-react-app
+#       - name: Push image to DigitalOcean Container Registry
+#         run: docker push registry.digitalocean.com/felipedocr/vote_the_news-vtn-react-app
+    
+#   deploy:
+#     runs-on: ubuntu-latest
+#     needs: build_and_push
+#     steps:
+#       - name: Deploy to DigitalOCean droplet via SSH action
+#         uses: appleboy/ssh-action@master
+#         with: 
+#           host: ${{ secrets.SSH_HOST }}
+#           username: ${{ secrets.SSH_USERNAME }}
+#           key:  ${{ secrets.SSH_KEY }}
+#           passphrase: ${{ secrets.SSH_PASSPHRASE }}
+#           envs: IMAGE_NAME,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
+#           script: |
+#             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+#             docker stop $(echo $IMAGE_NAME)
+#             docker rm $(echo $IMAGE_NAME)
+#             docker run -d \
+#             --restart always \
+#             --name $(echo $IMAGE_NAME) \
+#             $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo GITHUB_SHA | head -c7)
+
+# Second attempt: build and push image to Docker Hub, and then deploy to Droplet
 jobs:
-  build_and_push:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      # - name: Checkout files
+      #   uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push Docker images to Docker Hub
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: focall/vote_the_news:latest
+
+  deploy:
+    needs: docker
     runs-on: ubuntu-latest
     steps:
       - name: Checkout files
         uses: actions/checkout@v3
-      - name: Build container image
-        run: docker compose build
+      - name: Get tag name
+        uses: olegtarasov/get-tag@v2
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      - name: Log in to DigitalOcean Container Registry with short-lived credentials
-        run: doctl registry login --expiry-seconds 600
-      - name: Remove old images
-        run: if [ ! -z "$doctl registry repository list | grep "$(echo $IMAGE_NAME)")"]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
-      - name: Tag the image with the fully qualified destination path
-        run: docker tag vote_the_news-vtn-react-app registry.digitalocean.com/felipedocr/vote_the_news-vtn-react-app
-      - name: Push image to DigitalOcean Container Registry
-        run: docker push registry.digitalocean.com/felipedocr/vote_the_news-vtn-react-app
-    
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build_and_push
-    steps:
-      - name: Deploy to DigitalOCean droplet via SSH action
-        uses: appleboy/ssh-action@master
-        with: 
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key:  ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          envs: IMAGE_NAME,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
-          script: |
-            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-            docker stop $(echo $IMAGE_NAME)
-            docker rm $(echo $IMAGE_NAME)
-            docker run -d \
-            --restart always \
-            --name $(echo $IMAGE_NAME) \
-            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo GITHUB_SHA | head -c7)
-
-
-
-
-
-
-      # - name: Build and push Docker images
-      #   uses: docker/build-push-action@v1
-      #   with:
-      #     host: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      #     repository: FelipeKha/vote_the_news
-      #     tag_with_ref: true
-      #     tag_with_sha: true
-
-
-  # deploy:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout files
-  #       uses: actions/checkout@v3
-  #     - name: Get tag name
-  #       use: olegtarasov/get-tag@v2
-  #     - name: Install doctl
-  #       uses: digitalocean/action-doctl@v2
-  #       with:
-  #         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-  #     - name: Provision Droplet and deploy container
-  #       run: doctl compute droplet create "$GIT_TAG_NAME" --image docker-18-04 --size
+      - name: Provision Droplet and deploy container
+        run: doctl compute droplet
 
