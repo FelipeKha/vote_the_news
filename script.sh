@@ -8,4 +8,3 @@ expect "Are you sure you want to continue connecting?" {
     send "yes\r"
 }
 interact
-ls
