@@ -131,3 +131,5 @@ jobs:
         shell: bash
       - name: Print files in Droplet
         run: ls
+      - name: Print whoami
+        run: whoami
