@@ -127,9 +127,5 @@ jobs:
       - name: Install expect interpreter
         run: sudo apt-get install expect
       - name: Connect to Droplet with ssh
-        run: ./script.sh
+        run: ./deploy_script.sh
         shell: bash
-      - name: Print files in Droplet
-        run: ls
-      - name: Print whoami
-        run: whoami
