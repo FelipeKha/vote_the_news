@@ -125,7 +125,7 @@ jobs:
       #       git clone https://github.com/FelipeKha/vote_the_news.git
       #       echo 'Deployment to digital ocean finished'
       - name: Install expect interpreter
-        run: apt-get install expect
+        run: sudo apt-get install expect
       - name: Connect to Droplet with ssh
         run: ./script.sh
         shell: bash
