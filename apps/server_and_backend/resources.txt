@@ -74,6 +74,12 @@ https://thaoth.dev/Full-CI-CD-with-Docker-GitHub-Actions-DigitalOcean-Droplets-C
     Guide to deploy by login to droplet:
 https://gist.github.com/danieltorscho/c104c23e97c840f09fd9a186ec092b28
 
+Create a script:
+https://likegeeks.com/expect-command/
+
+Script to ssh connect to droplet:
+https://www.digitalocean.com/community/tutorials/expect-script-ssh-example-tutorial
+
 
 https://jazzfuel.com/best-jazz-albums/
 https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-pieces/
