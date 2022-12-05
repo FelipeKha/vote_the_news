@@ -7,4 +7,5 @@ expect "Enter passphrase for key '/Users/felipekharaba/.ssh/id_rsa'" {
 expect "Are you sure you want to continue connecting?" {
     send "yes\r"
 }
+echo "Connected to Droplet"
 interact
