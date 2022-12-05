@@ -71,6 +71,8 @@ https://github.com/mvkaran/openmct-tutorial/blob/completed/.github/workflows/sta
 https://codememoirs.com/automatic-deployment-digitalocean-github-actions
     Potential working solution with CLI commands:
 https://thaoth.dev/Full-CI-CD-with-Docker-GitHub-Actions-DigitalOcean-Droplets-Container-Registry/
+    Guide to deploy by login to droplet:
+https://gist.github.com/danieltorscho/c104c23e97c840f09fd9a186ec092b28
 
 
 https://jazzfuel.com/best-jazz-albums/
