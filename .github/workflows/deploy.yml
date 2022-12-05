@@ -124,5 +124,6 @@ jobs:
       #       echo 'Deployment to digital ocean finished'
       - name: Connect to Droplet with ssh
         run: ./script.sh
+        shell: bash
       - name: Print files in Droplet
         run: ls
