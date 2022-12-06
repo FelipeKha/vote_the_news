@@ -2,7 +2,7 @@
 
 set timeout 60
 
-ssh-keyscan 104.248.194.185 >> ~/.ssh/known_hosts
+echo 104.248.194.185 > ~/.ssh/known_hosts
 spawn ssh root@104.248.194.185
 
 expect "Enter passphrase for key '/Users/felipekharaba/.ssh/id_rsa'"
