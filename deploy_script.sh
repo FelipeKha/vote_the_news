@@ -2,12 +2,13 @@
 
 set timeout 60
 
+ssh-keyscan 104.248.194.185 >> ~/.ssh/known_hosts
 spawn ssh root@104.248.194.185
 
 expect "Enter passphrase for key '/Users/felipekharaba/.ssh/id_rsa'"
 send -- "vtncomingtolecreusot\r"
-expect "Are you sure you want to continue connecting"
-send -- "yes\r"
+# expect "Are you sure you want to continue connecting"
+# send -- "yes\r"
 expect "root@docker-s-1vcpu-1gb-ams3-01:~# "
 send -- "date >> timestamp.txt\r"
 expect "# "
