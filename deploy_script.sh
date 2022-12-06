@@ -2,17 +2,8 @@
 
 set timeout 60
 
+ssh-keyscan 104.248.194.185 >> ~/.ssh/known_hosts
 spawn ssh root@104.248.194.185
-# spawn ssh root@104.248.194.185 'bash -s' < remote_script.sh
-# spawn ssh -T root@104.248.194.185 << _remote_commands
-# date >> timestamp.txt
-
-# rm -rf vote_the_news
-# mkdir vote_the_news
-# cd vote_the_news
-# git clone https://github.com/FelipeKha/vote_the_news.git
-
-# _remote_commands
 
 expect "Enter passphrase for key '/Users/felipekharaba/.ssh/id_rsa'"
 send -- "vtncomingtolecreusot\r"
@@ -33,3 +24,15 @@ send -- "docker-compose up -d\r"
 expect "# "
 send -- "exit\r"
 expect eof
+
+
+# spawn ssh root@104.248.194.185 'bash -s' < remote_script.sh
+# spawn ssh -T root@104.248.194.185 << _remote_commands
+# date >> timestamp.txt
+
+# rm -rf vote_the_news
+# mkdir vote_the_news
+# cd vote_the_news
+# git clone https://github.com/FelipeKha/vote_the_news.git
+
+# _remote_commands
