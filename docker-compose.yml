@@ -2,8 +2,9 @@ version: '3.8'
 
 services:
  vtn-server:
-  build:
-   context: "./apps/server_and_backend"
+  image: focall/vtn_react_app:1.0.0
+  # build:
+  #  context: "./apps/server_and_backend"
   ports:
    - 4000:4000
    - 9229:9229
@@ -26,8 +27,9 @@ services:
    - mongodb_config:/data/configdb
 
  vtn-react-app:
-  build:
-   context: "./apps/react_app"
+  image: focall/vtn_server:1.0.0
+  # build:
+  #  context: "./apps/react_app"
   ports:
    - 3000:3000
   env_file:
