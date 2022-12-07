@@ -1,0 +1,6 @@
+services:
+  vtn-server:
+    image: focall/vtn_server:1.0.0
+
+  vtn-react-app:
+    image: focall/vtn_react_app:1.0.0
