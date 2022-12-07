@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  IMAGES_TAG: $(echo $GITHUB_SHA | head -c7)
+  IMAGES_TAG: $GITHUB_SHA | head -c7
 
 jobs:
   build_and_push:
