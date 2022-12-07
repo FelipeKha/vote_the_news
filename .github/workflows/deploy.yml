@@ -40,8 +40,8 @@ jobs:
             cd vote_the_news
             git pull https://github.com/FelipeKha/vote_the_news.git
             docker ps -aq | xargs docker stop | xargs docker rm
+            docker images -a | xargs docker rmi
             docker compose up -d
-            exit
 
 
 
