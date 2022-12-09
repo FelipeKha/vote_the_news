@@ -80,6 +80,22 @@ https://likegeeks.com/expect-command/
 Script to ssh connect to droplet:
 https://www.digitalocean.com/community/tutorials/expect-script-ssh-example-tutorial
 
+Server configuration:
+    Initial Server Setup with Ubuntu 18.04
+https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04
+    How To Install Nginx on Ubuntu 18.04
+https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04
+    How To Secure Nginx with Let's Encrypt on Ubuntu 18.04
+https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04
+
+    How to Create, Edit, and Delete DNS Records
+https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/
+
+
+
+
+https://www.digitalocean.com/community/questions/point-domain-name-to-specific-ip-port
+
 
 https://jazzfuel.com/best-jazz-albums/
 https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-pieces/
