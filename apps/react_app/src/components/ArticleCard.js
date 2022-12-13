@@ -18,7 +18,8 @@ import { UserContext } from "../context/UserContext";
 function ArticleCard(props) {
   const [userContext, setUserContext] = useContext(UserContext);
 
-  const fetchVoteUrl = process.env.REACT_APP_SERVER_URL + `${props.articleInfo._id}/vote`;
+  // const fetchVoteUrl = process.env.REACT_APP_SERVER_URL + `${props.articleInfo._id}/vote`;
+  const fetchVoteUrl = window._env_.REACT_APP_SERVER_URL + `${props.articleInfo._id}/vote`;
 
   function fetchUpVote() {
     fetch(
