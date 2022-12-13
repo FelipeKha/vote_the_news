@@ -37,6 +37,7 @@ function NavAppBar(props) {
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const [successMessage, setSuccessMessage] = useState("")
   
+  console.log("REACT_APP_SERVER_URL:", process.env.REACT_APP_SERVER_URL);
   const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
   const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me"
   // const refreshTokenUrl = props.serverUrl + "refreshToken";
