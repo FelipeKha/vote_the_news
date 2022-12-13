@@ -99,7 +99,9 @@ function getCorsOriginsArray() {
     }
     const localHostUrl = process.env.LOCAL_HOST_URL;
     const digitalOceanUrl = process.env.DIGITAL_OCEAN_URL;
-    corsOriginsArray.push(localHostUrl, digitalOceanUrl);
+    const domainUrl = process.env.DOMAIN_URL;
+    const domainUrlWww = process.env.DOMAIN_URL_WWW;
+    corsOriginsArray.push(localHostUrl, digitalOceanUrl, domainUrl, domainUrlWww);
     console.log("CORS origins: ", corsOriginsArray);
     return corsOriginsArray;
 }
