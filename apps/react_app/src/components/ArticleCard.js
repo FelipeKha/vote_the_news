@@ -80,7 +80,7 @@ function ArticleCard(props) {
           component="img"
           alt="green iguana"
           height="140"
-          image={props.articleInfo.linkPreview.img}
+          image={props.articleInfo.linkPreview.img ? props.articleInfo.linkPreview.img : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png"}
         />
         <CardContent>
           <Typography
@@ -91,7 +91,7 @@ function ArticleCard(props) {
             lineHeight={1.4}
             marginBottom={1}
           >
-            {props.articleInfo.linkPreview.title}
+            {props.articleInfo.linkPreview.title ? props.articleInfo.linkPreview.title : "[NO TITLE]" }
           </Typography>
           <Typography
             gutterBottom
@@ -100,7 +100,7 @@ function ArticleCard(props) {
             align="left"
             lineHeight={1.2}
           >
-            {props.articleInfo.linkPreview.description}
+            {props.articleInfo.linkPreview.description ? props.articleInfo.linkPreview.description : "[NO DESCRIPTION]"}
           </Typography>
           <Typography
             variant="overline"
@@ -108,7 +108,7 @@ function ArticleCard(props) {
             align="right"
             lineHeight={1}
           >
-            {props.articleInfo.linkPreview.domain}
+            {props.articleInfo.linkPreview.domain ? props.articleInfo.linkPreview.domain : "[NO DOMAIN]"}
           </Typography>
         </CardContent>
       </Link>
