@@ -97,6 +97,10 @@ https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/
 https://www.digitalocean.com/community/questions/point-domain-name-to-specific-ip-port
 
 
+Command to log into container command line:
+docker exec -it vote_the_news-vtn-react-app-1 /bin/bash
+
+
 https://jazzfuel.com/best-jazz-albums/
 https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-pieces/
 

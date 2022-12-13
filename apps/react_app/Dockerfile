@@ -25,8 +25,10 @@ FROM nginx:latest
 COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build-stage /react_app/build /usr/share/nginx/html
-# EXPOSE 3000 80
-ENTRYPOINT [ "nginx", "-g", "daemon off;"]
+COPY ./env.sh /usr/share/nginx/html
+COPY .env /usr/share/nginx/html
+RUN chmod +x /usr/share/nginx/html/env.sh
+CMD ["/bin/sh", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
 
 # WORKDIR /usr/share/nginx/html
 # RUN rm -rf /etc/nginx/nginx.conf
@@ -34,7 +36,10 @@ ENTRYPOINT [ "nginx", "-g", "daemon off;"]
 # RUN chown -R $USER:$USER /var/www/votethenews.com/html
 # RUN chmod -R 755 /var/www/votethenews.com
 # RUN rm -rf /var/www/votethenews.com/html/*
+# EXPOSE 3000 80
 
 # COPY ./.nginx/nginx.conf /etc/nginx/sites-available/votethenews.com
 # RUN ln -s /etc/nginx/sites-available/votethenews.com /etc/nginx/sites-enabled/
 # RUN rm -rf /usr/share/nginx/html/*
+
+# ENTRYPOINT [ "nginx", "-g", "daemon off;"]
