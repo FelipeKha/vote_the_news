@@ -39,8 +39,10 @@ function NavAppBar(props) {
   
   console.log("REACT_APP_SERVER_URL from .env:", process.env.REACT_APP_SERVER_URL);
   console.log("REACT_APP_SERVER_URL from env-config.js:", window._env_.REACT_APP_SERVER_URL);
-  const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
-  const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me"
+  // const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
+  // const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me"
+  const refreshTokenUrl = window._env_.REACT_APP_SERVER_URL + "refreshToken";
+  const userDetailsUrl = window._env_.REACT_APP_SERVER_URL + "me"
   // const refreshTokenUrl = props.serverUrl + "refreshToken";
   // const userDetailsUrl = props.serverUrl + "me"
 
