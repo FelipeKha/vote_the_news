@@ -259,21 +259,22 @@ class Database {
         const articleDeleted = await this.articleModel.findByIdAndDelete(id)
     }
 
-    createNewUserDocument(
-        firstName, 
+    async createNewUserDocument(
+        firstName,
         lastName,
         nameDisplayed,
         username,
         password
     ) {
-        const userDocument = new this.userModel({
-            firstName: firstName,
-            lastName: lastName,
-            nameDisplayed: nameDisplayed,
-            username: username,
-            password: password
-        });
-        return userDocument;
+        const user = await this.userModel.register(
+            new this.userModel({ username: username }),
+            password
+        )
+        user.firstName = firstName;
+        user.lastName = lastName || "";
+        user.nameDisplayed = nameDisplayed;
+        const userSaved = await user.save()
+        return userSaved;
     }
 
     async saveUser(userDocument) {
@@ -283,6 +284,11 @@ class Database {
 
     async loadUserWithId(userId) {
         const user = await this.userModel.findById(userId);
+        return user;
+    }
+
+    async loadUserWithUsername(username) {
+        const user = await this.userModel.find({ "username": username });
         return user;
     }
 }
