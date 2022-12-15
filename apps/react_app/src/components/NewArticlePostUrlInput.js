@@ -34,8 +34,7 @@ function NewArticlePostUrlInput() {
 
         const genericErrorMessage = "Something went wrong, please try again."
 
-        // const newArticlePostUrl = process.env.REACT_APP_SERVER_URL + "newarticlepost";
-        const newArticlePostUrl = window._env_.REACT_APP_SERVER_URL + "newarticlepost";
+        const newArticlePostUrl = process.env.REACT_APP_SERVER_URL + "newarticlepost";
 
         fetch(
             newArticlePostUrl,

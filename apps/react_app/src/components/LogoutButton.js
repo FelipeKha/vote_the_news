@@ -12,8 +12,7 @@ import { UserContext } from '../context/UserContext';
 function LogoutButton(props) {
     const [userContext, setUserContext] = useContext(UserContext);
 
-    // const logoutUrl = process.env.REACT_APP_SERVER_URL + "logout";
-    const logoutUrl = window._env_.REACT_APP_SERVER_URL + "logout";
+    const logoutUrl = process.env.REACT_APP_SERVER_URL + "logout";
 
     function logoutHandler() {
         fetch(

@@ -27,8 +27,7 @@ function SignInFormDialog(props) {
 
         const genericErrorMessage = "Something went wrong, please try again."
 
-        // const loginUrl = process.env.REACT_APP_SERVER_URL + "login";
-        const loginUrl = window._env_.REACT_APP_SERVER_URL + "login";
+        const loginUrl = process.env.REACT_APP_SERVER_URL + "login";
 
         fetch(
             loginUrl,
