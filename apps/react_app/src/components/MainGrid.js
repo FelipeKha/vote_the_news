@@ -57,8 +57,7 @@ function MainGrid(props) {
 
     setLoading(true);
 
-    // const fetchArticlesArrayUrl = process.env.REACT_APP_SERVER_URL + `${props.pageDisplayed}`
-    const fetchArticlesArrayUrl = window._env_.REACT_APP_SERVER_URL + `${props.pageDisplayed}`
+    const fetchArticlesArrayUrl = process.env.REACT_APP_SERVER_URL + `${props.pageDisplayed}`
     // const fetchArticlesArrayUrl = props.serverUrl + `${props.pageDisplayed}`
 
     fetch(

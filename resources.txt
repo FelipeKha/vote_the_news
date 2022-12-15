@@ -91,8 +91,8 @@ https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-
     How to Create, Edit, and Delete DNS Records
 https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/
 
-
-
+How to implement runtime environment variables with create-react-app, Docker, and Nginx:
+https://medium.com/free-code-camp/how-to-implement-runtime-environment-variables-with-create-react-app-docker-and-nginx-7f9d42a91d70
 
 https://www.digitalocean.com/community/questions/point-domain-name-to-specific-ip-port
 
