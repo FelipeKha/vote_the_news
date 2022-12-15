@@ -12,17 +12,16 @@ class UserManagement {
         username,
         password
     ) {
-        const userDocument = this.database.createNewUserDocument(
+        const userDocument = await this.database.createNewUserDocument(
             firstName,
             lastName,
             nameDisplayed,
             username,
             password
         );
+        console.log('In user_management:', userDocument);
         const userId = userDocument._id;
         const { token, refreshToken } = UserManagement.getNewTokens(userId);
-        // const token = getToken({ _id: userDocument._id });
-        // const refreshToken = getRefreshToken({ _id: userDocument._id });
         userDocument.refreshToken.push({ refreshToken });
         const user = await this.database.saveUser(userDocument)
         return { user: user, token: token, refreshToken: refreshToken };
