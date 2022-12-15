@@ -19,16 +19,17 @@ COPY ["package.json", "package-lock.json*", "/react_app/"]
 # COPY package*.json /react_app/
 RUN npm install
 COPY ./ /react_app/
+ENV REACT_APP_SERVER_URL "http://localhost:4000/"
 RUN npm run build
 
 FROM nginx:latest
 COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build-stage /react_app/build /usr/share/nginx/html
-COPY ./env.sh /usr/share/nginx/html
-COPY .env /usr/share/nginx/html
-RUN chmod +x /usr/share/nginx/html/env.sh
-CMD ["/bin/sh", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
+# COPY ./env.sh /usr/share/nginx/html
+# COPY .env /usr/share/nginx/html
+# RUN chmod +x /usr/share/nginx/html/env.sh
+CMD ["/bin/sh", "-c", "nginx -g \"daemon off;\""]
 
 # WORKDIR /usr/share/nginx/html
 # RUN rm -rf /etc/nginx/nginx.conf
