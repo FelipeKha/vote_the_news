@@ -106,3 +106,8 @@ https://www.classicfm.com/discover-music/instruments/piano/features/best-piano-p
 
 
 docker compose -f docker-compose.yml up --build -e "RUNNING_IN_DIGITAL_OCEAN=true" -e "REACT_APP_RUNNING_IN_DIGITAL_OCEAN=true"
+
+
+# git pull https://github.com/FelipeKha/vote_the_news.git
+# echo "IMAGES_TAG="$GITHUB_SHA | head -c18 > ~/vote_the_news/images_tag.env
+# export $(grep -v '^#' deploy_meta.env | xargs -d '\n')
