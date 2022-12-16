@@ -7,7 +7,7 @@ on:
       - dev_deploy
 
 env:
-  IMAGES_TAG=$(echo $GITHUB_SHA | head -c7)
+  # IMAGES_TAG=$(echo $GITHUB_SHA | head -c7)
   TEST_ENV_VAR="VLABLA"
 
 jobs:
