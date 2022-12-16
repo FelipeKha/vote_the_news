@@ -6,28 +6,24 @@ on:
       - main
       - dev_deploy
 
-env:
-  # IMAGES_TAG=$(echo $GITHUB_SHA | head -c7)
-  TEST_ENV_VAR="VLABLA"
-
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout files
         uses: actions/checkout@v3
-      - name: Check current location
-        run: pwd
-      - name: List all files
-        run: ls -a
-      - name: Create IMAGES_TAG env var
+      - name: Create IMAGES_TAG_CLI env var
         run: export IMAGES_TAG_CLI=$(echo $GITHUB_SHA | head -c7)
+      - name: Create TEST_ENV_VAR env var
+        run: export TEST_ENV_VAR="hello test env var"
+      - name: Another test
+        run: export GIT_PR_SHA_SHORT="${GITHUB_SHA:0:10}"
       - name: Print IMAGES_TAG_CLI
         run: echo $IMAGES_TAG_CLI
-      - name: Print IMAGES_TAG
-        run: echo $IMAGES_TAG
       - name: Print TEST_ENV_VAR
         run: echo $TEST_ENV_VAR
+      - name: Print GIT_PR_SHA_SHORT
+        run: echo $GIT_PR_SHA_SHORT
       - name: Create deploy_meta.env
         run: |
           echo \
