@@ -6,6 +6,10 @@ on:
       - main
       - dev_deploy
 
+env:
+  IMAGES_TAG=$(echo $GITHUB_SHA | head -c7)
+  TEST_ENV_VAR="VLABLA"
+
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
@@ -17,16 +21,20 @@ jobs:
       - name: List all files
         run: ls -a
       - name: Create IMAGES_TAG env var
-        run: export IMAGES_TAG=$(echo $GITHUB_SHA | head -c7)
+        run: export IMAGES_TAG_CLI=$(echo $GITHUB_SHA | head -c7)
+      - name: Print IMAGES_TAG_CLI
+        run: echo $IMAGES_TAG_CLI
       - name: Print IMAGES_TAG
         run: echo $IMAGES_TAG
+      - name: Print TEST_ENV_VAR
+        run: echo $TEST_ENV_VAR
       - name: Create deploy_meta.env
         run: |
           echo \
           "GITHUB_SHA="$GITHUB_SHA \
           "\nGITHUB_RUN_ID="$GITHUB_RUN_ID \
           "\nGITHUB_RUN_NUMBER="$GITHUB_RUN_NUMBER \
-          "\nIMAGES_TAG="$IMAGES_TAG
+          "\nIMAGES_TAG="$IMAGES_TAG \
           > deploy_meta.env
       - name: Build images
         run: |
