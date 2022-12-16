@@ -11,38 +11,6 @@ jobs:
   build_and_push:
     runs-on: ubuntu-latest
     steps:
-      # - name: Checkout files
-      #   uses: actions/checkout@v3
-      # - name: Check current location
-      #   run: pwd
-      # - name: List all files
-      #   run: ls -a
-      # - name: Create IMAGES_TAG env var
-      #   run: export IMAGES_TAG=$(echo $GITHUB_SHA | head -c7)
-      # - name: Print IMAGES_TAG
-      #   run: echo $IMAGES_TAG
-      # - name: Create deploy_meta.env
-      #   run: |
-      #     echo \
-      #     "GITHUB_SHA="$GITHUB_SHA \
-      #     "\nGITHUB_RUN_ID="$GITHUB_RUN_ID \
-      #     "\nGITHUB_RUN_NUMBER="$GITHUB_RUN_NUMBER \
-      #     "\nIMAGES_TAG="$IMAGES_TAG
-      #     > deploy_meta.env
-      # - name: Build images
-      #   run: |
-      #     docker build -t focall/vtn_server:$(echo $GITHUB_SHA | head -c7) apps/server_and_backend/ 
-      #     docker build --build-arg REACT_APP_SERVER_URL=http://104.248.194.185:4000/ -t focall/vtn_react_app:$(echo $GITHUB_SHA | head -c7) apps/react_app/
-      # - name: Login to Docker Hub
-      #   uses: docker/login-action@v2
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push focall/vtn_server:$(echo $GITHUB_SHA | head -c7)
-      #     docker push focall/vtn_react_app:$(echo $GITHUB_SHA | head -c7)
-
       - name: Checkout files
         uses: actions/checkout@v3
       - name: Create deploy_meta.env
@@ -66,38 +34,13 @@ jobs:
         run: |
           docker push focall/vtn_server:$(echo $GITHUB_SHA | head -c7)
           docker push focall/vtn_react_app:$(echo $GITHUB_SHA | head -c7)
+      - name: List all files in folder
+        run: ls -a
+  
   deploy:
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
-      # - name: Checkout files
-      #   uses: actions/checkout@v3
-      # - name: Copy file via ssh password
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     username: ${{ secrets.USERNAME }}
-      #     password: ${{ secrets.PASSWORD }}
-      #     port: ${{ secrets.PORT }}
-      #     source: "tests/a.txt,tests/b.txt"
-      #     target: "test"
-      # - name: Execute remote ssh commands using ssh key
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.SSH_KNOWN_HOSTS }}
-      #     username: ${{ secrets.SSH_USERNAME }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     envs: GITHUB_SHA
-      #     script: |
-      #       date >> timestamp.txt
-      #       cd vote_the_news
-      #       git pull https://github.com/FelipeKha/vote_the_news.git
-      #       echo "IMAGES_TAG="$GITHUB_SHA | head -c18 > ~/vote_the_news/images_tag.env
-      #       docker ps -aq | xargs docker stop | xargs docker rm
-      #       docker images -a | xargs docker rmi
-      #       docker compose -f docker-compose.production.yml --env-file images_tag.env up -d
-      #       export $(grep -v '^#' .env | xargs -d '\n')
-
       - name: Checkout files
         uses: actions/checkout@v3
       - name: Copy file via ssh password
@@ -121,70 +64,3 @@ jobs:
             docker ps -aq | xargs docker stop | xargs docker rm
             docker images -a | xargs docker rmi
             docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d
-
-
-
-
-# name: Build & Deploy
-
-# on:
-#   push:
-#     branches: 
-#       - main
-#       - dev_deploy
-
-# jobs:
-#   build_and_push:
-#     runs-on: ubuntu-latests
-#     steps:
-#       - name: Checkout files
-#         uses: actions/checkout@v3
-#       - name: Create deploy_meta.env
-#         run: |
-#           echo \
-#           "GITHUB_SHA="$GITHUB_SHA \
-#           "\nGITHUB_RUN_ID="$GITHUB_RUN_ID \
-#           "\nGITHUB_RUN_NUMBER="$GITHUB_RUN_NUMBER \
-#           "\nIMAGES_TAG="$(echo $GITHUB_SHA | head -c7) \
-#           > deploy_meta.env
-#       - name: Build images
-#         run: |
-#           docker build -t focall/vtn_server:$(echo $GITHUB_SHA | head -c7) apps/server_and_backend/ 
-#           docker build --build-arg REACT_APP_SERVER_URL=http://104.248.194.185:4000/ -t focall/vtn_react_app:$(echo $GITHUB_SHA | head -c7) apps/react_app/
-#       - name: Login to Docker Hub
-#         uses: docker/login-action@v2
-#         with:
-#           username: ${{ secrets.DOCKERHUB_USERNAME }}
-#           password: ${{ secrets.DOCKERHUB_TOKEN }}
-#       - name: Push Docker image to Docker Hub
-#         run: |
-#           docker push focall/vtn_server:$(echo $GITHUB_SHA | head -c7)
-#           docker push focall/vtn_react_app:$(echo $GITHUB_SHA | head -c7)
-
-#   deploy:
-#     needs: build_and_push
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout files
-#         uses: actions/checkout@v3
-#       - name: Copy file via ssh password
-#         uses: appleboy/scp-action@master
-#         with:
-#           host: ${{ secrets.SSH_KNOWN_HOSTS }}
-#           username: ${{ secrets.SSH_USERNAME }}
-#           key: ${{ secrets.SSH_PRIVATE_KEY }}
-#           source: "docker-compose.production.yml,deploy_meta.env,config/digitalocean.env"
-#           target: "vote_the_news"
-#           rm: true
-#       - name: Execute remote ssh commands using ssh key
-#         uses: appleboy/ssh-action@master
-#         with:
-#           host: ${{ secrets.SSH_KNOWN_HOSTS }}
-#           username: ${{ secrets.SSH_USERNAME }}
-#           key: ${{ secrets.SSH_PRIVATE_KEY }}
-#           script: |
-#             date >> timestamp.txt
-#             cd vote_the_news
-#             docker ps -aq | xargs docker stop | xargs docker rm
-#             docker images -a | xargs docker rmi
-#             docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d
