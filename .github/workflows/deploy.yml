@@ -8,7 +8,9 @@ on:
 
 jobs:
   build_and_push:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latests
+    env:
+      FIRST_NAME: Mona
     steps:
       - name: Checkout files
         uses: actions/checkout@v3
@@ -17,13 +19,19 @@ jobs:
       - name: Create TEST_ENV_VAR env var
         run: export TEST_ENV_VAR="hello test env var"
       - name: Another test
-        run: export GIT_PR_SHA_SHORT="${GITHUB_SHA:0:10}"
+        run: export GIT_PR_SHA_SHORT=${GITHUB_SHA:0:10}
+      - name: Another test
+        run: export GIT_PR_SHA_NOT_SHORT="${{ github.sha }}"
       - name: Print IMAGES_TAG_CLI
         run: echo $IMAGES_TAG_CLI
       - name: Print TEST_ENV_VAR
         run: echo $TEST_ENV_VAR
       - name: Print GIT_PR_SHA_SHORT
         run: echo $GIT_PR_SHA_SHORT
+      - name: Print GIT_PR_SHA_NOT_SHORT
+        run: echo $GIT_PR_SHA_NOT_SHORT
+      - name: Print FIRST_NAME
+        run: echo $FIRST_NAME
       - name: Create deploy_meta.env
         run: |
           echo \
