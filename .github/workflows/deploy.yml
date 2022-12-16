@@ -58,6 +58,7 @@ jobs:
           host: ${{ secrets.SSH_KNOWN_HOSTS }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           source: "docker-compose.production.yml,deploy_meta.env,config/digitalocean.env"
           target: "vote_the_news"
           rm: true
@@ -69,6 +70,7 @@ jobs:
           host: ${{ secrets.SSH_KNOWN_HOSTS }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 23
           script: |
             date >> timestamp.txt
             cd vote_the_news
