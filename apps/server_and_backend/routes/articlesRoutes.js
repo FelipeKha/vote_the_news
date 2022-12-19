@@ -14,10 +14,9 @@ const router = express.Router();
 
 router.post('/allarticles', catchAsync(async (req, res) => {
     const lastPostTime = req.body.lastPostTime;
-    console.log(lastPostTime);
-    const articlesArray = await articleManagement.getSortedArticlesArray(lastPostTime);
+    const articleObject = await articleManagement.getSortedArticlesArray(lastPostTime);
     res.statusCode = 200;
-    res.send(articlesArray);
+    res.send(articleObject);
 }))
 
 router.post('/myarticles', verifyUser, catchAsync(async (req, res) => {

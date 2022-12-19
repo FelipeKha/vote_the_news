@@ -35,17 +35,21 @@ class ArticleManagement {
     }
 
     async getMyVotesArray(userId, lastPostTime) {
-        let votesArray;
+        let voteObject;
         try {
-            votesArray = await this.database.loadMyVotesArray(userId, lastPostTime);
+            voteObject = await this.database.loadMyVotesArray(userId, lastPostTime);
         } catch (e) {
             articleManagementErrorsHandler(e);
         }
         const articlesArray = [];
-        for (let vote of votesArray) {
+        for (let vote of voteObject.votesArray) {
             articlesArray.push(vote.article);
         }
-        return articlesArray;
+        const articleObject = {
+            "articlesArray": articlesArray,
+            "lastArticle": voteObject.lastVote
+        }
+        return articleObject;
     }
 
     async postNewArticle(url, authorId) {
@@ -68,7 +72,7 @@ class ArticleManagement {
             newArticleObjectWithLinkPreview = await this.addLinkPreview(newArticleSaved._id)
             console.log('Link preview added');
         } catch (e) {
-            if (e instanceof DomainNotInWhiteListError){
+            if (e instanceof DomainNotInWhiteListError) {
                 this.database.deleteArticle(newArticleSaved._id);
                 throw e;
             } else {
