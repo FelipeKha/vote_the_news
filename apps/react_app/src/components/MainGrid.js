@@ -33,6 +33,7 @@ function MainGrid(props) {
   const [userContext, setUserContext] = useContext(UserContext);
   const [lastArticleCard, setLastArticleCard] = useState(null)
   const [shouldFetch, setShouldFetch] = useState(false)
+  const [pageLoaded, setPageLoaded] = useState(props.pageDisplayed)
   const ref = useRef();
 
   const observer = useRef(
@@ -40,20 +41,20 @@ function MainGrid(props) {
       const first = entries[0];
       if (first.isIntersecting) {
         observerTrigger++;
-        console.log(`observer triggered ${observerTrigger}`);
+        // console.log(`observer triggered ${observerTrigger}`);
         // console.log(articlesArray);
         // const newLastPostTime = articlesArray[articlesArray.length - 1].postTime;
         // setLastPostTime(newLastPostTime);
         // fetchArticlesArray();
-        setShouldFetch(true)
+        setShouldFetch(true);
       }
     })
   );
 
   function fetchArticlesArray(lastPostTimeInput) {
     fetchCalled++
-    console.log(`fetchArticlesArray called ${fetchCalled}`);
-    console.log(lastPostTime);
+    // console.log(`fetchArticlesArray called ${fetchCalled}`);
+    // console.log(lastPostTime);
 
     setLoading(true);
 
@@ -76,16 +77,18 @@ function MainGrid(props) {
       .then(async response => {
         if (response.ok) {
           const data = await response.json();
-          if (data.length !== 0) {
+          const articlesArray = data.articlesArray
+          if (articlesArray !== 0) {
             setIsLoaded(true);
             setArticlesArray(oldValues => {
-              return [...oldValues, ...data];
+              return [...oldValues, ...articlesArray];
             })
-            const newLastPostTime = data[data.length - 1].postTime;
-            console.log('newLastPostTime:', newLastPostTime);
+            const newLastPostTime = articlesArray[articlesArray.length - 1].postTime;
+            // console.log('newLastPostTime:', newLastPostTime);
             setLastPostTime(newLastPostTime);
+            setAllArticlesLoaded(data.lastArticle);
           } else {
-            console.log('No more articles');
+            // console.log('No more articles');
             setAllArticlesLoaded(true);
           }
           setLoading(false);
@@ -114,40 +117,16 @@ function MainGrid(props) {
 
   useEffect(() => {
     useEffectCalled++
-    console.log(`useEffect called ${useEffectCalled}`);
-    console.log(`lastPostTime: ${lastPostTime}`);
+    // console.log(`useEffect called ${useEffectCalled}`);
+    // console.log(`lastPostTime: ${lastPostTime}`);
     fetchArticlesArray(lastPostTime);
-    console.log(`lastPostTime: ${lastPostTime}`);
+    // console.log(`lastPostTime: ${lastPostTime}`);
   },
     []
   )
 
-  // useEffect(() => {
-  //   setArticlesArray([])
-  //   fetchArticlesArray();
-  //   console.log("Second useEffect ran");
-  // },
-  //   [props.pageDisplayed]
-  // )
-
-
-  // useEffect(() => {
-  //   const currentElement = ref.current;
-  //   const currentObserver = observer.current;
-
-  //   if (currentElement) {
-  //     currentObserver.observe(currentElement);
-  //   }
-
-  //   return () => {
-  //     if (currentElement) {
-  //       currentObserver.unobserve(currentElement);
-  //     }
-  //   };
-  // }, [ref]);
-
   useEffect(() => {
-    console.log(lastPostTime);
+    // console.log(lastPostTime);
     const currentElement = lastArticleCard;
     const currentObserver = observer.current;
 
@@ -163,17 +142,25 @@ function MainGrid(props) {
   }, [lastArticleCard, lastPostTime]);
 
   useEffect(() => {
-    console.log(`useEffect shouldFetch: ${lastPostTime}`);
-    if (shouldFetch) {
+    if (shouldFetch && !allArticlesLoaded) {
       fetchArticlesArray(lastPostTime);
     }
   },
     [shouldFetch, lastPostTime]
   )
 
+  useEffect(() => {
+    if (pageLoaded !== props.pageDisplayed) {
+      setArticlesArray([]);
+      fetchArticlesArray("");
+      setPageLoaded(props.pageDisplayed);
+    }
+  },
+    [props.pageDisplayed]
+  )
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      {console.log(lastPostTime)}
       <Grid
         container
         spacing={2}

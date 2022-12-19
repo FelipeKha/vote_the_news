@@ -21,6 +21,7 @@ class Database {
         this.articleModel;
         this.userModel;
         this.voteModel;
+        this.loadLimit = 7;
 
         // this.conn = mongoose.createConnection(this.databaseUrl);
         // this.conn.on('error', (e) => mongoErrorsHandler(e));
@@ -58,45 +59,60 @@ class Database {
     }
 
     async loadArticlesArrayInfiniteScroll(lastPostTime) {
-        let articlesArray
+        let articlesArray;
+        let lastArticle = false;
         if (lastPostTime === '') {
-            articlesArray = this.articleModel.find({})
+            articlesArray = await this.articleModel.find({})
                 .populate('author', 'nameDisplayed')
                 .populate('numUpVotes')
                 .sort({ postTime: -1 })
-                .limit(7);
+                .limit(this.loadLimit + 1);
         } else {
-            articlesArray = this.articleModel.find({ postTime: { $lt: lastPostTime } })
+            articlesArray = await this.articleModel.find({ postTime: { $lt: lastPostTime } })
                 .populate('author', 'nameDisplayed')
                 .populate('numUpVotes')
                 .sort({ postTime: -1 })
-                .limit(7);
+                .limit(this.loadLimit + 1);
         }
-        return articlesArray;
+        if (articlesArray.length < this.loadLimit + 1) {
+            lastArticle = true;
+        }
+        return {
+            "articlesArray": articlesArray.slice(0, this.loadLimit),
+            "lastArticle": lastArticle
+        };
     }
 
     async loadMyArticlesArray(userId, lastPostTime) {
-        let articlesArray
+        let articlesArray;
+        let lastArticle = false;
         if (lastPostTime === '') {
-            articlesArray = this.articleModel.find({ author: userId })
+            articlesArray = await this.articleModel.find({ author: userId })
                 .populate('author', 'nameDisplayed')
                 .populate('numUpVotes')
                 .sort({ postTime: -1 })
-                .limit(20);
+                .limit(this.loadLimit + 1);
         } else {
-            articlesArray = this.articleModel.find({ author: userId, postTime: { $lt: lastPostTime } })
+            articlesArray = await this.articleModel.find({ author: userId, postTime: { $lt: lastPostTime } })
                 .populate('author', 'nameDisplayed')
                 .populate('numUpVotes')
                 .sort({ postTime: -1 })
-                .limit(20);
+                .limit(this.loadLimit + 1);
         }
-        return articlesArray;
+        if (articlesArray.length < this.loadLimit + 1) {
+            lastArticle = true;
+        }
+        return {
+            "articlesArray": articlesArray.slice(0, this.loadLimit),
+            "lastArticle": lastArticle
+        };
     }
 
     async loadMyVotesArray(userId, lastPostTime) {
-        let votesArray
+        let votesArray;
+        let lastVote = false;
         if (lastPostTime === '') {
-            votesArray = this.voteModel.find({
+            votesArray = await this.voteModel.find({
                 author: userId,
                 status: true
             })
@@ -113,9 +129,9 @@ class Database {
                     ]
                 })
                 .sort({ postTime: -1 })
-                .limit(20);
+                .limit(this.loadLimit);
         } else {
-            votesArray = this.voteModel.find({
+            votesArray = await this.voteModel.find({
                 author: userId,
                 status: true,
                 postTime: { $lt: lastPostTime }
@@ -133,9 +149,15 @@ class Database {
                     ]
                 })
                 .sort({ postTime: -1 })
-                .limit(20);
+                .limit(this.loadLimit);
         }
-        return votesArray;
+        if (votesArray.length < this.loadLimit + 1) {
+            lastVote = true;
+        }
+        return {
+            "votesArray": votesArray.slice(0, this.loadLimit),
+            "lastVote": lastVote
+        };
     }
 
     async saveAllArticlesArray(newArticleArray) {
@@ -251,7 +273,6 @@ class Database {
                 path: 'articlesUpVoted',
                 populate: { path: 'article' }
             });
-        console.log(userUpVotes);
         return userUpVotes;
     }
 
