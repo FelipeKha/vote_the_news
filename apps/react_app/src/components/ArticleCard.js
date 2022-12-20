@@ -16,6 +16,7 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import domainsAndLogos from '../logos/domainsAndLogos.js';
 import { UserContext } from "../context/UserContext";
 
 
@@ -150,7 +151,19 @@ function ArticleCard(props) {
               align="right"
               lineHeight={1}
             >
-              {props.articleInfo.linkPreview.domain ? props.articleInfo.linkPreview.domain : "[NO DOMAIN]"}
+              {
+                props.articleInfo.linkPreview.domain ?
+                  props.articleInfo.linkPreview.domain in domainsAndLogos ?
+                    <CardMedia
+                      component="img"
+                      alt="green iguana"
+                      height="20"
+                      sx={{ padding: "1em", objectFit: "contain" }}
+                      image={domainsAndLogos[props.articleInfo.linkPreview.domain]}
+                    />
+                    : props.articleInfo.linkPreview.domain
+                  : "[NO DOMAIN]"
+              }
             </Typography>
           </CardContent>
         </Link>
