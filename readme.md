@@ -83,6 +83,7 @@ To do
 - Refactor the server to move the authentication work out of the router files
 - Vote button greyed out if article already voted
 - Dynamic view of the removed article when deleting an article (curently stays and needs to refresh to remove)
+- Add all the newspapers to the whitelist
 
 
 Will remain open

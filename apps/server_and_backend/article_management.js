@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import articleManagementErrorsHandler from './utils/articleManagementErrorsHandler.js';
+import domainsAndLogos from './logos/domainsAndLogos.js';
 import {
     InvalidURLError,
     ArticleAlreadyHasLinkPreviewError,
@@ -55,6 +56,10 @@ class ArticleManagement {
     async postNewArticle(url, authorId) {
         if (!ArticleManagement.isValidHttpUrl(url)) {
             throw new InvalidURLError('Invalid URL');
+        }
+
+        if (!ArticleManagement.checkDomainInWhitelist(url)) {
+            throw new DomainNotInWhiteListError('Domain not in whitelist');
         }
 
         const newArticleObject = ArticleManagement.createNewArticleObject(url, authorId);
@@ -169,6 +174,13 @@ class ArticleManagement {
         }
         return true
     }
+
+    static checkDomainInWhitelist(url) {
+        const urlObject = new URL(url);
+        const domain = urlObject.hostname
+        return domain in domainsAndLogos;
+    }
 }
+
 
 export default ArticleManagement;
