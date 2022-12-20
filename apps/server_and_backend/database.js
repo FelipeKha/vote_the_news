@@ -7,7 +7,8 @@ import mongoErrorsHandler from "./utils/mongoErrorsHandler.js";
 import {
     NoArticleWithThisIDError,
     NoArticleWithThisUrlError,
-    NoUserOrArticleWithIDError
+    NoUserOrArticleWithIDError,
+    UserNotAuthorError
 } from "./errors.js";
 
 
@@ -276,8 +277,19 @@ class Database {
         return userUpVotes;
     }
 
-    async deleteArticle(id) {
-        const articleDeleted = await this.articleModel.findByIdAndDelete(id)
+    async deleteArticle(articleId, userId) {
+        let deletedArticle;
+        const article = await this.articleModel.findById(articleId);
+        if (article === null) {
+            throw new NoArticleWithThisIDError('There is no article with this id');
+        }
+        const authorId = new mongoose.Types.ObjectId(article.author.id);
+        if (authorId.toString() === userId.toString()) {
+            deletedArticle = await this.articleModel.findByIdAndDelete(articleId)
+        } else {
+            throw new UserNotAuthorError('User is not the author of this article');
+        }
+        return deletedArticle;
     }
 
     async createNewUserDocument(

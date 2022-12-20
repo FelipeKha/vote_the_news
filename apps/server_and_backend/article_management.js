@@ -129,6 +129,11 @@ class ArticleManagement {
         return userUpVotes;
     }
 
+    async deleteArticle(articleId, userId) {
+        const deletedArticle = await this.database.deleteArticle(articleId, userId);
+        return deletedArticle;
+    }
+
     static isValidHttpUrl(string) {
         let url;
 

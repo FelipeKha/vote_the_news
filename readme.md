@@ -81,6 +81,8 @@ To do
 - Get https for the website
 - Refactor the server to include the creation of the objects in index.js
 - Refactor the server to move the authentication work out of the router files
+- Vote button greyed out if article already voted
+- Dynamic view of the removed article when deleting an article (curently stays and needs to refresh to remove)
 
 
 Will remain open

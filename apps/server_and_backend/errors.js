@@ -171,6 +171,13 @@ class DomainNotInWhiteListError extends Error {
     }
 }
 
+class UserNotAuthorError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'UserNotAuthorError';
+    }
+}
+
 
 export {
     ArticleAlreadyPostedError,
@@ -193,5 +200,6 @@ export {
     MongoCastError,
     MongoValidatorError,
     NoUserOrArticleWithIDError,
-    DomainNotInWhiteListError
+    DomainNotInWhiteListError,
+    UserNotAuthorError
 }
