@@ -109,6 +109,7 @@ function MainGrid(props) {
       <Item>
         <ArticleCard
           articleInfo={articleInfo}
+          pageDisplayed={props.pageDisplayed}
           key={articleInfo.id}
         />
       </Item>

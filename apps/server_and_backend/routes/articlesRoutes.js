@@ -73,5 +73,20 @@ router.post('/:id/vote', verifyUser, catchAsync(async (req, res) => {
     }
 }))
 
+router.delete('/:articleId/delete', verifyUser, catchAsync(async (req, res) => {
+    console.log('Delete request received');
+    const { articleId } = req.params;
+    const userId = req.user._id;
+    try {
+        const deletedArticle = await articleManagement.deleteArticle(articleId, userId);
+        res.status(200).send({
+            deletedArticle: deletedArticle,
+            message: 'Article deleted'
+        })
+    } catch (e) {
+        throw e;
+    }
+}))
+
 
 export { router };
