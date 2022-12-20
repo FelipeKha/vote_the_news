@@ -103,6 +103,7 @@ To do
 - Visualise my votes
 - Notification for new votes on my articles
 - Implement the white list of newspaper we can post from
+- Populate the about tabs
 
 Will remain open
 - Share an article

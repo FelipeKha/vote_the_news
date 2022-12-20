@@ -19,9 +19,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import AboutDialog from './AboutDialog';
+import LogoutButton from './LogoutButton';
 import SignUpFormDialog from './SignUpFormDialog';
 import SignInFormDialog from './SignInFormDialog';
-import LogoutButton from './LogoutButton';
+import UserProfileDialog from './UserProfileDialog';
 import { UserContext } from '../context/UserContext';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -36,7 +38,7 @@ function NavAppBar(props) {
   const [infoMessage, setInfoMessage] = useState("")
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const [successMessage, setSuccessMessage] = useState("")
-  
+
   const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
   const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me"
 
@@ -182,6 +184,9 @@ function NavAppBar(props) {
         <MenuItem key="myVotes" onClick={myVotesHandler}>
           <Typography textAlign="center">My Votes</Typography>
         </MenuItem>
+        <MenuItem key="about">
+          <AboutDialog />
+        </MenuItem>
       </>
     )
   }
@@ -194,21 +199,33 @@ function NavAppBar(props) {
           onClick={allArticlesHandler}
           sx={{ my: 2, color: 'white', display: 'block' }}
         >
-          All Articles
+          <Typography>
+            All Articles
+          </Typography>
         </Button>
         <Button
           key="myArticles"
           onClick={myArticlesHandler}
           sx={{ my: 2, color: 'white', display: 'block' }}
         >
-          My Articles
+          <Typography>
+            My Articles
+          </Typography>
         </Button>
         <Button
           key="myVotes"
           onClick={myVotesHandler}
           sx={{ my: 2, color: 'white', display: 'block' }}
         >
-          My Votes
+          <Typography>
+            My Votes
+          </Typography>
+        </Button>
+        <Button
+          key="about"
+          sx={{ my: 2, color: 'white', display: 'block' }}
+        >
+          <AboutDialog />
         </Button>
       </Box>
     )
@@ -298,16 +315,9 @@ function NavAppBar(props) {
           </IconButton>
           <Typography textAlign="center">Notifications</Typography>
         </MenuItem>
-        <MenuItem key="profile" onClick={handleCloseUserMenu}>
-          <IconButton
-            size="large"
-            aria-label="show 17 new notifications"
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-          <Typography textAlign="center">Profile</Typography>
-        </MenuItem>
+        <UserProfileDialog 
+          handleCloseUserMenu={handleCloseUserMenu}
+        />
         <LogoutButton
           openInfoAlertHandler={openInfoAlertHandler}
         />
