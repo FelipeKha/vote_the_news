@@ -1,4 +1,5 @@
 import { getToken, getRefreshToken } from './authenticate.js';
+import { PasswordDoNotMatchError } from './errors.js';
 
 class UserManagement {
     constructor(database) {
@@ -64,6 +65,33 @@ class UserManagement {
     async loadUserWithId(userId) {
         const user = await this.database.loadUserWithId(userId);
         return user;
+    }
+
+    async updateUserInfo(userId, firstName, lastName, nameDisplayed, username) {
+        const user = await this.database.loadUserWithId(userId);
+        if (user) {
+            user.firstName = firstName;
+            user.lastName = lastName;
+            user.nameDisplayed = nameDisplayed;
+            user.username = username;
+            const userSaved = await this.database.saveUser(user);
+            return userSaved;
+        }
+    }
+
+    async changePassword(userId, oldPassword, newPassword, newPasswordConfirm) {
+        if (newPassword !== newPasswordConfirm) {
+            throw new PasswordDoNotMatchError('Passwords do not match');
+        }
+        const user = await this.database.loadUserWithId(userId);
+        if (user) {
+            try {
+                const updatedUser = await this.database.changePassword(user, oldPassword, newPassword);
+                return updatedUser;
+            } catch (e) {
+                throw e;
+            }
+        }
     }
 
     static getNewTokens(userId) {

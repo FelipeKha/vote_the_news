@@ -178,6 +178,12 @@ class UserNotAuthorError extends Error {
     }
 }
 
+class PasswordDoNotMatchError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'PasswordDoNotMatchError';
+    }
+}
 
 export {
     ArticleAlreadyPostedError,
@@ -201,5 +207,6 @@ export {
     MongoValidatorError,
     NoUserOrArticleWithIDError,
     DomainNotInWhiteListError,
-    UserNotAuthorError
+    UserNotAuthorError,
+    PasswordDoNotMatchError
 }

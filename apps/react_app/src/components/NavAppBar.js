@@ -317,6 +317,7 @@ function NavAppBar(props) {
         </MenuItem>
         <UserProfileDialog 
           handleCloseUserMenu={handleCloseUserMenu}
+          openSuccessAlertHandler={openSuccessAlertHandler}
         />
         <LogoutButton
           openInfoAlertHandler={openInfoAlertHandler}
