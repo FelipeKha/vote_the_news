@@ -324,6 +324,15 @@ class Database {
         const user = await this.userModel.find({ "username": username });
         return user;
     }
+
+    async changePassword(user, oldPassword, newPassword) {
+        try {
+            const updatedUser = await user.changePassword(oldPassword, newPassword);
+            return updatedUser;
+        } catch (e) {
+            throw e;
+        }
+    }
 }
 
 export default Database;

@@ -103,8 +103,11 @@ To do
 - Visualise my votes
 - Notification for new votes on my articles
 - Implement the white list of newspaper we can post from
+- Populate the about tabs
+- For all the form, add first nivel of validation (mark missing requested fields red, grey out submit button if missing info, check password)
 
 Will remain open
 - Share an article
 - Notify user that new articles have been posted, with button to go to top of the page and load new article cards
 - Implement authentication with social logins (e.g. with Google and Facebook)
+- Reset forgotten password

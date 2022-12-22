@@ -37,33 +37,6 @@ router.post('/signup', catchAsync(async (req, res) => {
         } catch (e) {
             throw e;
         }
-
-        // database.userModel.register(
-        //     new database.userModel({ username: req.body.username }),
-        //     req.body.password,
-        //     (err, user) => {
-        //         if (err) {
-        //             res.statusCode = 500;
-        //             res.send(err);
-        //         } else {
-        //             user.firstName = req.body.firstName;
-        //             user.lastName = req.body.lastName;
-        //             user.nameDisplayed = req.body.nameDisplayed;
-        //             const token = getToken({ _id: user._id });
-        //             const refreshToken = getRefreshToken({ _id: user._id });
-        //             user.refreshToken.push({ refreshToken });
-        //             user.save((err, user) => {
-        //                 if (err) {
-        //                     res.statusCode = 500;
-        //                     res.send(err);
-        //                 } else {
-        //                     res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-        //                     res.send({ success: true, token, username: user.nameDisplayed });
-        //                 }
-        //             })
-        //         }
-        //     }
-        // )
     }
 }))
 
@@ -76,24 +49,6 @@ router.post('/login', passport.authenticate('local'), async (req, res, next) => 
     } catch (e) {
         throw e;
     }
-
-    // const token = getToken({ _id: req.user._id });
-    // const refreshToken = getRefreshToken({ _id: req.user._id });
-    // database.userModel.findById(req.user._id)
-    //     .then(user => {
-    //         user.refreshToken.push({ refreshToken });
-    //         user.save((err, user) => {
-    //             if (err) {
-    //                 res.statusCode = 500;
-    //                 res.send(err);
-    //             } else {
-    //                 res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-    //                 res.send({ success: true, token, username: user.nameDisplayed });
-    //             }
-    //         })
-    //     },
-    //         err => next(err)
-    //     )
 })
 
 router.post("/refreshToken", async (req, res, next) => {
@@ -123,43 +78,6 @@ router.post("/refreshToken", async (req, res, next) => {
         res.statusCode = 401;
         res.send({ message: "Unauthorized" });
     }
-
-
-    //     try {
-    //     database.userModel.findOne({ _id: userId })
-    //         .then(user => {
-    //             if (user) {
-    //                 const tokenIndex = user.refreshToken.findIndex(
-    //                     item => item.refreshToken === refreshToken
-    //                 )
-    //                 if (tokenIndex === -1) {
-    //                     res.statusCode = 401;
-    //                     res.send({ message: "Unauthorized" });
-    //                 } else {
-    //                     const token = getToken({ _id: userId });
-    //                     const newRefreshToken = getRefreshToken({ _id: userId });
-    //                     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
-    //                     user.save((err, user) => {
-    //                         if (err) {
-    //                             res.statusCode = 500;
-    //                             res.send(err);
-    //                         } else {
-    //                             res.cookie("refreshToken", newRefreshToken, COOKIE_OPTIONS);
-    //                             res.send({ success: true, token });
-    //                         }
-    //                     })
-    //                 }
-    //             } else {
-    //                 res.statusCode = 401;
-    //                 res.send({ message: "Unauthorized" });
-    //             }
-    //         },
-    //             err => next(err)
-    //         )
-    // } catch(err) {
-    //     res.statusCode = 401;
-    //     res.send({ message: "Unauthorized" });
-    // }
 })
 
 router.get('/me', verifyUser, (req, res, next) => {
@@ -178,28 +96,6 @@ router.get('/logout', verifyUser, async (req, res, next) => {
     } catch (e) {
         throw e;
     }
-
-
-    // database.userModel.findById(req.user._id)
-    //     .then(user => {
-    //         const tokenIndex = user.refreshToken.findIndex(
-    //             item => item.refreshToken === refreshToken
-    //         )
-    //         if (tokenIndex !== -1) {
-    //             user.refreshToken.id(user.refreshToken[tokenIndex]._id).remove();
-    //         }
-    //         user.save((err, user) => {
-    //             if (err) {
-    //                 res.statusCode = 500;
-    //                 res.send(err);
-    //             } else {
-    //                 res.clearCookie("refreshToken", COOKIE_OPTIONS);
-    //                 res.send({ success: true });
-    //             }
-    //         })
-    //     },
-    //         err => next(err)
-    //     )
 })
 
 router.get('/isloggedin', isLoggedIn, (req, res) => {
@@ -223,5 +119,63 @@ router.get('/articlesupvoted', isLoggedIn, async (req, res) => {
     const userUpVotes = await articleManagement.loadAllUserUpVotesArray(userId);
     res.status(200).send(userUpVotes);
 })
+
+router.post('/updateuserinfo', verifyUser, catchAsync(async (req, res) => {
+    console.log(req.body);
+    const {
+        firstName,
+        lastName,
+        nameDisplayed,
+        username
+    } = req.body;
+    const userId = req.user._id;
+    if (!firstName || !lastName) {
+        res.statusCode = 500;
+        res.send({
+            name: "FirstNameError",
+            message: "First and last names are required"
+        })
+    } else {
+        try {
+            const updatedUser = await userManagement.updateUserInfo(
+                userId,
+                firstName,
+                lastName,
+                nameDisplayed,
+                username
+            )
+            res.send({ success: true, username: updatedUser.nameDisplayed })
+        } catch (e) {
+            res.statusCode = 500;
+            res.send({
+                name: e.name,
+                message: e.message
+            })
+            throw e;
+        }
+    }
+}))
+
+router.post('/changepassword', verifyUser, catchAsync(async (req, res) => {
+    const { oldPassword, newPassword, newPasswordConfirm } = req.body;
+    const userId = req.user._id;
+    try {
+        const updatedUser = await userManagement.changePassword(
+            userId,
+            oldPassword,
+            newPassword,
+            newPasswordConfirm
+        );
+        res.send({ success: true });
+    } catch (e) {
+        console.log('sending the error for change password');
+        res.statusCode = 500;
+        res.send({
+            name: e.name,
+            message: e.message
+        })
+        throw e;
+    }
+}))
 
 export { router };
