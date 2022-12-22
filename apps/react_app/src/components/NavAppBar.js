@@ -175,15 +175,19 @@ function NavAppBar(props) {
   function MenuNavXs() {
     return (
       <>
-        <MenuItem key="allArticles" onClick={allArticlesHandler}>
-          <Typography textAlign="center">All Articles</Typography>
-        </MenuItem>
-        <MenuItem key="myArticles" onClick={myArticlesHandler}>
-          <Typography textAlign="center">My Articles</Typography>
-        </MenuItem>
-        <MenuItem key="myVotes" onClick={myVotesHandler}>
-          <Typography textAlign="center">My Votes</Typography>
-        </MenuItem>
+        {userContext.token &&
+          <>
+            <MenuItem key="allArticles" onClick={allArticlesHandler}>
+              <Typography textAlign="center">All Articles</Typography>
+            </MenuItem>
+            <MenuItem key="myArticles" onClick={myArticlesHandler}>
+              <Typography textAlign="center">My Articles</Typography>
+            </MenuItem>
+            <MenuItem key="myVotes" onClick={myVotesHandler}>
+              <Typography textAlign="center">My Votes</Typography>
+            </MenuItem>
+          </>
+        }
         <MenuItem key="about">
           <AboutDialog />
         </MenuItem>
@@ -194,33 +198,37 @@ function NavAppBar(props) {
   function MenuNavMd() {
     return (
       <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-        <Button
-          key="allArticles"
-          onClick={allArticlesHandler}
-          sx={{ my: 2, color: 'white', display: 'block' }}
-        >
-          <Typography>
-            All Articles
-          </Typography>
-        </Button>
-        <Button
-          key="myArticles"
-          onClick={myArticlesHandler}
-          sx={{ my: 2, color: 'white', display: 'block' }}
-        >
-          <Typography>
-            My Articles
-          </Typography>
-        </Button>
-        <Button
-          key="myVotes"
-          onClick={myVotesHandler}
-          sx={{ my: 2, color: 'white', display: 'block' }}
-        >
-          <Typography>
-            My Votes
-          </Typography>
-        </Button>
+        {userContext.token &&
+          <>
+            <Button
+              key="allArticles"
+              onClick={allArticlesHandler}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              <Typography>
+                All Articles
+              </Typography>
+            </Button>
+            <Button
+              key="myArticles"
+              onClick={myArticlesHandler}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              <Typography>
+                My Articles
+              </Typography>
+            </Button>
+            <Button
+              key="myVotes"
+              onClick={myVotesHandler}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              <Typography>
+                My Votes
+              </Typography>
+            </Button>
+          </>
+        }
         <Button
           key="about"
           sx={{ my: 2, color: 'white', display: 'block' }}
@@ -315,7 +323,7 @@ function NavAppBar(props) {
           </IconButton>
           <Typography textAlign="center">Notifications</Typography>
         </MenuItem>
-        <UserProfileDialog 
+        <UserProfileDialog
           handleCloseUserMenu={handleCloseUserMenu}
           openSuccessAlertHandler={openSuccessAlertHandler}
         />
