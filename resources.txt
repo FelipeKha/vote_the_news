@@ -96,6 +96,11 @@ https://medium.com/free-code-camp/how-to-implement-runtime-environment-variables
 
 https://www.digitalocean.com/community/questions/point-domain-name-to-specific-ip-port
 
+Websocket:
+https://www.npmjs.com/package/ws
+https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+
+
 
 Command to log into container command line:
 docker exec -it vote_the_news-vtn-react-app-1 /bin/bash

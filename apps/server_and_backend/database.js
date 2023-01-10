@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
 
-import articleSchema from './models/article.js';
-import userSchema from './models/user.js';
-import voteSchema from './models/vote.js'
 import mongoErrorsHandler from "./utils/mongoErrorsHandler.js";
 import {
     NoArticleWithThisIDError,
@@ -13,12 +10,13 @@ import {
 
 
 class Database {
-    constructor(databaseUrl, articleSchema, userSchema, voteSchema) {
+    constructor(databaseUrl, articleSchema, userSchema, voteSchema, notificationUpvoteSchema) {
         this.databaseUrl = databaseUrl;
         this.articleSchema = articleSchema;
         this.userSchema = userSchema;
         this.voteSchema = voteSchema;
-        this.conn
+        this.notificationUpvoteSchema = notificationUpvoteSchema;
+        this.conn;
         this.articleModel;
         this.userModel;
         this.voteModel;
@@ -43,6 +41,7 @@ class Database {
         this.articleModel = this.conn.model('Article', this.articleSchema);
         this.userModel = this.conn.model('User', this.userSchema);
         this.voteModel = this.conn.model('Vote', this.voteSchema);
+        this.notificationUpvoteModel = this.conn.model('NotificationUpvote', this.notificationUpvoteSchema);
         return this.articleModel;
     }
 
@@ -161,6 +160,71 @@ class Database {
         };
     }
 
+    async loadMyNotificationsArray(userId, lastPostTime) {
+        let notificationsArray;
+        let lastNotification = false;
+        if (lastPostTime === '') {
+            notificationsArray = await this.notificationUpvoteModel.find({
+                author: userId,
+                active: true
+            })
+                .populate({
+                    path: 'article',
+                    populate: [
+                        {
+                            path: 'author',
+                            select: 'nameDisplayed'
+                        },
+                        {
+                            path: 'numUpVotes'
+                        }
+                    ]
+                })
+                .sort({ postTime: -1 })
+                .limit(this.loadLimit);
+        } else {
+            notificationsArray = await this.notificationUpvoteModel.find({
+                author: userId,
+                active: true,
+                postTime: { $lt: lastPostTime }
+            })
+                .populate({
+                    path: 'article',
+                    populate: [
+                        {
+                            path: 'author',
+                            select: 'nameDisplayed'
+                        },
+                        {
+                            path: 'numUpVotes'
+                        }
+                    ]
+                })
+                .sort({ postTime: -1 })
+                .limit(this.loadLimit);
+        }
+        if (notificationsArray.length < this.loadLimit + 1) {
+            lastNotification = true;
+        }
+        return {
+            "notificationsArray": notificationsArray.slice(0, this.loadLimit),
+            "lastNotification": lastNotification
+        };
+    }
+
+    async markNotificationAsRead(notificationId) {
+        let notification;
+        try {
+            notification = await this.notificationUpvoteModel.findByIdAndUpdate(
+                notificationId,
+                { active: false },
+                { new: true }
+            )
+        } catch (e) {
+            mongoErrorsHandler(e);
+        }
+    }
+
     async saveAllArticlesArray(newArticleArray) {
         await this.articleModel.deleteMany({});
         try {
@@ -262,6 +326,76 @@ class Database {
         }
     }
 
+    async notificationUpvote(upVote) {
+        const userId = upVote.author;
+        const articleId = upVote.article;
+
+        let notificationUpvote;
+        try {
+            notificationUpvote = await this.notificationUpvoteModel.findOne({ author: userId, article: articleId });
+        } catch (e) {
+            throw e;
+        }
+
+        if (upVote.status === true) {
+            if (notificationUpvote !== null) {
+                const updatedNotificationUpvote = await this.notificationUpvoteModel.findByIdAndUpdate(
+                    notificationUpvote._id,
+                    { active: true },
+                    { new: true }
+                )
+                return updatedNotificationUpvote;
+            } else {
+                const articleCount = await this.articleModel.countDocuments({ _id: articleId });
+                const userCount = await this.userModel.countDocuments({ _id: userId });
+                if (articleCount !== 0 && userCount !== 0) {
+                    const newNotificationUpvoteDocument = new this.notificationUpvoteModel({
+                        active: true,
+                        author: userId,
+                        article: articleId
+                    })
+                    let newNotificationUpvote;
+                    try {
+                        newNotificationUpvote = await newNotificationUpvoteDocument.save();
+                    } catch (e) {
+                        throw e;
+                    }
+                    return newNotificationUpvote;
+                } else {
+                    throw new NoUserOrArticleWithIDError('No article and/or user with id provided');
+                }
+            }
+        } else {
+            if (notificationUpvote !== null) {
+                const updatedNotificationUpvote = await this.notificationUpvoteModel.findByIdAndUpdate(
+                    notificationUpvote._id,
+                    { active: false },
+                    { new: true }
+                )
+                return updatedNotificationUpvote;
+            } else {
+                const articleCount = await this.articleModel.countDocuments({ _id: articleId });
+                const userCount = await this.userModel.countDocuments({ _id: userId });
+                if (articleCount !== 0 && userCount !== 0) {
+                    const newNotificationUpvoteDocument = new this.notificationUpvoteModel({
+                        active: false,
+                        author: userId,
+                        article: articleId
+                    })
+                    let newNotificationUpvote;
+                    try {
+                        newNotificationUpvote = await newNotificationUpvoteDocument.save();
+                    } catch (e) {
+                        throw e;
+                    }
+                    return newNotificationUpvote;
+                } else {
+                    throw new NoUserOrArticleWithIDError('No article and/or user with id provided');
+                }
+            }
+        }
+    }
+
     async loadAllUserPostsArray(userId) {
         const userPosts = await this.userModel.findById(userId)
             .populate('articlesPosted');
@@ -275,6 +409,14 @@ class Database {
                 populate: { path: 'article' }
             });
         return userUpVotes;
+    }
+
+    async loadNotificationUpvotesArray(userId) {
+        const notificationUpvotes = await this.userModel.findById(userId)
+            .populate({
+                path: 'notificationUpvotes',
+                populate: { path: 'article' }
+            });
     }
 
     async deleteArticle(articleId, userId) {

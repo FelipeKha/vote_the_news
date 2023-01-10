@@ -112,7 +112,6 @@ router.get('/articlesposted', isLoggedIn, async (req, res) => {
     res.status(200).send(userPosts);
 })
 
-
 router.get('/articlesupvoted', isLoggedIn, async (req, res) => {
     console.log('Request for upvoted articles');
     const userId = req.user._id;

@@ -34,6 +34,10 @@ function App() {
         setPageDisplayed("myvotes");
     }
 
+    function myNotificationsHandler() {
+        setPageDisplayed("mynotifications");
+    }
+
     // useEffect(() => {
     //     console.log("useEffect in App");
     //     getServerUrl();
@@ -47,6 +51,7 @@ function App() {
                 allArticlesHandler={allArticlesHandler}
                 myArticlesHandler={myArticlesHandler}
                 myVotesHandler={myVotesHandler}
+                myNotificationsHandler={myNotificationsHandler}
                 // serverUrl={serverUrl}
             />
             <NewArticlePostUrlInput />

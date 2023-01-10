@@ -153,6 +153,11 @@ function NavAppBar(props) {
     props.myVotesHandler();
   }
 
+  function myNotificatoionsHandler() {
+    handleCloseNavMenu();
+    props.myNotificationsHandler();
+  }
+
   function openInfoAlertHandler(message) {
     setInfoMessage(message);
     setOpenInfoAlert(true);
@@ -321,7 +326,12 @@ function NavAppBar(props) {
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <Typography textAlign="center">Notifications</Typography>
+          <Typography
+            textAlign="center"
+            onClick={myNotificatoionsHandler}
+          >
+            Notifications
+          </Typography>
         </MenuItem>
         <UserProfileDialog
           handleCloseUserMenu={handleCloseUserMenu}

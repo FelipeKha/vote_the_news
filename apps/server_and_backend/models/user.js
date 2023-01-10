@@ -59,6 +59,13 @@ userSchema.virtual('articlesUpVoted', {
     match: { status: true }
 })
 
+userSchema.virtual('notificationUpvotes', {
+    ref: 'NotificationUpvote',
+    localField: '_id',
+    foreignField: 'author',
+    match: { active: true }
+});
+
 userSchema.plugin(passportLocalMongoose);
 
 export default userSchema;

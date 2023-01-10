@@ -53,6 +53,25 @@ class ArticleManagement {
         return articleObject;
     }
 
+    async getMyNotificationsArray(userId, lastPostTime) {
+        let notificationObject;
+        try {
+            notificationObject = await this.database.loadMyNotificationsArray(userId, lastPostTime);
+        } catch (e) {
+            articleManagementErrorsHandler(e);
+        }
+        const articlesArray = [];
+        for (let notification of notificationObject.notificationsArray) {
+            await this.database.markNotificationAsRead(notification._id);
+            articlesArray.push(notification.article);
+        }
+        const articleObject = {
+            "articlesArray": articlesArray,
+            "lastArticle": notificationObject.lastNotification
+        }
+        return articleObject;
+    }
+
     async postNewArticle(url, authorId) {
         if (!ArticleManagement.isValidHttpUrl(url)) {
             throw new InvalidURLError('Invalid URL');
@@ -91,8 +110,10 @@ class ArticleManagement {
 
     async upVote(userId, articleId) {
         let upVote;
+        let notificationUpvote;
         try {
             upVote = await this.database.upVote(userId, articleId);
+            notificationUpvote = await this.database.notificationUpvote(upVote);
         } catch (e) {
             throw e;
         }
@@ -133,6 +154,8 @@ class ArticleManagement {
         const userUpVotes = await this.database.loadAllUserUpVotesArray(userId);
         return userUpVotes;
     }
+
+
 
     async deleteArticle(articleId, userId) {
         const deletedArticle = await this.database.deleteArticle(articleId, userId);

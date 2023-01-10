@@ -84,6 +84,7 @@ To do
 - Vote button greyed out if article already voted
 - Dynamic view of the removed article when deleting an article (curently stays and needs to refresh to remove)
 - Add all the newspapers to the whitelist
+- Get a pop showing nice notifications rather than current solution (e.g. "[username] upvoted article [title]")
 
 
 Will remain open
