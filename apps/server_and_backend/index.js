@@ -6,20 +6,18 @@ import express from 'express';
 import os, { type } from 'os';
 import passport from 'passport';
 import session from 'express-session';
+import { WebSocketServer } from 'ws';
 
 import ArticleManagement from './article_management.js';
-import articleSchema from './models/article.js';
-import Database from './database.js';
 import LinkPreview from './link_preview.js';
 import UserManagement from './user_management.js';
-import userSchema from './models/user.js';
-import voteSchema from './models/vote.js';
 import { } from "./strategies/LocalStrategy.js";
 import { } from "./strategies/JwtStrategy.js";
 import { } from "./authenticate.js"
 import { database } from './database_object.js';
 import { router as articlesRouter } from './routes/articlesRoutes.js';
 import { router as usersRouter } from './routes/usersRoutes.js';
+import { log } from 'console';
 // import ExpressError from './utils/ExpressError.js';
 
 dotenv.config();
@@ -130,5 +128,45 @@ app.use('/', articlesRouter);
 app.listen(port, () => {
     console.log(`Listening port ${port}`);
 })
+
+const wss = new WebSocketServer({ port: 4001 });
+
+wss.on('connection', async (ws) => {
+    let userId;
+    let lastNotifCountSent;
+
+    ws.on('message', async message => {
+        const result = JSON.parse(message);
+        if (result.userId) {
+            userId = result.userId;
+            const notificationCount = await userManagement.getNotificationCount(userId);
+            const messageNotifCount = JSON.stringify({ "notificationCount": notificationCount });
+            ws.send(messageNotifCount);
+            lastNotifCountSent = JSON.parse(messageNotifCount).notificationCount;
+        }
+    })
+
+    const intervalId = setInterval(sendNewNotifCount, 5000);
+
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    })
+
+    ws.onerror = (error) => {
+        console.log('THERE WAS AN ERROR:');
+        console.log(error);
+    }
+
+    async function sendNewNotifCount() {
+        if (ws.readyState === 3) return clearInterval(intervalId);
+        const newNotifCount = await userManagement.getNotificationCount(userId);
+        if (lastNotifCountSent !== newNotifCount) {
+            const newMessageNotifCount = JSON.stringify({ "notificationCount": newNotifCount });
+            ws.send(newMessageNotifCount);
+            lastNotifCountSent = JSON.parse(newMessageNotifCount).notificationCount;
+        }
+    };
+})
+
 
 export { articleManagement, userManagement };

@@ -54,6 +54,7 @@ class ArticleManagement {
     }
 
     async getMyNotificationsArray(userId, lastPostTime) {
+        console.log('getMyNotificationsArray called');
         let notificationObject;
         try {
             notificationObject = await this.database.loadMyNotificationsArray(userId, lastPostTime);

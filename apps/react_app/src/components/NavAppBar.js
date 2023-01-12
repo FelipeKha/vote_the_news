@@ -31,13 +31,16 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 function NavAppBar(props) {
-  const [userContext, setUserContext] = useContext(UserContext);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [infoMessage, setInfoMessage] = useState("");
+  const [notifCount, setNotifCount] = useState(0);
   const [openInfoAlert, setOpenInfoAlert] = useState(false);
-  const [infoMessage, setInfoMessage] = useState("")
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
+  const [socket, setSocket] = useState({});
+  const [socketConnected, setSocketConnected] = useState(false);
   const [successMessage, setSuccessMessage] = useState("")
+  const [userContext, setUserContext] = useContext(UserContext);
 
   const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
   const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me"
@@ -69,37 +72,52 @@ function NavAppBar(props) {
   )
 
   const fetchUserDetails = useCallback(() => {
-    fetch(
-      userDetailsUrl,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userContext.token}`
-        }
-      }
-    )
-      .then(async response => {
-        if (response.ok) {
-          const data = await response.json();
-          setUserContext(oldValues => {
-            return { ...oldValues, details: data };
-          })
-        } else {
-          if (response.status === 401) {
-            // window.location.reload();
-            console.log("no user details available.")
-          } else {
-            setUserContext(oldValues => {
-              return { ...oldValues, details: null }
-            })
+    if (userContext.token) {
+      fetch(
+        userDetailsUrl,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userContext.token}`
           }
         }
-      })
+      )
+        .then(async response => {
+          if (response.ok) {
+            const data = await response.json();
+            setUserContext(oldValues => {
+              return { ...oldValues, details: data };
+            })
+          } else {
+            if (response.status === 401) {
+              // window.location.reload();
+              console.log("no user details available.")
+            } else {
+              setUserContext(oldValues => {
+                return { ...oldValues, details: null }
+              })
+            }
+          }
+        })
+    }
   },
     [setUserContext, userContext.token]
   )
+
+  const openConnection = () => {
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    socket.addEventListener("open", () => {
+      socket.send(JSON.stringify({ token: userContext.token }));
+    });
+    socket.addEventListener("message", (event) => {
+      const data = JSON.parse(event.data);
+      if (data.notificationCount) {
+        setNotifCount(data.notificationCount);
+      }
+    });
+  }
 
   useEffect(() => {
     verifyUser();
@@ -113,6 +131,34 @@ function NavAppBar(props) {
     }
   },
     [fetchUserDetails, userContext.details]
+  )
+
+  useEffect(() => {
+    if (userContext.details) {
+      const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+
+      socket.addEventListener("open", () => {
+        setSocketConnected(true);
+        socket.send(JSON.stringify({ userId: userContext.details._id }));
+      });
+
+      socket.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data);
+        if (data.notificationCount !== undefined) {
+          setNotifCount(data.notificationCount);
+        }
+      });
+
+      socket.addEventListener("close", () => {
+        setSocketConnected(false);
+      });
+
+      return () => {
+        socket.close();
+      }
+    }
+  },
+    [userContext.details]
   )
 
   const syncLogout = useCallback(e => {
@@ -153,8 +199,9 @@ function NavAppBar(props) {
     props.myVotesHandler();
   }
 
-  function myNotificatoionsHandler() {
+  function myNotificationsHandler() {
     handleCloseNavMenu();
+    setNotifCount(0);
     props.myNotificationsHandler();
   }
 
@@ -322,13 +369,13 @@ function NavAppBar(props) {
             aria-label="show 17 new notifications"
             color="inherit"
           >
-            <Badge badgeContent={17} color="error">
+            <Badge badgeContent={notifCount} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>
           <Typography
             textAlign="center"
-            onClick={myNotificatoionsHandler}
+            onClick={myNotificationsHandler}
           >
             Notifications
           </Typography>
@@ -413,7 +460,7 @@ function NavAppBar(props) {
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }} color="inherit">
-                    <Badge badgeContent={17} color="error">
+                    <Badge badgeContent={notifCount} color="error">
                       <AccountCircle fontSize='large' />
                     </Badge>
                   </IconButton>

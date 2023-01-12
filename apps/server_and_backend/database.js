@@ -225,6 +225,14 @@ class Database {
         }
     }
 
+    async getNotificationCount(userId) {
+        const notificationCount = await this.notificationUpvoteModel.where({
+            author: userId,
+            active: true
+        }).countDocuments();
+        return notificationCount;
+    }
+
     async saveAllArticlesArray(newArticleArray) {
         await this.articleModel.deleteMany({});
         try {

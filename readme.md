@@ -85,6 +85,7 @@ To do
 - Dynamic view of the removed article when deleting an article (curently stays and needs to refresh to remove)
 - Add all the newspapers to the whitelist
 - Get a pop showing nice notifications rather than current solution (e.g. "[username] upvoted article [title]")
+- Check that client is connected before opening the websocket, and secure the websocket for authentication
 
 
 Will remain open

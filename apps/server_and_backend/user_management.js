@@ -94,6 +94,16 @@ class UserManagement {
         }
     }
 
+    async getNotificationCount(userId) {
+        let notificationCount;
+        try {
+            notificationCount = await this.database.getNotificationCount(userId);
+        } catch (e) {
+            throw e;
+        }
+        return notificationCount;
+    }
+
     static getNewTokens(userId) {
         const token = getToken({ _id: userId });
         const refreshToken = getRefreshToken({ _id: userId });
