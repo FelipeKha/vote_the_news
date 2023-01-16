@@ -3,6 +3,8 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import express from 'express';
+import http from 'http';
+import jwt from 'jsonwebtoken';
 import os, { type } from 'os';
 import passport from 'passport';
 import session from 'express-session';
@@ -13,7 +15,7 @@ import LinkPreview from './link_preview.js';
 import UserManagement from './user_management.js';
 import { } from "./strategies/LocalStrategy.js";
 import { } from "./strategies/JwtStrategy.js";
-import { } from "./authenticate.js"
+import { verifyUser } from "./authenticate.js"
 import { database } from './database_object.js';
 import { router as articlesRouter } from './routes/articlesRoutes.js';
 import { router as usersRouter } from './routes/usersRoutes.js';
@@ -68,6 +70,8 @@ const sessionConfig = {
     }
 }
 
+const sessionParser = session(sessionConfig);
+
 function getIpAddress() {
     const networkInterfaces = os.networkInterfaces();
     const results = {};
@@ -109,7 +113,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser(sessionSecret));
 app.use(cors(corsOptions));
-app.use(session(sessionConfig));
+app.use(sessionParser);
 app.use(passport.initialize());
 app.use('/', usersRouter);
 app.use('/', articlesRouter);
@@ -125,24 +129,66 @@ app.use('/', articlesRouter);
 //     res.status(statusCode).send(err.message)
 // })
 
-app.listen(port, () => {
-    console.log(`Listening port ${port}`);
-})
-
+const server = http.createServer(app);
 const wss = new WebSocketServer({ port: 4001 });
 
-wss.on('connection', async (ws) => {
+// const verifyUserWs = (request, callback) => {
+//     console.log('This is what I need to implement');
+// };
+
+// CHECK THIS - DONE
+// setInterval(() => {
+//     // console.log(wss._server._connections);
+//     const clientsCount = wss._server._connections;
+//     console.log("Number of clients connected:", clientsCount);
+// }, 5000);
+
+// server.on('upgrade', function (request, socket, head) {
+//     console.log('Running ws authentication');
+//     console.log('Request', request.url);
+//     // console.log('Socket', socket);
+//     // console.log('Head', head);
+
+//     verifyUserWs(request, function next(err, client) {
+//         if (err || !client) {
+//             socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+//             socket.destroy();
+//             return;
+//         }
+
+//         console.log('Now verifying user');
+
+//         wss.handleUpgrade(request, socket, head, function (ws) {
+//             wss.emit('connection', ws, request);
+//         });
+//     });
+// });
+
+wss.on('connection', async (ws, request) => {
     let userId;
     let lastNotifCountSent;
 
     ws.on('message', async message => {
         const result = JSON.parse(message);
-        if (result.userId) {
-            userId = result.userId;
-            const notificationCount = await userManagement.getNotificationCount(userId);
-            const messageNotifCount = JSON.stringify({ "notificationCount": notificationCount });
-            ws.send(messageNotifCount);
-            lastNotifCountSent = JSON.parse(messageNotifCount).notificationCount;
+
+        if (result.userId && result.wsToken) {
+            const { userId, wsToken } = result;
+            const WsTokenSecret = process.env.WS_TOKEN_SECRET;
+            const decodedWsToken = jwt.verify(wsToken, WsTokenSecret);
+
+            if (decodedWsToken._id === userId) {
+                const user = await userManagement.loadUserWithId(userId);
+                if (user.wsToken === wsToken) {
+                    const notificationCount = await userManagement.getNotificationCount(userId);
+                    const messageNotifCount = JSON.stringify({ "notificationCount": notificationCount });
+                    ws.send(messageNotifCount);
+                    lastNotifCountSent = JSON.parse(messageNotifCount).notificationCount;
+                } else {
+                    ws.close();
+                }
+            } else {
+                ws.close();
+            }
         }
     })
 
@@ -150,6 +196,7 @@ wss.on('connection', async (ws) => {
 
     ws.on('close', () => {
         console.log('Client disconnected');
+        clearInterval(intervalId);
     })
 
     ws.onerror = (error) => {
@@ -166,6 +213,10 @@ wss.on('connection', async (ws) => {
             lastNotifCountSent = JSON.parse(newMessageNotifCount).notificationCount;
         }
     };
+})
+
+server.listen(port, () => {
+    console.log(`Listening port ${port}`);
 })
 
 

@@ -29,7 +29,7 @@ function LogoutButton(props) {
             .then(async response => {
                 const username = userContext.details.nameDisplayed;
                 setUserContext(oldValues => {
-                    return { ...oldValues, details: undefined, token: null };
+                    return { ...oldValues, details: undefined, token: null, wsToken: null };
                 })
                 window.localStorage.setItem("logout", Date.now());
                 props.openInfoAlertHandler(`See you soon ${username}!`);

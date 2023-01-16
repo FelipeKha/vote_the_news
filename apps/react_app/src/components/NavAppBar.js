@@ -43,7 +43,8 @@ function NavAppBar(props) {
   const [userContext, setUserContext] = useContext(UserContext);
 
   const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
-  const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me"
+  const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me";
+  const wsTokenUrl = process.env.REACT_APP_SERVER_URL + "wsToken";
 
   const verifyUser = useCallback(() => {
     fetch(
@@ -106,6 +107,42 @@ function NavAppBar(props) {
     [setUserContext, userContext.token]
   )
 
+  const fetchWsToken = useCallback(() => {
+    if (userContext.token) {
+      fetch(
+        wsTokenUrl,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userContext.token}`
+          }
+        }
+      )
+        .then(async response => {
+          if (response.ok) {
+            const data = await response.json();
+            console.log("ws token fetched:", data);
+            setUserContext(oldValues => {
+              return { ...oldValues, wsToken: data.wsToken };
+            })
+          } else {
+            if (response.status === 401) {
+              // window.location.reload();
+              console.log("no ws token available.")
+            } else {
+              setUserContext(oldValues => {
+                return { ...oldValues, wsToken: null }
+              })
+            }
+          }
+        })
+    }
+  },
+    [setUserContext, userContext.token]
+  )
+
   const openConnection = () => {
     const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
     socket.addEventListener("open", () => {
@@ -134,12 +171,24 @@ function NavAppBar(props) {
   )
 
   useEffect(() => {
-    if (userContext.details) {
+    if (!userContext.wsToken) {
+      fetchWsToken();
+    }
+  },
+    [fetchWsToken, userContext.wsToken]
+  )
+
+  useEffect(() => {
+    if (userContext.details && userContext.wsToken) {
+      console.log("ws token", userContext.wsToken);
       const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
       socket.addEventListener("open", () => {
         setSocketConnected(true);
-        socket.send(JSON.stringify({ userId: userContext.details._id }));
+        socket.send(JSON.stringify({
+          userId: userContext.details._id,
+          wsToken: userContext.wsToken
+        }));
       });
 
       socket.addEventListener("message", (event) => {
@@ -158,7 +207,7 @@ function NavAppBar(props) {
       }
     }
   },
-    [userContext.details]
+    [userContext.details, userContext.wsToken]
   )
 
   const syncLogout = useCallback(e => {

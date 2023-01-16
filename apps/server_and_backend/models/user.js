@@ -31,6 +31,9 @@ const userSchema = new mongoose.Schema(
         },
         refreshToken: {
             type: [Session]
+        },
+        wsToken: {
+            type: String
         }
     },
     {

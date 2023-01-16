@@ -100,7 +100,8 @@ Websocket:
 https://www.npmjs.com/package/ws
 https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
 https://stackoverflow.com/questions/22429744/how-to-setup-route-for-websocket-server-in-express
-
+https://socket.io/how-to/use-with-react-hooks
+https://websockets.readthedocs.io/en/stable/topics/authentication.html
 
 
 Command to log into container command line:

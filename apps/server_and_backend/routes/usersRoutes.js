@@ -80,6 +80,16 @@ router.post("/refreshToken", async (req, res, next) => {
     }
 })
 
+router.get('/wstoken', verifyUser, async (req, res, next) => {
+    const userId = req.user._id;
+    try {
+        const wsToken = await userManagement.saveNewWsToken(userId);
+        res.send({ wsToken: wsToken });
+    } catch (e) {
+        throw e;
+    }
+});
+
 router.get('/me', verifyUser, (req, res, next) => {
     res.send(req.user);
 })
