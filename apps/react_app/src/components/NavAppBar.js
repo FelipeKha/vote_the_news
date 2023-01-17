@@ -123,7 +123,6 @@ function NavAppBar(props) {
         .then(async response => {
           if (response.ok) {
             const data = await response.json();
-            console.log("ws token fetched:", data);
             setUserContext(oldValues => {
               return { ...oldValues, wsToken: data.wsToken };
             })
@@ -178,18 +177,27 @@ function NavAppBar(props) {
     [fetchWsToken, userContext.wsToken]
   )
 
+  function heartbeat(ws) {
+    clearTimeout(ws.pingTimeout);
+    ws.pingTimeout = setTimeout(() => {
+      ws.terminate();
+    }, 30000 + 1000);
+  }
+
   useEffect(() => {
     if (userContext.details && userContext.wsToken) {
-      console.log("ws token", userContext.wsToken);
       const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
       socket.addEventListener("open", () => {
+        heartbeat(socket)
         setSocketConnected(true);
         socket.send(JSON.stringify({
           userId: userContext.details._id,
           wsToken: userContext.wsToken
         }));
       });
+
+      socket.addEventListener("ping", () => heartbeat(socket));
 
       socket.addEventListener("message", (event) => {
         const data = JSON.parse(event.data);
@@ -199,6 +207,7 @@ function NavAppBar(props) {
       });
 
       socket.addEventListener("close", () => {
+        clearTimeout(socket.pingTimeout);
         setSocketConnected(false);
       });
 

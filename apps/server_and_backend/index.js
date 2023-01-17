@@ -164,7 +164,13 @@ const wss = new WebSocketServer({ port: 4001 });
 //     });
 // });
 
+function heartbeat() {
+    this.isAlive = true;
+}
+
 wss.on('connection', async (ws, request) => {
+    ws.isAlive = true;
+    ws.on('pong', heartbeat);
     let userId;
     let lastNotifCountSent;
 
@@ -214,6 +220,19 @@ wss.on('connection', async (ws, request) => {
         }
     };
 })
+
+const intervalCloseBrokenWs = setInterval(function ping() {
+    wss.clients.forEach(function each(ws) {
+        if (ws.isAlive === false) return ws.terminate();
+
+        ws.isAlive = false;
+        ws.ping();
+    });
+}, 30000);
+
+wss.on('close', function close() {
+    clearInterval(intervalCloseBrokenWs);
+});
 
 server.listen(port, () => {
     console.log(`Listening port ${port}`);
