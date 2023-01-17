@@ -31,16 +31,20 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 function NavAppBar(props) {
-  const [userContext, setUserContext] = useContext(UserContext);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [infoMessage, setInfoMessage] = useState("");
+  const [notifCount, setNotifCount] = useState(0);
   const [openInfoAlert, setOpenInfoAlert] = useState(false);
-  const [infoMessage, setInfoMessage] = useState("")
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
+  const [socket, setSocket] = useState({});
+  const [socketConnected, setSocketConnected] = useState(false);
   const [successMessage, setSuccessMessage] = useState("")
+  const [userContext, setUserContext] = useContext(UserContext);
 
   const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
-  const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me"
+  const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me";
+  const wsTokenUrl = process.env.REACT_APP_SERVER_URL + "wsToken";
 
   const verifyUser = useCallback(() => {
     fetch(
@@ -69,37 +73,87 @@ function NavAppBar(props) {
   )
 
   const fetchUserDetails = useCallback(() => {
-    fetch(
-      userDetailsUrl,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userContext.token}`
-        }
-      }
-    )
-      .then(async response => {
-        if (response.ok) {
-          const data = await response.json();
-          setUserContext(oldValues => {
-            return { ...oldValues, details: data };
-          })
-        } else {
-          if (response.status === 401) {
-            // window.location.reload();
-            console.log("no user details available.")
-          } else {
-            setUserContext(oldValues => {
-              return { ...oldValues, details: null }
-            })
+    if (userContext.token) {
+      fetch(
+        userDetailsUrl,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userContext.token}`
           }
         }
-      })
+      )
+        .then(async response => {
+          if (response.ok) {
+            const data = await response.json();
+            setUserContext(oldValues => {
+              return { ...oldValues, details: data };
+            })
+          } else {
+            if (response.status === 401) {
+              // window.location.reload();
+              console.log("no user details available.")
+            } else {
+              setUserContext(oldValues => {
+                return { ...oldValues, details: null }
+              })
+            }
+          }
+        })
+    }
   },
     [setUserContext, userContext.token]
   )
+
+  const fetchWsToken = useCallback(() => {
+    if (userContext.token) {
+      fetch(
+        wsTokenUrl,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userContext.token}`
+          }
+        }
+      )
+        .then(async response => {
+          if (response.ok) {
+            const data = await response.json();
+            setUserContext(oldValues => {
+              return { ...oldValues, wsToken: data.wsToken };
+            })
+          } else {
+            if (response.status === 401) {
+              // window.location.reload();
+              console.log("no ws token available.")
+            } else {
+              setUserContext(oldValues => {
+                return { ...oldValues, wsToken: null }
+              })
+            }
+          }
+        })
+    }
+  },
+    [setUserContext, userContext.token]
+  )
+
+  const openConnection = () => {
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    socket.addEventListener("open", () => {
+      socket.send(JSON.stringify({ token: userContext.token }));
+    });
+    socket.addEventListener("message", (event) => {
+      const data = JSON.parse(event.data);
+      if (data.notificationCount) {
+        setNotifCount(data.notificationCount);
+      }
+    });
+  }
 
   useEffect(() => {
     verifyUser();
@@ -113,6 +167,57 @@ function NavAppBar(props) {
     }
   },
     [fetchUserDetails, userContext.details]
+  )
+
+  useEffect(() => {
+    if (!userContext.wsToken) {
+      fetchWsToken();
+    }
+  },
+    [fetchWsToken, userContext.wsToken]
+  )
+
+  useEffect(() => {
+    if (userContext.details && userContext.wsToken) {
+      const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+
+      function heartbeat() {
+        clearTimeout(socket.pingTimeout);
+        socket.pingTimeout = setTimeout(() => {
+          socket.close();
+        }, 30000 + 1000);
+      }
+
+      socket.addEventListener("open", () => {
+        heartbeat()
+        setSocketConnected(true);
+        socket.send(JSON.stringify({
+          userId: userContext.details._id,
+          wsToken: userContext.wsToken
+        }));
+      });
+
+      socket.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data);
+        if (data.notificationCount !== undefined) {
+          setNotifCount(data.notificationCount);
+        } else if (data.ping === true) {
+          heartbeat();
+          socket.send(JSON.stringify({ pong: true }));
+        }
+      });
+
+      socket.addEventListener("close", () => {
+        clearTimeout(socket.pingTimeout);
+        setSocketConnected(false);
+      });
+
+      return () => {
+        socket.close();
+      }
+    }
+  },
+    [userContext.details, userContext.wsToken]
   )
 
   const syncLogout = useCallback(e => {
@@ -151,6 +256,12 @@ function NavAppBar(props) {
   function myVotesHandler() {
     handleCloseNavMenu();
     props.myVotesHandler();
+  }
+
+  function myNotificationsHandler() {
+    handleCloseNavMenu();
+    setNotifCount(0);
+    props.myNotificationsHandler();
   }
 
   function openInfoAlertHandler(message) {
@@ -317,11 +428,16 @@ function NavAppBar(props) {
             aria-label="show 17 new notifications"
             color="inherit"
           >
-            <Badge badgeContent={17} color="error">
+            <Badge badgeContent={notifCount} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <Typography textAlign="center">Notifications</Typography>
+          <Typography
+            textAlign="center"
+            onClick={myNotificationsHandler}
+          >
+            Notifications
+          </Typography>
         </MenuItem>
         <UserProfileDialog
           handleCloseUserMenu={handleCloseUserMenu}
@@ -403,7 +519,7 @@ function NavAppBar(props) {
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }} color="inherit">
-                    <Badge badgeContent={17} color="error">
+                    <Badge badgeContent={notifCount} color="error">
                       <AccountCircle fontSize='large' />
                     </Badge>
                   </IconButton>

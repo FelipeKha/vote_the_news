@@ -5,6 +5,7 @@ services:
   image: focall/vtn_server:${IMAGES_TAG}
   ports:
    - 4000:4000
+   - 4001:4001
    - 9229:9229
   env_file:
     - ./config/digitalocean.env

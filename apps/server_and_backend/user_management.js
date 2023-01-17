@@ -1,4 +1,4 @@
-import { getToken, getRefreshToken } from './authenticate.js';
+import { getToken, getRefreshToken, getWsToken } from './authenticate.js';
 import { PasswordDoNotMatchError } from './errors.js';
 
 class UserManagement {
@@ -62,6 +62,16 @@ class UserManagement {
         }
     }
 
+    async saveNewWsToken(userId) {
+        const user = await this.database.loadUserWithId(userId);
+        if (user) {
+            const newWsToken = getWsToken({ _id: userId });
+            user.wsToken = newWsToken;
+            const updatedUser = await this.database.saveUser(user);
+            return newWsToken;
+        }
+    }
+
     async loadUserWithId(userId) {
         const user = await this.database.loadUserWithId(userId);
         return user;
@@ -92,6 +102,16 @@ class UserManagement {
                 throw e;
             }
         }
+    }
+
+    async getNotificationCount(userId) {
+        let notificationCount;
+        try {
+            notificationCount = await this.database.getNotificationCount(userId);
+        } catch (e) {
+            throw e;
+        }
+        return notificationCount;
     }
 
     static getNewTokens(userId) {

@@ -35,6 +35,14 @@ router.post('/myvotes', verifyUser, catchAsync(async (req, res) => {
     res.send(articlesArray);
 }))
 
+router.post('/mynotifications', verifyUser, catchAsync(async (req, res) => {
+    const lastPostTime = req.body.lastPostTime;
+    const userId = req.user._id;
+    const articlesArray = await articleManagement.getMyNotificationsArray(userId, lastPostTime);
+    res.statusCode = 200;
+    res.send(articlesArray);
+}))
+
 router.post('/newarticlepost', verifyUser, catchAsync(async (req, res) => {
     console.log('Post request received', req.body.url);
     const newArticleURL = req.body.url;

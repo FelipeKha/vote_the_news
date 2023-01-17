@@ -3,23 +3,23 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import express from 'express';
+import http from 'http';
+import jwt from 'jsonwebtoken';
 import os, { type } from 'os';
 import passport from 'passport';
 import session from 'express-session';
+import { WebSocketServer } from 'ws';
 
 import ArticleManagement from './article_management.js';
-import articleSchema from './models/article.js';
-import Database from './database.js';
 import LinkPreview from './link_preview.js';
 import UserManagement from './user_management.js';
-import userSchema from './models/user.js';
-import voteSchema from './models/vote.js';
 import { } from "./strategies/LocalStrategy.js";
 import { } from "./strategies/JwtStrategy.js";
-import { } from "./authenticate.js"
+import { verifyUser } from "./authenticate.js"
 import { database } from './database_object.js';
 import { router as articlesRouter } from './routes/articlesRoutes.js';
 import { router as usersRouter } from './routes/usersRoutes.js';
+import { log } from 'console';
 // import ExpressError from './utils/ExpressError.js';
 
 dotenv.config();
@@ -70,6 +70,8 @@ const sessionConfig = {
     }
 }
 
+const sessionParser = session(sessionConfig);
+
 function getIpAddress() {
     const networkInterfaces = os.networkInterfaces();
     const results = {};
@@ -111,7 +113,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser(sessionSecret));
 app.use(cors(corsOptions));
-app.use(session(sessionConfig));
+app.use(sessionParser);
 app.use(passport.initialize());
 app.use('/', usersRouter);
 app.use('/', articlesRouter);
@@ -127,8 +129,83 @@ app.use('/', articlesRouter);
 //     res.status(statusCode).send(err.message)
 // })
 
-app.listen(port, () => {
+const server = http.createServer(app);
+const wss = new WebSocketServer({ port: process.env.WEBSOCKET_SERVER_PORT });
+
+wss.on('connection', async (ws, request) => {
+    ws.isAlive = true;
+
+    ws.on('message', async message => {
+        const result = JSON.parse(message);
+
+        if (result.userId && result.wsToken) {
+            const { userId, wsToken } = result;
+            ws.userId = userId;
+            const WsTokenSecret = process.env.WS_TOKEN_SECRET;
+            const decodedWsToken = jwt.verify(wsToken, WsTokenSecret);
+
+            if (decodedWsToken._id === ws.userId) {
+                const user = await userManagement.loadUserWithId(ws.userId);
+                if (user.wsToken === wsToken) {
+                    const notificationCount = await userManagement.getNotificationCount(ws.userId);
+                    const messageNotifCount = JSON.stringify({ "notificationCount": notificationCount });
+                    ws.send(messageNotifCount);
+                    ws.lastNotifCountSent = JSON.parse(messageNotifCount).notificationCount;
+                } else {
+                    ws.close();
+                }
+            } else {
+                ws.close();
+            }
+        } else if (result.pong === true) {
+            heartbeat();
+        }
+    })
+
+    const intervalId = setInterval(sendNewNotifCount, 5000);
+
+    ws.on('close', () => {
+        console.log('Client disconnected');
+        clearInterval(intervalId);
+    })
+
+    ws.onerror = (error) => {
+        console.log('THERE WAS AN ERROR:');
+        console.log(error);
+    }
+
+    async function sendNewNotifCount() {
+        if (ws.readyState === 3) return clearInterval(intervalId);
+        const newNotifCount = await userManagement.getNotificationCount(ws.userId);;
+        if (ws.lastNotifCountSent !== newNotifCount) {
+            const newMessageNotifCount = JSON.stringify({ "notificationCount": newNotifCount });
+            ws.send(newMessageNotifCount);
+            ws.lastNotifCountSent = JSON.parse(newMessageNotifCount).notificationCount;
+        }
+    };
+
+    function heartbeat() {
+        ws.isAlive = true;
+    }
+
+})
+
+const intervalCloseBrokenWs = setInterval(function ping() {
+    wss.clients.forEach(function each(ws) {
+        if (ws.isAlive === false) return ws.terminate();
+
+        ws.isAlive = false;
+        ws.send(JSON.stringify({ "ping": true }));
+    });
+}, 30000);
+
+wss.on('close', function close() {
+    clearInterval(intervalCloseBrokenWs);
+});
+
+server.listen(port, () => {
     console.log(`Listening port ${port}`);
 })
+
 
 export { articleManagement, userManagement };

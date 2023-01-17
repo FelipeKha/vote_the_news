@@ -96,6 +96,16 @@ https://medium.com/free-code-camp/how-to-implement-runtime-environment-variables
 
 https://www.digitalocean.com/community/questions/point-domain-name-to-specific-ip-port
 
+Websocket:
+https://www.npmjs.com/package/ws
+https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+https://stackoverflow.com/questions/22429744/how-to-setup-route-for-websocket-server-in-express
+https://socket.io/how-to/use-with-react-hooks
+https://websockets.readthedocs.io/en/stable/topics/authentication.html
+https://medium.com/voodoo-engineering/websockets-on-production-with-node-js-bdc82d07bb9f
+https://stackoverflow.com/questions/20466129/how-to-organize-socket-handling-in-node-js-and-socket-io-app
+
+
 
 Command to log into container command line:
 docker exec -it vote_the_news-vtn-react-app-1 /bin/bash

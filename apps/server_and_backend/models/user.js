@@ -31,6 +31,9 @@ const userSchema = new mongoose.Schema(
         },
         refreshToken: {
             type: [Session]
+        },
+        wsToken: {
+            type: String
         }
     },
     {
@@ -58,6 +61,13 @@ userSchema.virtual('articlesUpVoted', {
     foreignField: 'author',
     match: { status: true }
 })
+
+userSchema.virtual('notificationUpvotes', {
+    ref: 'NotificationUpvote',
+    localField: '_id',
+    foreignField: 'author',
+    match: { active: true }
+});
 
 userSchema.plugin(passportLocalMongoose);
 

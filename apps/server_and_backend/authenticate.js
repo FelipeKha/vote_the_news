@@ -20,6 +20,15 @@ function getToken(user) {
     return token;
 }
 
+const WsTokenSecret = process.env.WS_TOKEN_SECRET
+
+function getWsToken(user) {
+    const WsToken = jwt.sign(user, WsTokenSecret, {
+        expiresIn: eval(process.env.MINUTE_IN_SECONDS)
+    })
+    return WsToken;
+}
+
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
 function getRefreshToken(user) {
@@ -35,5 +44,6 @@ export {
     COOKIE_OPTIONS,
     getToken,
     getRefreshToken,
+    getWsToken,
     verifyUser
 }
