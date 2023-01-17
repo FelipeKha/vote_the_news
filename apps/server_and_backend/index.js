@@ -130,71 +130,41 @@ app.use('/', articlesRouter);
 // })
 
 const server = http.createServer(app);
-const wss = new WebSocketServer({ port: 4001 });
-
-// const verifyUserWs = (request, callback) => {
-//     console.log('This is what I need to implement');
-// };
-
-// CHECK THIS - DONE
-// setInterval(() => {
-//     // console.log(wss._server._connections);
-//     const clientsCount = wss._server._connections;
-//     console.log("Number of clients connected:", clientsCount);
-// }, 5000);
-
-// server.on('upgrade', function (request, socket, head) {
-//     console.log('Running ws authentication');
-//     console.log('Request', request.url);
-//     // console.log('Socket', socket);
-//     // console.log('Head', head);
-
-//     verifyUserWs(request, function next(err, client) {
-//         if (err || !client) {
-//             socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
-//             socket.destroy();
-//             return;
-//         }
-
-//         console.log('Now verifying user');
-
-//         wss.handleUpgrade(request, socket, head, function (ws) {
-//             wss.emit('connection', ws, request);
-//         });
-//     });
-// });
-
-function heartbeat() {
-    this.isAlive = true;
-}
+const wss = new WebSocketServer({ port: process.env.WEBSOCKET_SERVER_PORT });
 
 wss.on('connection', async (ws, request) => {
     ws.isAlive = true;
-    ws.on('pong', heartbeat);
-    let userId;
-    let lastNotifCountSent;
+    // ws.on('pong', heartbeat);
+    // let userId;
+    // let lastNotifCountSent;
 
     ws.on('message', async message => {
         const result = JSON.parse(message);
+        console.log(result);
 
         if (result.userId && result.wsToken) {
             const { userId, wsToken } = result;
+            ws.userId = userId;
+            console.log("ws userId:", ws.userId);
             const WsTokenSecret = process.env.WS_TOKEN_SECRET;
             const decodedWsToken = jwt.verify(wsToken, WsTokenSecret);
 
-            if (decodedWsToken._id === userId) {
-                const user = await userManagement.loadUserWithId(userId);
+            if (decodedWsToken._id === ws.userId) {
+                const user = await userManagement.loadUserWithId(ws.userId);
                 if (user.wsToken === wsToken) {
-                    const notificationCount = await userManagement.getNotificationCount(userId);
+                    const notificationCount = await userManagement.getNotificationCount(ws.userId);
                     const messageNotifCount = JSON.stringify({ "notificationCount": notificationCount });
                     ws.send(messageNotifCount);
-                    lastNotifCountSent = JSON.parse(messageNotifCount).notificationCount;
+                    console.log("message sent at openning:", messageNotifCount);
+                    ws.lastNotifCountSent = JSON.parse(messageNotifCount).notificationCount;
                 } else {
                     ws.close();
                 }
             } else {
                 ws.close();
             }
+        } else if (result.pong === true) {
+            heartbeat();
         }
     })
 
@@ -211,22 +181,34 @@ wss.on('connection', async (ws, request) => {
     }
 
     async function sendNewNotifCount() {
+        console.log("ws status in interval", ws.readyState);
         if (ws.readyState === 3) return clearInterval(intervalId);
-        const newNotifCount = await userManagement.getNotificationCount(userId);
-        if (lastNotifCountSent !== newNotifCount) {
+        console.log("userId for notif search", ws.userId);
+        const newNotifCount = await userManagement.getNotificationCount(ws.userId);;
+        if (ws.lastNotifCountSent !== newNotifCount) {
             const newMessageNotifCount = JSON.stringify({ "notificationCount": newNotifCount });
             ws.send(newMessageNotifCount);
-            lastNotifCountSent = JSON.parse(newMessageNotifCount).notificationCount;
+            console.log("message sent at interval:", newMessageNotifCount);
+            ws.lastNotifCountSent = JSON.parse(newMessageNotifCount).notificationCount;
         }
     };
+
+    function heartbeat() {
+        console.log('Pong received');
+        ws.isAlive = true;
+    }
+
 })
 
 const intervalCloseBrokenWs = setInterval(function ping() {
     wss.clients.forEach(function each(ws) {
+        console.log("ws alive start?", ws.isAlive);
         if (ws.isAlive === false) return ws.terminate();
 
         ws.isAlive = false;
-        ws.ping();
+        // ws.ping();
+        ws.send(JSON.stringify({ "ping": true }));
+        console.log("ws alive end?", ws.isAlive);
     });
 }, 30000);
 

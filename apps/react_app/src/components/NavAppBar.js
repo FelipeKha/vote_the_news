@@ -177,19 +177,37 @@ function NavAppBar(props) {
     [fetchWsToken, userContext.wsToken]
   )
 
-  function heartbeat(ws) {
-    clearTimeout(ws.pingTimeout);
-    ws.pingTimeout = setTimeout(() => {
-      ws.terminate();
-    }, 30000 + 1000);
-  }
+  // function heartbeat(ws) {
+  //   console.log("pingTimeout before clear", ws.pingTimeout);
+  //   clearTimeout(ws.pingTimeout);
+  //   console.log("pingTimeout after clear", ws.pingTimeout);
+  //   console.log("pinging:", ws);
+  //   ws.pingTimeout = setTimeout((ws) => {
+  //     console.log("ping timeout:", ws);
+  //     ws.terminate();
+  //   }, 30000 + 1000);
+  //   console.log("pingTimeout after set", ws.pingTimeout);
+  // }
 
   useEffect(() => {
     if (userContext.details && userContext.wsToken) {
       const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
+      function heartbeat() {
+        console.log("socket in ue", socket);
+        console.log("pingTimeout before clear", socket.pingTimeout);
+        clearTimeout(socket.pingTimeout);
+        console.log("pingTimeout after clear", socket.pingTimeout);
+        console.log("pinging:", socket);
+        socket.pingTimeout = setTimeout(() => {
+          console.log("ping timeout:", socket);
+          socket.close();
+        }, 30000 + 1000);
+        console.log("pingTimeout after set", socket.pingTimeout);
+      }
+
       socket.addEventListener("open", () => {
-        heartbeat(socket)
+        heartbeat()
         setSocketConnected(true);
         socket.send(JSON.stringify({
           userId: userContext.details._id,
@@ -197,16 +215,24 @@ function NavAppBar(props) {
         }));
       });
 
-      socket.addEventListener("ping", () => heartbeat(socket));
+      socket.addEventListener("ping", () => {
+        console.log("ping received");
+        heartbeat()
+      });
 
       socket.addEventListener("message", (event) => {
         const data = JSON.parse(event.data);
+        console.log("message received:", data);
         if (data.notificationCount !== undefined) {
           setNotifCount(data.notificationCount);
+        } else if (data.ping === true) {
+          heartbeat();
+          socket.send(JSON.stringify({ pong: true }));
         }
       });
 
       socket.addEventListener("close", () => {
+        console.log("socket closed");
         clearTimeout(socket.pingTimeout);
         setSocketConnected(false);
       });
