@@ -29,6 +29,7 @@ services:
    args:
     # - REACT_APP_SERVER_URL=${REACT_APP_SERVER_URL}
     - REACT_APP_SERVER_URL=http://localhost:4000/
+    - REACT_APP_WEBSOCKET_URL=ws://localhost:4001/
   ports:
    - 80:80
   # env_file:
