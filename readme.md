@@ -91,6 +91,7 @@ To do
 Will remain open
 - Architecture improvement (TO BE EXPLAINED, SHOULD BE AN EXPLANATION OF POTENTIAL IMPROVEMENTS IF THE WEBSITE WAS TO BE USED BY MILLIONS OF USERS)
 - Confirm user email
+- Send updated number of notification upon event of upvote only, not every 5 seconds
 
 
 ### Potential additional functionalities
