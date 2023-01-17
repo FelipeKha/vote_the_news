@@ -6,6 +6,7 @@ services:
    context: "./apps/server_and_backend"
   ports:
    - 4000:4000
+   - 4001:4001
    - 9229:9229
   env_file:
     - ./config/dockerlocal.env

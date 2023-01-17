@@ -134,18 +134,13 @@ const wss = new WebSocketServer({ port: process.env.WEBSOCKET_SERVER_PORT });
 
 wss.on('connection', async (ws, request) => {
     ws.isAlive = true;
-    // ws.on('pong', heartbeat);
-    // let userId;
-    // let lastNotifCountSent;
 
     ws.on('message', async message => {
         const result = JSON.parse(message);
-        console.log(result);
 
         if (result.userId && result.wsToken) {
             const { userId, wsToken } = result;
             ws.userId = userId;
-            console.log("ws userId:", ws.userId);
             const WsTokenSecret = process.env.WS_TOKEN_SECRET;
             const decodedWsToken = jwt.verify(wsToken, WsTokenSecret);
 
@@ -155,7 +150,6 @@ wss.on('connection', async (ws, request) => {
                     const notificationCount = await userManagement.getNotificationCount(ws.userId);
                     const messageNotifCount = JSON.stringify({ "notificationCount": notificationCount });
                     ws.send(messageNotifCount);
-                    console.log("message sent at openning:", messageNotifCount);
                     ws.lastNotifCountSent = JSON.parse(messageNotifCount).notificationCount;
                 } else {
                     ws.close();
@@ -181,20 +175,16 @@ wss.on('connection', async (ws, request) => {
     }
 
     async function sendNewNotifCount() {
-        console.log("ws status in interval", ws.readyState);
         if (ws.readyState === 3) return clearInterval(intervalId);
-        console.log("userId for notif search", ws.userId);
         const newNotifCount = await userManagement.getNotificationCount(ws.userId);;
         if (ws.lastNotifCountSent !== newNotifCount) {
             const newMessageNotifCount = JSON.stringify({ "notificationCount": newNotifCount });
             ws.send(newMessageNotifCount);
-            console.log("message sent at interval:", newMessageNotifCount);
             ws.lastNotifCountSent = JSON.parse(newMessageNotifCount).notificationCount;
         }
     };
 
     function heartbeat() {
-        console.log('Pong received');
         ws.isAlive = true;
     }
 
@@ -202,13 +192,10 @@ wss.on('connection', async (ws, request) => {
 
 const intervalCloseBrokenWs = setInterval(function ping() {
     wss.clients.forEach(function each(ws) {
-        console.log("ws alive start?", ws.isAlive);
         if (ws.isAlive === false) return ws.terminate();
 
         ws.isAlive = false;
-        // ws.ping();
         ws.send(JSON.stringify({ "ping": true }));
-        console.log("ws alive end?", ws.isAlive);
     });
 }, 30000);
 
