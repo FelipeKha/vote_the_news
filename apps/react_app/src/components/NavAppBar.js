@@ -47,9 +47,6 @@ function NavAppBar(props) {
   const wsTokenUrl = process.env.REACT_APP_SERVER_URL + "wsToken";
   const wsServerUrl = process.env.REACT_APP_WEBSOCKET_URL;
 
-  console.log("ws token url", wsTokenUrl);
-  console.log("ws server url", wsServerUrl);
-
   const verifyUser = useCallback(() => {
     fetch(
       refreshTokenUrl,
