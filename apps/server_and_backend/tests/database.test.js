@@ -4,7 +4,7 @@ import Database from '../database';
 import articleSchema from '../models/article.js';
 import userSchema from '../models/user.js';
 import voteSchema from '../models/vote.js';
-import notificationSchema from '../models/notification.js';
+import notificationSchema from '../models/notificationUpvote.js';
 import {
   ArticleAlreadyPostedError,
   NoArticleWithThisIDError,
