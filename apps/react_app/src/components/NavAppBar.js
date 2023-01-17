@@ -45,6 +45,10 @@ function NavAppBar(props) {
   const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
   const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me";
   const wsTokenUrl = process.env.REACT_APP_SERVER_URL + "wsToken";
+  const wsServerUrl = process.env.REACT_APP_WEBSOCKET_URL;
+
+  console.log("ws token url", wsTokenUrl);
+  console.log("ws server url", wsServerUrl);
 
   const verifyUser = useCallback(() => {
     fetch(
@@ -143,7 +147,7 @@ function NavAppBar(props) {
   )
 
   const openConnection = () => {
-    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    const socket = new WebSocket(wsServerUrl);
     socket.addEventListener("open", () => {
       socket.send(JSON.stringify({ token: userContext.token }));
     });
