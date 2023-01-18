@@ -19,7 +19,6 @@ import { verifyUser } from "./authenticate.js"
 import { database } from './database_object.js';
 import { router as articlesRouter } from './routes/articlesRoutes.js';
 import { router as usersRouter } from './routes/usersRoutes.js';
-import { log } from 'console';
 // import ExpressError from './utils/ExpressError.js';
 
 dotenv.config();
@@ -68,6 +67,7 @@ const sessionConfig = {
         secure: false,
         signed: true,
         domain: ".votethenews.com",
+        sameSite: "none",
         expires: Date.now() + eval(process.env.WEEK_IN_MILISECONDS),
         maxAge: eval(process.env.WEEK_IN_MILISECONDS)
     }
