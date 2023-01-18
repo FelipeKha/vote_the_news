@@ -105,6 +105,12 @@ https://websockets.readthedocs.io/en/stable/topics/authentication.html
 https://medium.com/voodoo-engineering/websockets-on-production-with-node-js-bdc82d07bb9f
 https://stackoverflow.com/questions/20466129/how-to-organize-socket-handling-in-node-js-and-socket-io-app
 
+Server on domain instead of IP to make cookies work:
+https://docs.digitalocean.com/products/networking/dns/how-to/add-subdomain/
+https://developer.chrome.com/blog/new-in-devtools-79/
+https://stackoverflow.com/questions/62749492/set-cookie-was-blocked-because-its-domain-attribute-was-invalid-with-regards-to
+https://stackoverflow.com/questions/59808537/cookies-headers-are-present-but-cookies-are-not-stored-in-browser
+
 
 
 Command to log into container command line:
