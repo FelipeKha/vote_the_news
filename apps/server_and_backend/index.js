@@ -67,7 +67,6 @@ const sessionConfig = {
         secure: false,
         signed: true,
         domain: ".votethenews.com",
-        sameSite: "none",
         expires: Date.now() + eval(process.env.WEEK_IN_MILISECONDS),
         maxAge: eval(process.env.WEEK_IN_MILISECONDS)
     }

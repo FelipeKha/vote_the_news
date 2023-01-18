@@ -9,7 +9,6 @@ const COOKIE_OPTIONS = {
     secure: false,
     signed: true,
     domain: ".votethenews.com",
-    sameSite: "none",
     expires: Date.now() + eval(process.env.MONTH_IN_MILISECONDS),
     maxAge: eval(process.env.MONTH_IN_MILISECONDS)
 }
