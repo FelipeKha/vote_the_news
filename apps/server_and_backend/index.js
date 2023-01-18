@@ -70,8 +70,6 @@ const sessionConfig = {
     }
 }
 
-const sessionParser = session(sessionConfig);
-
 function getIpAddress() {
     const networkInterfaces = os.networkInterfaces();
     const results = {};
@@ -113,7 +111,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser(sessionSecret));
 app.use(cors(corsOptions));
-app.use(sessionParser);
+app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use('/', usersRouter);
 app.use('/', articlesRouter);
@@ -129,7 +127,6 @@ app.use('/', articlesRouter);
 //     res.status(statusCode).send(err.message)
 // })
 
-const server = http.createServer(app);
 const wss = new WebSocketServer({ port: process.env.WEBSOCKET_SERVER_PORT });
 
 wss.on('connection', async (ws, request) => {
@@ -203,7 +200,7 @@ wss.on('close', function close() {
     clearInterval(intervalCloseBrokenWs);
 });
 
-server.listen(port, () => {
+app.listen(port, () => {
     console.log(`Listening port ${port}`);
 })
 
