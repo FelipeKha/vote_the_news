@@ -60,6 +60,7 @@ router.post("/refreshToken", async (req, res, next) => {
             const payload = jwt.verify(refreshToken, refreshTokenSecret);
             const userId = payload._id;
             const user = await userManagement.loadUserWithId(userId);
+            console.log("In usersRoutes:", user);
             if (user) {
                 const {
                     updatedUser,
