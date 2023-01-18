@@ -65,6 +65,9 @@ const sessionConfig = {
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
+        secure: false,
+        signed: true,
+        domain: ".votethenews.com",
         expires: Date.now() + eval(process.env.WEEK_IN_MILISECONDS),
         maxAge: eval(process.env.WEEK_IN_MILISECONDS)
     }
