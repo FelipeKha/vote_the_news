@@ -8,7 +8,6 @@ const COOKIE_OPTIONS = {
     httpOnly: true,
     secure: false,
     signed: true,
-    // domain: ".votethenews.com",
     maxAge: eval(process.env.MONTH_IN_MILISECONDS)
 }
 
