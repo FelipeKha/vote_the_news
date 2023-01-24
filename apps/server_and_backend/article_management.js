@@ -73,6 +73,26 @@ class ArticleManagement {
         return articleObject;
     }
 
+    async getArticleVotes(articleIdArray, userId) {
+        try {
+            const articleVotes = await this.database.loadArticleVotes(articleIdArray);
+            const userVotedArticle = await this.database.loadUserVotedArticle(articleIdArray, userId);
+
+            const articleVotesObject = {};
+            const userVotedArticleIdArray = userVotedArticle.map(vote => vote.article.toString());
+
+            articleVotes.forEach(article => {
+                articleVotesObject[article._id] = {
+                    numUpVotes: article.numUpVotes,
+                    userVoted: userVotedArticleIdArray.includes(article._id.toString())
+                };
+            });
+            return articleVotesObject;
+        } catch (e) {
+            articleManagementErrorsHandler(e);
+        }
+    }
+
     async postNewArticle(url, authorId) {
         if (!ArticleManagement.isValidHttpUrl(url)) {
             throw new InvalidURLError('Invalid URL');

@@ -41,6 +41,7 @@ function ArticleCard(props) {
       .then(response => {
         if (response.ok) {
           console.log("upvoted");
+          props.upVoteLocalEffect(props.articleInfo._id);
         }
       })
       .catch(err => {
@@ -68,6 +69,10 @@ function ArticleCard(props) {
       .catch(err => {
         console.log(err);
       })
+  }
+
+  function upVote() {
+    fetchUpVote();
   }
 
   return (
@@ -175,12 +180,19 @@ function ArticleCard(props) {
           spacing={0}
           marginY={0.5}
         >
-          <Chip
-            variant="outlined"
-            icon={<HowToVoteIcon />}
-            label="+Vote"
-            onClick={fetchUpVote}
-          />
+          {
+            props.articleInfo.userVoted ?
+              <Chip
+                label="+Vote"
+                onClick={upVote}
+              />
+              :
+              <Chip
+                variant="outlined"
+                label="+Vote"
+                onClick={upVote}
+              />
+          }
           <Typography
             color="text.secondary"
             variant="body2"

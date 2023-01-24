@@ -160,6 +160,28 @@ class Database {
         };
     }
 
+    async loadArticleVotes(articleIdArray, userId) {
+        const votesArray = await this.articleModel.find({
+            "_id": { $in: articleIdArray }
+        })
+            .populate('numUpVotes')
+            .select('numUpVotes')
+            .lean();
+
+        return votesArray;
+    }
+
+    async loadUserVotedArticle(articleIdArray, userId) {
+        const votesArray = await this.voteModel.find({
+            "article": { $in: articleIdArray },
+            "author": userId,
+            "status": true
+        })
+            .select('article');
+
+        return votesArray;
+    }
+
     async loadMyNotificationsArray(userId, lastPostTime) {
         let notificationsArray;
         let lastNotification = false;

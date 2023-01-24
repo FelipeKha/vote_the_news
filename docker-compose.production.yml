@@ -6,6 +6,7 @@ services:
   ports:
    - 4000:4000
    - 4001:4001
+   - 4002:4002
    - 9229:9229
   env_file:
     - ./config/digitalocean.env

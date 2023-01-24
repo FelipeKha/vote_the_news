@@ -58,7 +58,6 @@ class UserManagement {
             const { token: newToken, refreshToken: newRefreshToken } = UserManagement.getNewTokens(user._id);
             user.refreshToken[refreshTokenIndex] = { refreshToken: newRefreshToken };
             const updatedUser = await this.database.saveUser(user);
-            console.log('In saveNewRefreshToken:', updatedUser);
             return { updatedUser, newToken, newRefreshToken };
         }
     }

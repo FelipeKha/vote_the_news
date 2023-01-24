@@ -10,6 +10,7 @@ function App() {
     // console.log("App rendered");
     const [pageDisplayed, setPageDisplayed] = useState("allarticles");
     const [serverUrl, setServerUrl] = useState("");
+    const [triedFetchUserDetails, setTriedFetchUserDetails] = useState(false);
     // console.log(pageDisplayed);
 
 
@@ -38,6 +39,10 @@ function App() {
         setPageDisplayed("mynotifications");
     }
 
+    function setTryFetchUserDetails() {
+        setTriedFetchUserDetails(true);
+    }
+
     // useEffect(() => {
     //     console.log("useEffect in App");
     //     getServerUrl();
@@ -52,11 +57,13 @@ function App() {
                 myArticlesHandler={myArticlesHandler}
                 myVotesHandler={myVotesHandler}
                 myNotificationsHandler={myNotificationsHandler}
+                setTryFetchUserDetails={setTryFetchUserDetails}
                 // serverUrl={serverUrl}
             />
             <NewArticlePostUrlInput />
             <MainGrid
                 pageDisplayed={pageDisplayed}
+                triedFetchUserDetails={triedFetchUserDetails}
                 // serverUrl={serverUrl}
             />
         </>

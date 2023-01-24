@@ -5,7 +5,7 @@ WORKDIR /react_app
 COPY ["package.json", "package-lock.json*", "/react_app/"]
 RUN npm install
 COPY ./ /react_app/
-ARG REACT_APP_SERVER_URL REACT_APP_WEBSOCKET_URL
+ARG REACT_APP_SERVER_URL REACT_APP_WEBSOCKET_URL_NOTIF REACT_APP_WEBSOCKET_URL_VOTES
 RUN npm run build
 
 FROM nginx:latest
