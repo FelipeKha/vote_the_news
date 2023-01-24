@@ -45,7 +45,7 @@ function NavAppBar(props) {
   const refreshTokenUrl = process.env.REACT_APP_SERVER_URL + "refreshToken";
   const userDetailsUrl = process.env.REACT_APP_SERVER_URL + "me";
   const wsTokenUrl = process.env.REACT_APP_SERVER_URL + "wsToken";
-  const wsServerUrl = process.env.REACT_APP_WEBSOCKET_URL;
+  const wsServerUrl = process.env.REACT_APP_WEBSOCKET_URL_NOTIF;
 
   const verifyUser = useCallback(() => {
     fetch(
@@ -139,6 +139,7 @@ function NavAppBar(props) {
           }
         })
     }
+    setTryFetchUserDetails();
   },
     [setUserContext, userContext.token]
   )
@@ -180,7 +181,7 @@ function NavAppBar(props) {
 
   useEffect(() => {
     if (userContext.details && userContext.wsToken) {
-      const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+      const socket = new WebSocket(wsServerUrl);
 
       function heartbeat() {
         clearTimeout(socket.pingTimeout);
@@ -203,6 +204,7 @@ function NavAppBar(props) {
         if (data.notificationCount !== undefined) {
           setNotifCount(data.notificationCount);
         } else if (data.ping === true) {
+          console.log("Ping received");
           heartbeat();
           socket.send(JSON.stringify({ pong: true }));
         }
@@ -283,6 +285,10 @@ function NavAppBar(props) {
     setOpenInfoAlert(false);
     setOpenSuccessAlert(false);
   };
+
+  function setTryFetchUserDetails() {
+    props.setTryFetchUserDetails();
+  }
 
   function MenuNavXs() {
     return (

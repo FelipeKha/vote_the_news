@@ -27,6 +27,7 @@ function MainGrid(props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [articlesArray, setArticlesArray] = useState([]);
+  const [articlesVotesObject, setArticlesVotesObject] = useState({});
   const [lastPostTime, setLastPostTime] = useState("");
   const [allArticlesLoaded, setAllArticlesLoaded] = useState(false);
   const [prevY, setPrevY] = useState(0);
@@ -35,6 +36,9 @@ function MainGrid(props) {
   const [shouldFetch, setShouldFetch] = useState(false)
   const [pageLoaded, setPageLoaded] = useState(props.pageDisplayed)
   const ref = useRef();
+
+  const fetchArticlesArrayUrl = process.env.REACT_APP_SERVER_URL + `${props.pageDisplayed}`;
+  const wsServerUrl = process.env.REACT_APP_WEBSOCKET_URL_VOTES;
 
   const observer = useRef(
     new IntersectionObserver((entries) => {
@@ -57,9 +61,6 @@ function MainGrid(props) {
     // console.log(lastPostTime);
 
     setLoading(true);
-
-    const fetchArticlesArrayUrl = process.env.REACT_APP_SERVER_URL + `${props.pageDisplayed}`
-    // const fetchArticlesArrayUrl = props.serverUrl + `${props.pageDisplayed}`
 
     fetch(
       fetchArticlesArrayUrl,
@@ -104,11 +105,28 @@ function MainGrid(props) {
     setArticlesArray(newArticlesList)
   }
 
+  function upVoteLocalEffect(articleId) {
+    if (articlesVotesObject[articleId]) {
+      const newUserVoted = !articlesVotesObject[articleId].userVoted;
+      let newVoteCount;
+      newUserVoted ?
+        newVoteCount = articlesVotesObject[articleId].numUpVotes + 1 :
+        newVoteCount = articlesVotesObject[articleId].numUpVotes - 1;
+      const newArticleVotesObject = articlesVotesObject;
+      newArticleVotesObject[articleId] = {
+        numUpVotes: newVoteCount,
+        userVoted: newUserVoted
+      }
+      setArticlesVotesObject({...newArticleVotesObject});
+    }
+  }
+
   function renderArticlePost(articleInfo) {
     return (
       <Item>
         <ArticleCard
           articleInfo={articleInfo}
+          upVoteLocalEffect={upVoteLocalEffect}
           pageDisplayed={props.pageDisplayed}
           key={articleInfo.id}
         />
@@ -160,6 +178,60 @@ function MainGrid(props) {
     [props.pageDisplayed]
   )
 
+  useEffect(() => {
+    console.log("Running useEffect votes");
+    if (articlesArray.length !== 0 && props.triedFetchUserDetails) {
+      // console.log(articlesArray);
+      const socket = new WebSocket(wsServerUrl);
+
+      function heartbeat() {
+        clearTimeout(socket.pingTimeout);
+        socket.pingTimeout = setTimeout(() => {
+          socket.close();
+        }, 30000 + 1000);
+      }
+
+      socket.addEventListener("open", () => {
+        console.log("Openning websocket");
+        heartbeat()
+        const articleIdArray = articlesArray.map((article) => article._id);
+        if (userContext.details) {
+          console.log("User Context ready");
+          socket.send(JSON.stringify({
+            userId: userContext.details._id,
+            articleIdArray: articleIdArray
+          }));
+        } else {
+          console.log("No user context yet");
+          socket.send(JSON.stringify({
+            articleIdArray: articleIdArray
+          }));
+        }
+      });
+
+      socket.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data);
+        if (data.articleVotes !== undefined) {
+          setArticlesVotesObject(data.articleVotes);
+        } else if (data.ping === true) {
+          heartbeat();
+          socket.send(JSON.stringify({ pong: true }));
+        }
+      });
+
+      socket.addEventListener("close", () => {
+        console.log("Vote socket closed");
+        clearTimeout(socket.pingTimeout);
+      });
+
+      return () => {
+        socket.close();
+      }
+    }
+  }
+    , [articlesArray, userContext.details, props.triedFetchUserDetails]
+  )
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid
@@ -167,6 +239,10 @@ function MainGrid(props) {
         spacing={2}
       >
         {articlesArray.map((article, i) => {
+          if (articlesVotesObject[article._id]) {
+            article.numUpVotes = articlesVotesObject[article._id].numUpVotes;
+            article.userVoted = articlesVotesObject[article._id].userVoted;
+          }
           return i === articlesArray.length - 1 ? (
             <Grid
               item

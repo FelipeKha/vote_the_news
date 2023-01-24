@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 import os, { type } from 'os';
 import passport from 'passport';
 import session from 'express-session';
+import { Url } from 'url';
 import { WebSocketServer } from 'ws';
 
 import ArticleManagement from './article_management.js';
@@ -66,7 +67,7 @@ const sessionConfig = {
         httpOnly: true,
         secure: false,
         signed: true,
-        domain: ".votethenews.com",
+        // domain: ".votethenews.com",
         expires: Date.now() + eval(process.env.WEEK_IN_MILISECONDS),
         maxAge: eval(process.env.WEEK_IN_MILISECONDS)
     }
@@ -129,13 +130,23 @@ app.use('/', articlesRouter);
 //     res.status(statusCode).send(err.message)
 // })
 
-const wss = new WebSocketServer({ port: process.env.WEBSOCKET_SERVER_PORT });
 
-wss.on('connection', async (ws, request) => {
+// Start websocket server notifications
+
+
+const wssOptions = {
+    port: process.env.WEBSOCKET_SERVER_PORT_NOTIF,
+}
+const wss = new WebSocketServer(wssOptions);
+
+wss.on('connection', async (ws, req) => {
     ws.isAlive = true;
+
+    console.log("New connection to notifications websocket server");
 
     ws.on('message', async message => {
         const result = JSON.parse(message);
+        // console.log("Message received in notifications:", result);
 
         if (result.userId && result.wsToken) {
             const { userId, wsToken } = result;
@@ -158,13 +169,16 @@ wss.on('connection', async (ws, request) => {
             }
         } else if (result.pong === true) {
             heartbeat();
+        } else {
+            console.log("Closing websocket connection notifications because of invalid message");
+            ws.close();
         }
     })
 
     const intervalId = setInterval(sendNewNotifCount, 5000);
 
     ws.on('close', () => {
-        console.log('Client disconnected');
+        console.log('Notification client disconnected');
         clearInterval(intervalId);
     })
 
@@ -201,6 +215,84 @@ const intervalCloseBrokenWs = setInterval(function ping() {
 wss.on('close', function close() {
     clearInterval(intervalCloseBrokenWs);
 });
+
+// End websocket server notifications
+
+// Start websocket server votes
+
+const wssVotesOptions = {
+    port: process.env.WEBSOCKET_SERVER_PORT_VOTES,
+}
+const wssVotes = new WebSocketServer(wssVotesOptions);
+
+wssVotes.on('connection', async (ws, req) => {
+    ws.isAlive = true;
+
+    console.log("New connection to articlevotes websocket server");
+
+    ws.on('message', async message => {
+        const result = JSON.parse(message);
+        // console.log("Message received in votes: ", result);
+
+        if (result.articleIdArray !== undefined) {
+            const { userId, articleIdArray } = result;
+            ws.userId = userId;
+            ws.articleIdArray = articleIdArray;
+            console.log("Sending article votes");
+            const articleVotes = await articleManagement.getArticleVotes(ws.articleIdArray, ws.userId);
+            const messageArtVotes = JSON.stringify({ articleVotes: articleVotes });
+            ws.send(messageArtVotes);
+            ws.lastArtVotesSent = JSON.parse(messageArtVotes).articleVotes;
+        } else if (result.pong === true) {
+            heartbeat();
+        } else {
+            console.log("Closing websocket connection votes");
+            ws.close();
+        }
+    })
+
+    const intervalId = setInterval(sendNewVotesObject, 5000);
+
+    ws.on('close', () => {
+        console.log('Votes client disconnected');
+        clearInterval(intervalId);
+    })
+
+    ws.onerror = (error) => {
+        console.log('THERE WAS AN ERROR:');
+        console.log(error);
+    }
+
+    async function sendNewVotesObject() {
+        if (ws.readyState === 3) return clearInterval(intervalId);
+        const newVoteObject = await articleManagement.getArticleVotes(ws.articleIdArray, ws.userId);
+        if (JSON.stringify(ws.lastArtVotesSent) !== JSON.stringify(newVoteObject)) {
+            const newMessageVotes = JSON.stringify({ articleVotes: newVoteObject });
+            ws.send(newMessageVotes);
+            ws.lastArtVotesSent = JSON.parse(newMessageVotes).articleVotes;
+        }
+    };
+
+    function heartbeat() {
+        ws.isAlive = true;
+    }
+
+})
+
+const intervalCloseBrokenWsVotes = setInterval(function ping() {
+    wssVotes.clients.forEach(function each(ws) {
+        if (ws.isAlive === false) return ws.terminate();
+
+        ws.isAlive = false;
+        ws.send(JSON.stringify({ "ping": true }));
+    });
+}, 30000);
+
+wssVotes.on('close', function close() {
+    clearInterval(intervalCloseBrokenWsVotes);
+});
+
+// End websocket server votes
 
 app.listen(port, () => {
     console.log(`Listening port ${port}`);

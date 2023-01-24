@@ -60,20 +60,12 @@ router.post("/refreshToken", async (req, res, next) => {
             const payload = jwt.verify(refreshToken, refreshTokenSecret);
             const userId = payload._id;
             const user = await userManagement.loadUserWithId(userId);
-            console.log("In usersRoutes:", user);
             if (user) {
-                const result = await userManagement.saveNewRefreshToken(user, refreshToken);
-                console.log("result in usersRoutes", result);
                 const {
                     updatedUser,
                     newToken,
                     newRefreshToken
-                } = result;
-                // const {
-                //     updatedUser,
-                //     newToken,
-                //     newRefreshToken
-                // } = await userManagement.saveNewRefreshToken(user, refreshToken);
+                } = await userManagement.saveNewRefreshToken(user, refreshToken);
                 res.cookie("refreshToken", newRefreshToken, COOKIE_OPTIONS);
                 res.send({ success: true, newToken });
             } else {
