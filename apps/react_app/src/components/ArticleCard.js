@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 
 import domainsAndLogos from '../logos/domainsAndLogos.js';
 import { UserContext } from "../context/UserContext";
+import { shadows } from '@mui/system';
 
 
 function ArticleCard(props) {
@@ -75,6 +76,15 @@ function ArticleCard(props) {
     fetchUpVote();
   }
 
+  function formatDate(date) {
+    let dateObj = new Date(date);
+    let month = dateObj.getMonth() + 1;
+    let day = dateObj.getDate();
+    let year = dateObj.getFullYear();
+    return `${month}/${day}/${year}`;
+  }
+
+
   return (
     <Badge
       badgeContent=
@@ -91,8 +101,21 @@ function ArticleCard(props) {
         horizontal: 'right',
       }}
       invisible={props.pageDisplayed !== "myarticles"}
+      style={{
+        width: "100%",
+        height: "100%",
+        alignSelf: "flex-end",
+      }}
     >
       <Card
+        style={{
+          border: "0.5px solid rgba(0, 0, 0, 0.12)",
+          boxShadow: "none",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
         <Box
           display="flex"
@@ -116,7 +139,7 @@ function ArticleCard(props) {
           align="left"
           margin={0}
         >
-          {props.articleInfo.postTime}
+          {formatDate(props.articleInfo.postTime)}
         </Typography>
         <Link
           href={props.articleInfo.url}
@@ -129,6 +152,10 @@ function ArticleCard(props) {
             alt="green iguana"
             height="140"
             image={props.articleInfo.linkPreview.img ? props.articleInfo.linkPreview.img : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png"}
+            style={{
+              borderTop: "0.25px solid rgba(0, 0, 0, 0.12)",
+              borderBottom: "0.25px solid rgba(0, 0, 0, 0.12)",
+            }}
           />
           <CardContent>
             <Typography
@@ -138,6 +165,13 @@ function ArticleCard(props) {
               align="left"
               lineHeight={1.4}
               marginBottom={1}
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: '-webkit-box',
+                WebkitLineClamp: '3',
+                WebkitBoxOrient: 'vertical',
+              }}
             >
               {props.articleInfo.linkPreview.title ? props.articleInfo.linkPreview.title : "[NO TITLE]"}
             </Typography>
@@ -147,32 +181,61 @@ function ArticleCard(props) {
               color="text.secondary"
               align="left"
               lineHeight={1.2}
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: '-webkit-box',
+                WebkitLineClamp: '4',
+                WebkitBoxOrient: 'vertical',
+              }}
             >
               {props.articleInfo.linkPreview.description ? props.articleInfo.linkPreview.description : "[NO DESCRIPTION]"}
             </Typography>
-            <Typography
-              variant="overline"
-              color="text.secondary"
-              align="right"
-              lineHeight={1}
-            >
-              {
-                props.articleInfo.linkPreview.domain ?
-                  props.articleInfo.linkPreview.domain in domainsAndLogos ?
-                    <CardMedia
-                      component="img"
-                      alt="green iguana"
-                      height="20"
-                      sx={{ padding: "1em", objectFit: "contain" }}
-                      image={domainsAndLogos[props.articleInfo.linkPreview.domain]}
-                    />
-                    : props.articleInfo.linkPreview.domain
-                  : "[NO DOMAIN]"
-              }
-            </Typography>
           </CardContent>
         </Link>
-        <Divider variant="middle" />
+        <Link
+          href={'http://' + props.articleInfo.linkPreview.domain}
+          underline="none"
+          target="_blank"
+          rel="noopener"
+          style={{
+            marginTop: "auto",
+          }}
+        >
+          <Typography
+            variant="overline"
+            color="text.secondary"
+            align="right"
+            lineHeight={1}
+            style={{
+              height: "auto",
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            {
+              props.articleInfo.linkPreview.domain ?
+                props.articleInfo.linkPreview.domain in domainsAndLogos ?
+                  <CardMedia
+                    component="img"
+                    alt="green iguana"
+                    style={{
+                      padding: "10px",
+                      objectFit: "contain",
+                      width: "90%",
+                      height: "20px",
+                    }}
+                    image={domainsAndLogos[props.articleInfo.linkPreview.domain]}
+                  />
+                  : props.articleInfo.linkPreview.domain
+                : "[NO DOMAIN]"
+            }
+          </Typography>
+        </Link>
+        <Divider
+          variant="middle"
+        />
         <Stack
           direction="row"
           justifyContent="space-around"
@@ -185,6 +248,9 @@ function ArticleCard(props) {
               <Chip
                 label="+Vote"
                 onClick={upVote}
+                style={{
+                  border: "1px solid #bdbdbd",
+                }}
               />
               :
               <Chip

@@ -58,13 +58,13 @@ function App() {
                 myVotesHandler={myVotesHandler}
                 myNotificationsHandler={myNotificationsHandler}
                 setTryFetchUserDetails={setTryFetchUserDetails}
-                // serverUrl={serverUrl}
+            // serverUrl={serverUrl}
             />
             <NewArticlePostUrlInput />
             <MainGrid
                 pageDisplayed={pageDisplayed}
                 triedFetchUserDetails={triedFetchUserDetails}
-                // serverUrl={serverUrl}
+            // serverUrl={serverUrl}
             />
         </>
     )

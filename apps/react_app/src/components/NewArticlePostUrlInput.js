@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import IconButton from '@mui/material/IconButton';
@@ -89,14 +90,20 @@ function NewArticlePostUrlInput() {
 
 
     return (
-        <>
+        <Box
+            style={{
+                marginTop: "80px",
+                marginBottom: "12px",
+            }}
+        >
             <Paper
                 component="form"
-                sx={{
+                style={{
                     p: '2px 4px',
                     display: 'flex',
                     alignItems: 'center',
-                    marginTop: "80px"
+                    boxShadow: "none",
+                    border: "1px solid rgba(0, 0, 0, 0.12)",
                 }}
                 onSubmit={formSubmitHandler}
             >
@@ -115,14 +122,25 @@ function NewArticlePostUrlInput() {
                     type="submit"
                     variant="contained"
                     disabled={isSubmitting}
-                    endIcon={<SendIcon />} >
+                    endIcon={<SendIcon />}
+                    style={{
+                        boxShadow: "none",
+                        borderTopLeftRadius: "0",
+                        borderTopRightRadius: "4px",
+                        borderBottomRightRadius: "4px",
+                        borderBottomLeftRadius: "0",
+                        alignSelf: "stretch",
+                    }}
+                >
                     Post
                 </Button>
             </Paper>
-            {isSubmitting &&
+            {
+                isSubmitting &&
                 <ArticleCardSkeleton />
             }
-            {Object.keys(articlePosted).length !== 0 &&
+            {
+                Object.keys(articlePosted).length !== 0 &&
                 <ArticleCard articleInfo={articlePosted} />
             }
             <Snackbar open={openSuccessAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
@@ -135,7 +153,7 @@ function NewArticlePostUrlInput() {
                     {error}
                 </Alert>
             </Snackbar>
-        </>
+        </Box >
     );
 }
 
