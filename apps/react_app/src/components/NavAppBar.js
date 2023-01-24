@@ -7,6 +7,7 @@ import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -359,7 +360,7 @@ function NavAppBar(props) {
   function VtnLogoMd() {
     return (
       <>
-        <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+        <HowToVoteIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
         <Typography
           variant="h6"
           noWrap
@@ -475,7 +476,12 @@ function NavAppBar(props) {
 
   return (
     <>
-      <AppBar position="fixed">
+      <AppBar 
+      position="fixed"
+      style={{
+        boxShadow: 'none',
+      }}
+      >
         <Container maxWidth="xl">
           <Toolbar disableGutters>
 

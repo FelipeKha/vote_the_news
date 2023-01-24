@@ -113,6 +113,8 @@ function ArticleCard(props) {
           boxShadow: "none",
           width: "100%",
           height: "100%",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <Box
@@ -150,6 +152,10 @@ function ArticleCard(props) {
             alt="green iguana"
             height="140"
             image={props.articleInfo.linkPreview.img ? props.articleInfo.linkPreview.img : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png"}
+            style={{
+              borderTop: "0.25px solid rgba(0, 0, 0, 0.12)",
+              borderBottom: "0.25px solid rgba(0, 0, 0, 0.12)",
+            }}
           />
           <CardContent>
             <Typography
@@ -185,86 +191,86 @@ function ArticleCard(props) {
             >
               {props.articleInfo.linkPreview.description ? props.articleInfo.linkPreview.description : "[NO DESCRIPTION]"}
             </Typography>
-            <Typography
-              variant="overline"
-              color="text.secondary"
-              align="right"
-              lineHeight={1}
-              style={{
-                height: "20px",
-                width: "100%",
-              }}
-            >
-              {
-                props.articleInfo.linkPreview.domain ?
-                  props.articleInfo.linkPreview.domain in domainsAndLogos ?
-                    <CardMedia
-                      component="img"
-                      alt="green iguana"
-                      style={{
-                        padding: "1em",
-                        objectFit: "contain",
-                        width: "90%",
-                        height: "20px",
-                      }}
-                      image={domainsAndLogos[props.articleInfo.linkPreview.domain]}
-                    />
-                    : props.articleInfo.linkPreview.domain
-                  : "[NO DOMAIN]"
-              }
-            </Typography>
           </CardContent>
-          <Box
-            style={{
-              height: "40px",
-            }}
-          ></Box>
         </Link>
-        <Box
+        <Link
+          href={'http://' + props.articleInfo.linkPreview.domain}
+          underline="none"
+          target="_blank"
+          rel="noopener"
           style={{
-            position: "absolute",
-            bottom: "0",
-            width: "100%",
-            height: "45px",
+            marginTop: "auto",
           }}
         >
-          <Divider variant="middle" />
-          <Stack
-            direction="row"
-            justifyContent="space-around"
-            alignItems="center"
-            spacing={0}
-            marginY={0.5}
+          <Typography
+            variant="overline"
+            color="text.secondary"
+            align="right"
+            lineHeight={1}
+            style={{
+              height: "auto",
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+            }}
           >
             {
-              props.articleInfo.userVoted ?
-                <Chip
-                  label="+Vote"
-                  onClick={upVote}
-                  style={{
-                    border: "1px solid #bdbdbd",
-                  }}
-                />
-                :
-                <Chip
-                  variant="outlined"
-                  label="+Vote"
-                  onClick={upVote}
-                />
+              props.articleInfo.linkPreview.domain ?
+                props.articleInfo.linkPreview.domain in domainsAndLogos ?
+                  <CardMedia
+                    component="img"
+                    alt="green iguana"
+                    style={{
+                      padding: "10px",
+                      objectFit: "contain",
+                      width: "90%",
+                      height: "20px",
+                    }}
+                    image={domainsAndLogos[props.articleInfo.linkPreview.domain]}
+                  />
+                  : props.articleInfo.linkPreview.domain
+                : "[NO DOMAIN]"
             }
-            <Typography
-              color="text.secondary"
-              variant="body2"
-            >
-              {props.articleInfo.numUpVotes}
-              {(props.articleInfo.numUpVotes === 0 ||
-                props.articleInfo.numUpVotes === 1) ?
-                <> vote</>
-                : <> votes</>
-              }
-            </Typography>
-          </Stack>
-        </Box>
+          </Typography>
+        </Link>
+        <Divider
+          variant="middle"
+        />
+        <Stack
+          direction="row"
+          justifyContent="space-around"
+          alignItems="center"
+          spacing={0}
+          marginY={0.5}
+        >
+          {
+            props.articleInfo.userVoted ?
+              <Chip
+                label="+Vote"
+                onClick={upVote}
+                style={{
+                  border: "1px solid #bdbdbd",
+                }}
+              />
+              :
+              <Chip
+                variant="outlined"
+                label="+Vote"
+                onClick={upVote}
+              />
+          }
+          <Typography
+            color="text.secondary"
+            variant="body2"
+          >
+            {props.articleInfo.numUpVotes}
+            {(props.articleInfo.numUpVotes === 0 ||
+              props.articleInfo.numUpVotes === 1) ?
+              <> vote</>
+              : <> votes</>
+            }
+          </Typography>
+        </Stack>
       </Card >
     </Badge >
   );
