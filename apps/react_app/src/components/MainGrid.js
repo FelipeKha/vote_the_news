@@ -117,13 +117,18 @@ function MainGrid(props) {
         numUpVotes: newVoteCount,
         userVoted: newUserVoted
       }
-      setArticlesVotesObject({...newArticleVotesObject});
+      setArticlesVotesObject({ ...newArticleVotesObject });
     }
   }
 
   function renderArticlePost(articleInfo) {
     return (
-      <Item>
+      <Item
+      style={{ 
+        padding: '0px',
+        height: '100%',
+       }}
+      >
         <ArticleCard
           articleInfo={articleInfo}
           upVoteLocalEffect={upVoteLocalEffect}
