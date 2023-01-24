@@ -7,6 +7,7 @@ services:
   ports:
    - 4000:4000
    - 4001:4001
+   - 4002:4002
    - 9229:9229
   env_file:
     - ./config/dockerlocal.env
@@ -27,13 +28,11 @@ services:
   build:
    context: "./apps/react_app"
    args:
-    # - REACT_APP_SERVER_URL=${REACT_APP_SERVER_URL}
     - REACT_APP_SERVER_URL=http://localhost:4000/
-    - REACT_APP_WEBSOCKET_URL=ws://localhost:4001/
+    - REACT_APP_WEBSOCKET_URL_NOTIF=ws://localhost:4001/
+    - REACT_APP_WEBSOCKET_URL_VOTES=ws://localhost:4002/
   ports:
    - 80:80
-  # env_file:
-  #   - ./config/dockerlocal.env
   environment:
    - SERVER_PORT=80
 

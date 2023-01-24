@@ -179,9 +179,7 @@ function MainGrid(props) {
   )
 
   useEffect(() => {
-    console.log("Running useEffect votes");
-    if (articlesArray.length !== 0 && props.triedFetchUserDetails) {
-      // console.log(articlesArray);
+    if (articlesArray.length !== 0) {
       const socket = new WebSocket(wsServerUrl);
 
       function heartbeat() {
@@ -192,17 +190,15 @@ function MainGrid(props) {
       }
 
       socket.addEventListener("open", () => {
-        console.log("Openning websocket");
         heartbeat()
         const articleIdArray = articlesArray.map((article) => article._id);
-        if (userContext.details) {
-          console.log("User Context ready");
+        if (userContext.wsToken) {
           socket.send(JSON.stringify({
             userId: userContext.details._id,
-            articleIdArray: articleIdArray
+            articleIdArray: articleIdArray,
+            wsToken: userContext.wsToken
           }));
         } else {
-          console.log("No user context yet");
           socket.send(JSON.stringify({
             articleIdArray: articleIdArray
           }));
@@ -220,7 +216,6 @@ function MainGrid(props) {
       });
 
       socket.addEventListener("close", () => {
-        console.log("Vote socket closed");
         clearTimeout(socket.pingTimeout);
       });
 
@@ -229,7 +224,7 @@ function MainGrid(props) {
       }
     }
   }
-    , [articlesArray, userContext.details, props.triedFetchUserDetails]
+    , [articlesArray, userContext.wsToken, props.triedFetchUserDetails]
   )
 
   return (

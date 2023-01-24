@@ -228,17 +228,28 @@ const wssVotes = new WebSocketServer(wssVotesOptions);
 wssVotes.on('connection', async (ws, req) => {
     ws.isAlive = true;
 
-    console.log("New connection to articlevotes websocket server");
+    console.log("New connection to votes websocket server");
 
     ws.on('message', async message => {
         const result = JSON.parse(message);
-        // console.log("Message received in votes: ", result);
 
         if (result.articleIdArray !== undefined) {
-            const { userId, articleIdArray } = result;
-            ws.userId = userId;
+            if (result.userId && result.wsToken) {
+                const { userId, wsToken } = result;
+                const WsTokenSecret = process.env.WS_TOKEN_SECRET;
+                const decodedWsToken = jwt.verify(wsToken, WsTokenSecret);
+
+                if (decodedWsToken._id === userId) {
+                    const user = await userManagement.loadUserWithId(userId);
+                    if (user.wsToken !== wsToken) {
+                        ws.close();
+                    } else {
+                        ws.userId = userId;
+                    }
+                }
+            }
+            const {articleIdArray } = result;
             ws.articleIdArray = articleIdArray;
-            console.log("Sending article votes");
             const articleVotes = await articleManagement.getArticleVotes(ws.articleIdArray, ws.userId);
             const messageArtVotes = JSON.stringify({ articleVotes: articleVotes });
             ws.send(messageArtVotes);
@@ -246,7 +257,6 @@ wssVotes.on('connection', async (ws, req) => {
         } else if (result.pong === true) {
             heartbeat();
         } else {
-            console.log("Closing websocket connection votes");
             ws.close();
         }
     })

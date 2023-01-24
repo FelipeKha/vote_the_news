@@ -204,7 +204,6 @@ function NavAppBar(props) {
         if (data.notificationCount !== undefined) {
           setNotifCount(data.notificationCount);
         } else if (data.ping === true) {
-          console.log("Ping received");
           heartbeat();
           socket.send(JSON.stringify({ pong: true }));
         }
