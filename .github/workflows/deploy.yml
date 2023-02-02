@@ -77,6 +77,8 @@ jobs:
             docker ps -aq | xargs docker stop | xargs docker rm
             docker images -a | xargs docker rmi
             docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d
+            docker compose -f docker-compose.production.yml run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --dry-run -d votethenews.com -d www.votethenews.com
 
 
+# docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d
 # certbot --nginx -d votethenews.com -d www.votethenews.com
