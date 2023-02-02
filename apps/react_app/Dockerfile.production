@@ -7,7 +7,7 @@ RUN npm install
 COPY ./ /react_app/
 RUN npm run build
 
-FROM certbot/dns-digitalocean:latest
+# FROM certbot/dns-digitalocean:latest
 
 FROM nginx:latest
 COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
@@ -16,4 +16,31 @@ COPY --from=build-stage /react_app/build /usr/share/nginx/html
 COPY ./production.env.sh /usr/share/nginx/html
 COPY production.env /usr/share/nginx/html
 RUN chmod +x /usr/share/nginx/html/production.env.sh
+
+# Install certbot and the Nginx plugin
+RUN apk add certbot && \
+    apk add certbot-nginx
+# Get the certificate from Let's Encrypt and configure Nginx to use HTTPS
+RUN certbot --nginx &&
+
 CMD ["/bin/sh", "-c", "/usr/share/nginx/html/production.env.sh && nginx -g \"daemon off;\""]
+
+
+
+
+# Use an Nginx base image
+FROM nginx:1.19-alpine
+
+# Copy the built React app from the previous step
+COPY --from=0 /app/build /usr/share/nginx/html
+
+
+RUN apk add certbot && \
+    apk add certbot-nginx
+
+# Get the certificate from Let's Encrypt and configure Nginx to use HTTPS
+RUN certbot --nginx && \
+    echo "server { listen 80; server_name localhost; return 301 https://votethenews.com; }" > /etc/nginx/conf.d/redirect.conf
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
