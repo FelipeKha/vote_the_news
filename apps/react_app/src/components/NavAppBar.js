@@ -138,25 +138,13 @@ function NavAppBar(props) {
               })
             }
           }
+          setTimeout(fetchWsToken, 1000 * 60 * 5);
         })
     }
     setTryFetchUserDetails();
   },
     [setUserContext, userContext.token]
   )
-
-  const openConnection = () => {
-    const socket = new WebSocket(wsServerUrl);
-    socket.addEventListener("open", () => {
-      socket.send(JSON.stringify({ token: userContext.token }));
-    });
-    socket.addEventListener("message", (event) => {
-      const data = JSON.parse(event.data);
-      if (data.notificationCount) {
-        setNotifCount(data.notificationCount);
-      }
-    });
-  }
 
   useEffect(() => {
     verifyUser();
