@@ -12,7 +12,9 @@ FROM nginx:latest
 COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build-stage /react_app/build /usr/share/nginx/html
-RUN apk add certbot
-RUN apk add certbot-nginx
-RUN certbot --nginx
+RUN apt update
+RUN apt install python3
+RUN apt install python3-pip -y
+RUN pip3 install pip --upgrade
+RUN pip3 install certbot-nginx
 CMD ["/bin/sh", "-c", "nginx -g \"daemon off;\""]
