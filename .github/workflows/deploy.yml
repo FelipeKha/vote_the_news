@@ -77,4 +77,6 @@ jobs:
             docker ps -aq | xargs docker stop | xargs docker rm
             docker images -a | xargs docker rmi
             docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d
-            certbot --nginx -d votethenews.com -d www.votethenews.com
+
+
+# certbot --nginx -d votethenews.com -d www.votethenews.com
