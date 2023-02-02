@@ -28,19 +28,19 @@ CMD ["/bin/sh", "-c", "/usr/share/nginx/html/production.env.sh && nginx -g \"dae
 
 
 
-# Use an Nginx base image
-FROM nginx:1.19-alpine
+# # Use an Nginx base image
+# FROM nginx:1.19-alpine
 
-# Copy the built React app from the previous step
-COPY --from=0 /app/build /usr/share/nginx/html
+# # Copy the built React app from the previous step
+# COPY --from=0 /app/build /usr/share/nginx/html
 
 
-RUN apk add certbot && \
-    apk add certbot-nginx
+# RUN apk add certbot && \
+#     apk add certbot-nginx
 
-# Get the certificate from Let's Encrypt and configure Nginx to use HTTPS
-RUN certbot --nginx && \
-    echo "server { listen 80; server_name localhost; return 301 https://votethenews.com; }" > /etc/nginx/conf.d/redirect.conf
+# # Get the certificate from Let's Encrypt and configure Nginx to use HTTPS
+# RUN certbot --nginx && \
+#     echo "server { listen 80; server_name localhost; return 301 https://votethenews.com; }" > /etc/nginx/conf.d/redirect.conf
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# # Start Nginx
+# CMD ["nginx", "-g", "daemon off;"]
