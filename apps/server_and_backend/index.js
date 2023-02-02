@@ -237,7 +237,13 @@ wssVotes.on('connection', async (ws, req) => {
             if (result.userId && result.wsToken) {
                 const { userId, wsToken } = result;
                 const WsTokenSecret = process.env.WS_TOKEN_SECRET;
-                const decodedWsToken = jwt.verify(wsToken, WsTokenSecret);
+                let decodedWsToken;
+                try {
+                    decodedWsToken = jwt.verify(wsToken, WsTokenSecret);
+                } catch (e) {
+                    ws.close();
+                    console.log(e);
+                }
 
                 if (decodedWsToken._id === userId) {
                     const user = await userManagement.loadUserWithId(userId);

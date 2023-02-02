@@ -26,7 +26,7 @@ const WsTokenSecret = process.env.WS_TOKEN_SECRET
 
 function getWsToken(user) {
     const WsToken = jwt.sign(user, WsTokenSecret, {
-        expiresIn: eval(process.env.MINUTE_IN_SECONDS)
+        expiresIn: eval(process.env.QUARTER_HOUR_IN_SECONDS)
     })
     return WsToken;
 }
