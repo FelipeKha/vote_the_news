@@ -111,6 +111,11 @@ https://developer.chrome.com/blog/new-in-devtools-79/
 https://stackoverflow.com/questions/62749492/set-cookie-was-blocked-because-its-domain-attribute-was-invalid-with-regards-to
 https://stackoverflow.com/questions/59808537/cookies-headers-are-present-but-cookies-are-not-stored-in-browser
 
+https on docker:
+https://hub.docker.com/r/certbot/dns-digitalocean/
+https://eff-certbot.readthedocs.io/en/stable/install.html#running-with-docker
+https://stackoverflow.com/questions/58385340/dockerfile-how-install-snap-snapd-unrecognized-service
+
 
 
 Command to log into container command line:
