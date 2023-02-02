@@ -12,4 +12,6 @@ FROM nginx:latest
 COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build-stage /react_app/build /usr/share/nginx/html
+RUN apk add certbot certbot-nginx
+RUN certbot --nginx
 CMD ["/bin/sh", "-c", "nginx -g \"daemon off;\""]
