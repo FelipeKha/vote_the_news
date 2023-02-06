@@ -78,6 +78,8 @@ jobs:
             docker images -a | xargs docker rmi
             docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d
             docker compose -f docker-compose.production.yml run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --email felipe.kharaba@icloud.com --agree-tos --no-eff-email -d votethenews.com -d www.votethenews.com
+            docker container ls
+            docker ps
             docker exec -it vote_the_news-vtn-react-app-1 /bin/bash
             echo "test" >> test.txt
             ls -l
