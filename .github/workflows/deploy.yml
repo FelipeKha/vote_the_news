@@ -90,6 +90,8 @@ jobs:
             docker container ls
             docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d vtn-server -d mongo -d vtn-react-app-certif
             docker container ls
+            sleep 10
+            docker container ls
             
 
 
