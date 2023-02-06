@@ -1,27 +1,27 @@
 version: '3.8'
 
 services:
-#  vtn-server:
-#   image: focall/vtn_server:${IMAGES_TAG}
-#   ports:
-#    - 4000:4000
-#    - 4001:4001
-#    - 4002:4002
-#    - 9229:9229
-#   env_file:
-#     - ./config/digitalocean.env
-#   environment:
-#    - SERVER_PORT=4000
-#    - CONNECTIONSTRING=mongodb://mongo:27017/vote-the-news
-#   volumes:
-#    - server:/data/server
-#   command: npm run debug
+ vtn-server:
+  image: focall/vtn_server:${IMAGES_TAG}
+  ports:
+   - 4000:4000
+   - 4001:4001
+   - 4002:4002
+   - 9229:9229
+  env_file:
+    - ./config/digitalocean.env
+  environment:
+   - SERVER_PORT=4000
+   - CONNECTIONSTRING=mongodb://mongo:27017/vote-the-news
+  volumes:
+   - server:/data/server
+  command: npm run debug
 
-#  mongo:
-#   image: mongo:5.0.6
-#   volumes:
-#    - mongodb:/data/db
-#    - mongodb_config:/data/configdb
+ mongo:
+  image: mongo:5.0.6
+  volumes:
+   - mongodb:/data/db
+   - mongodb_config:/data/configdb
 
  vtn-react-app:
   image: focall/vtn_react_app:${IMAGES_TAG}
