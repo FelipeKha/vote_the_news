@@ -104,7 +104,16 @@ function getCorsOriginsArray() {
     const digitalOceanUrl = process.env.DIGITAL_OCEAN_URL;
     const domainUrl = process.env.DOMAIN_URL;
     const domainUrlWww = process.env.DOMAIN_URL_WWW;
-    corsOriginsArray.push(localHostUrl, digitalOceanUrl, domainUrl, domainUrlWww);
+    const domainUrlS = process.env.DOMAIN_URL_S;
+    const domainUrlSWww = process.env.DOMAIN_URL_S_WWW;
+    corsOriginsArray.push(
+        localHostUrl,
+        digitalOceanUrl,
+        domainUrl,
+        domainUrlWww,
+        domainUrlS,
+        domainUrlSWww
+    );
     console.log("CORS origins: ", corsOriginsArray);
     return corsOriginsArray;
 }
@@ -254,7 +263,7 @@ wssVotes.on('connection', async (ws, req) => {
                     }
                 }
             }
-            const {articleIdArray } = result;
+            const { articleIdArray } = result;
             ws.articleIdArray = articleIdArray;
             const articleVotes = await articleManagement.getArticleVotes(ws.articleIdArray, ws.userId);
             const messageArtVotes = JSON.stringify({ articleVotes: articleVotes });
