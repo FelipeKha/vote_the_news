@@ -1,13 +1,15 @@
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import * as dotenv from 'dotenv';
 import express from 'express';
+import fs from 'fs';
 import http from 'http';
+import https from 'https';
 import jwt from 'jsonwebtoken';
 import os, { type } from 'os';
 import passport from 'passport';
 import session from 'express-session';
+import * as dotenv from 'dotenv';
 import { Url } from 'url';
 import { WebSocketServer } from 'ws';
 
@@ -128,6 +130,12 @@ app.use(passport.initialize());
 app.use('/', usersRouter);
 app.use('/', articlesRouter);
 
+const privateKey = fs.readFileSync('/etc/nginx/ssl/live/votethenews.com/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/nginx/ssl/live/votethenews.com/fullchain.pem', 'utf8');
+console.log("Private key: ", privateKey);
+console.log("Certificate: ", certificate);
+const credentials = { key: privateKey, cert: certificate };
+const httpsServer = https.createServer(credentials, app);
 
 // app.all('*', (req, res, next) => {
 //     next(new ExpressError('Page not found', 404));
@@ -319,7 +327,7 @@ wssVotes.on('close', function close() {
 
 // End websocket server votes
 
-app.listen(port, () => {
+httpsServer.listen(port, () => {
     console.log(`Listening port ${port}`);
 })
 
