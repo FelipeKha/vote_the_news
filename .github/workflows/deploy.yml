@@ -83,7 +83,7 @@ jobs:
             docker ps -aq | xargs docker stop | xargs docker rm
             docker images -a | xargs docker rmi
             docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d vtn-react-app
-            docker compose -f docker-compose.production.yml run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --email felipe.kharaba@icloud.com --agree-tos --no-eff-email -d votethenews.com -d server.votethenews.com
+            docker compose -f docker-compose.production.yml run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --email felipe.kharaba@icloud.com --agree-tos --no-eff-email -d votethenews.com -d www.votethenews.com -d server.votethenews.com
             docker stop vote_the_news-vtn-react-app-1
             docker compose -f docker-compose.production.yml --env-file deploy_meta.env --verbose up -d vtn-server -d mongo -d vtn-react-app-certif
             
