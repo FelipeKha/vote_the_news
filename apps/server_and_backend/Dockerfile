@@ -40,7 +40,7 @@ RUN addgroup nodecert
 RUN adduser pptruser nodecert
 RUN adduser root nodecert
 RUN chgrp -R nodecert /server_and_backend/keys_folder
-RUN chmod -R 750 /server_and_backend/keys_folder
+RUN chmod -R 755 /server_and_backend/keys_folder
 
 USER pptruser
 
