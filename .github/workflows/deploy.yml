@@ -97,3 +97,5 @@ jobs:
 
 # complete certif command
 # docker compose -f docker-compose.production.yml run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --email felipe.kharaba@icloud.com --agree-tos --no-eff-email -d votethenews.com -d www.votethenews.com
+
+# chmod -R 705 vote_the_news/certbot/conf/live/
