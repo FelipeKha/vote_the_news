@@ -15,7 +15,7 @@ services:
    - CONNECTIONSTRING=mongodb://mongo:27017/vote-the-news
   volumes:
    - server:/data/server
-   - ./certbot/conf/:/keys_folder/:ro
+   - ./certbot/conf/:/server_and_backend/keys_folder/:ro
   command: npm run debug
 
  mongo:
