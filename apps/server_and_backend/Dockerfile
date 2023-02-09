@@ -36,6 +36,8 @@ RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
 
 USER pptruser
 
+RUN mkdir /keys_folder
+
 COPY . .
 
 # ENTRYPOINT ["dumb-init", "--"]
