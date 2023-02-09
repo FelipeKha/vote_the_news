@@ -37,7 +37,7 @@ RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
 RUN mkdir -p keys_folder
 
 RUN addgroup nodecert
-RUN adduser nodeuser nodecert
+RUN adduser pptruser nodecert
 RUN adduser root nodecert
 RUN chgrp -R nodecert /server_and_backend/keys_folder
 RUN chmod -R 750 /server_and_backend/keys_folder
