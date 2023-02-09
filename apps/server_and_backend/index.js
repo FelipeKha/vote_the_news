@@ -130,8 +130,8 @@ app.use(passport.initialize());
 app.use('/', usersRouter);
 app.use('/', articlesRouter);
 
-const privateKey = fs.readFileSync('/keys_folder/live/votethenews.com/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/keys_folder/live/votethenews.com/fullchain.pem', 'utf8');
+const privateKey = fs.readFileSync('/server_and_backend/keys_folder/live/votethenews.com/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/server_and_backend/keys_folder/live/votethenews.com/fullchain.pem', 'utf8');
 console.log("Private key: ", privateKey);
 console.log("Certificate: ", certificate);
 const credentials = { key: privateKey, cert: certificate };
