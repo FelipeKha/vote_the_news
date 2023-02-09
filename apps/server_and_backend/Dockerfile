@@ -35,6 +35,8 @@ RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
     && chown -R pptruser:pptruser /server_and_backend
 
 RUN mkdir -p keys_folder
+RUN chown -R pptruser:pptruser /server_and_backend/keys_folder
+
 
 USER pptruser
 
