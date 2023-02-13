@@ -81,7 +81,7 @@ jobs:
             cd vote_the_news
             docker ps -aq | xargs docker stop | xargs docker rm
             docker images -a | xargs docker rmi
-            docker compose -f docker-compose.production.yml --env-file deploy_meta.env --verbose up -d vtn-server -d mongo -d vtn-react-app-certif
+            docker compose -f docker-compose.production.yml --env-file deploy_meta.env --verbose up -d vtn-server -d mongo -d vtn-react-app
             
 
 
