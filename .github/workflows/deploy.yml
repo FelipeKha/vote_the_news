@@ -71,7 +71,7 @@ jobs:
           host: ${{ secrets.SSH_KNOWN_HOSTS }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "nginx/nginx.conf,nginx/nginx_post_certif.conf"
+          source: "nginx/nginx.conf,nginx/nginx_certif.conf"
           target: "vote_the_news/nginx/conf"
           rm: true
           strip_components: 1
