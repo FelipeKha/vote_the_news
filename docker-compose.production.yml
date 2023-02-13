@@ -42,4 +42,4 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/nginx/conf/'
+      device: '/root/vote_the_news/nginx/conf/'
