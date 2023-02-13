@@ -23,12 +23,6 @@ jobs:
         run: |
           docker build -t focall/vtn_server:$(echo $GITHUB_SHA | head -c7) apps/server_and_backend/ 
           docker build --build-arg REACT_APP_SERVER_URL=https://server.votethenews.com:4000/ --build-arg REACT_APP_WEBSOCKET_URL_NOTIF=ws://server.votethenews.com:4001/ --build-arg REACT_APP_WEBSOCKET_URL_VOTES=ws://server.votethenews.com:4002/ -t focall/vtn_react_app:$(echo $GITHUB_SHA | head -c7) apps/react_app/
-      # - name: Modify Nginx configuration file
-      #   run: |
-      #     cat apps/react_app/.nginx/nginx_post_certif.conf >> apps/react_app/.nginx/nginx.conf
-      # - name: Build image react app post certification
-      #   run: |
-      #     docker build --build-arg REACT_APP_SERVER_URL=https://server.votethenews.com:4000/ --build-arg REACT_APP_WEBSOCKET_URL_NOTIF=ws://server.votethenews.com:4001/ --build-arg REACT_APP_WEBSOCKET_URL_VOTES=ws://server.votethenews.com:4002/ -t focall/vtn_react_app_certif:$(echo $GITHUB_SHA | head -c7) apps/react_app/
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -98,7 +92,9 @@ jobs:
             cd vote_the_news
             docker ps -aq | xargs docker stop | xargs docker rm
             docker images -a | xargs docker rmi
-            docker compose -f docker-compose.production.yml --env-file deploy_meta.env --verbose up -d vtn-server -d mongo -d vtn-react-app
+            docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d 
+            
+# vtn-server -d mongo -d vtn-react-app
             
 
 
@@ -118,3 +114,5 @@ jobs:
 # docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d vtn-react-app
 # docker compose -f docker-compose.production.yml run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --email felipe.kharaba@icloud.com --agree-tos --no-eff-email -d votethenews.com -d server.votethenews.com -d www.server.votethenews.com
 # docker stop vote_the_news-vtn-react-app-1
+
+# cat apps/react_app/.nginx/nginx_post_certif.conf >> apps/react_app/.nginx/nginx.conf
