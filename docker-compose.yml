@@ -51,3 +51,9 @@ volumes:
  mongodb:
  mongodb_config:
  server:
+#  nginx_conf:
+#   driver: "local"
+#   driver_opts:
+#     type: "none"
+#     device: "./nginx_test/conf/"
+#     o: "bind"
