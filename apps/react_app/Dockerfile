@@ -9,7 +9,7 @@ ARG REACT_APP_SERVER_URL REACT_APP_WEBSOCKET_URL_NOTIF REACT_APP_WEBSOCKET_URL_V
 RUN npm run build
 
 FROM nginx:latest
-# COPY ./.nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
+COPY ./nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build-stage /react_app/build /usr/share/nginx/html
 CMD ["/bin/sh", "-c", "nginx -g \"daemon off;\""]
