@@ -44,7 +44,7 @@ jobs:
           name: deploy metadata
           path: deploy_meta.env
   
-  scp:
+  scp_docker_env:
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
@@ -63,6 +63,13 @@ jobs:
           source: "docker-compose.production.yml,deploy_meta.env,config/digitalocean.env"
           target: "vote_the_news"
           rm: true
+  
+  scp_nginx_conf:
+    needs: scp_docker_env
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v3
       - name: Copy nginx conf file via ssh password
         uses: appleboy/scp-action@master
         with:
@@ -74,7 +81,7 @@ jobs:
           rm: true
 
   deploy:
-    needs: scp
+    needs: scp_nginx_conf
     runs-on: ubuntu-latest
     steps:
       - name: Checkout files
