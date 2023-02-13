@@ -39,7 +39,7 @@ jobs:
           name: deploy metadata
           path: deploy_meta.env
   
-  scp:
+  scp_docker_env:
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
@@ -59,25 +59,29 @@ jobs:
           target: "vote_the_news"
           rm: true
 
-  deploy:
-    needs: scp
+  scp_nginx_conf:
+    needs: scp_docker_env
     runs-on: ubuntu-latest
     steps:
       - name: Checkout files
         uses: actions/checkout@v3
-      # - name: Download deploy_meta.env
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: deploy metadata
-      # - name: Copy file via ssh password
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ secrets.SSH_KNOWN_HOSTS }}
-      #     username: ${{ secrets.SSH_USERNAME }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     source: "docker-compose.production.yml,deploy_meta.env,config/digitalocean.env"
-      #     target: "vote_the_news"
-      #     rm: true
+      - name: Copy nginx conf file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_KNOWN_HOSTS }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "nginx/nginx.conf,nginx/nginx_certif.conf"
+          target: "vote_the_news/nginx/conf"
+          rm: true
+          strip_components: 1
+
+  deploy:
+    needs: scp_nginx_conf
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v3
       - name: Execute remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
         with:
