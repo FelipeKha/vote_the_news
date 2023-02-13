@@ -79,6 +79,7 @@ jobs:
           source: "apps/react_app/nginx/nginx.conf,apps/react_app/nginx/nginx_post_certif.conf"
           target: "vote_the_news/nginx/conf"
           rm: true
+          strip_components: true
 
   deploy:
     needs: scp_nginx_conf
