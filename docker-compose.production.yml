@@ -35,6 +35,7 @@ services:
     - ./nginx/conf/:/etc/nginx/conf.d/:ro
     - ./certbot/www/:/var/www/certbot/:ro
     - ./certbot/conf/:/etc/nginx/ssl/:ro
+  tty: true
 
 #  vtn-react-app-certif:
 #   image: focall/vtn_react_app_certif:${IMAGES_TAG}
