@@ -1,15 +1,13 @@
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import * as dotenv from 'dotenv';
 import express from 'express';
-import fs from 'fs';
 import http from 'http';
-import https from 'https';
 import jwt from 'jsonwebtoken';
 import os, { type } from 'os';
 import passport from 'passport';
 import session from 'express-session';
-import * as dotenv from 'dotenv';
 import { Url } from 'url';
 import { WebSocketServer } from 'ws';
 
@@ -106,16 +104,7 @@ function getCorsOriginsArray() {
     const digitalOceanUrl = process.env.DIGITAL_OCEAN_URL;
     const domainUrl = process.env.DOMAIN_URL;
     const domainUrlWww = process.env.DOMAIN_URL_WWW;
-    const domainUrlS = process.env.DOMAIN_URL_S;
-    const domainUrlSWww = process.env.DOMAIN_URL_S_WWW;
-    corsOriginsArray.push(
-        localHostUrl,
-        digitalOceanUrl,
-        domainUrl,
-        domainUrlWww,
-        domainUrlS,
-        domainUrlSWww
-    );
+    corsOriginsArray.push(localHostUrl, digitalOceanUrl, domainUrl, domainUrlWww);
     console.log("CORS origins: ", corsOriginsArray);
     return corsOriginsArray;
 }
@@ -130,12 +119,6 @@ app.use(passport.initialize());
 app.use('/', usersRouter);
 app.use('/', articlesRouter);
 
-const privateKey = fs.readFileSync('/server_and_backend/keys_folder/live/votethenews.com/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/server_and_backend/keys_folder/live/votethenews.com/fullchain.pem', 'utf8');
-console.log("Private key: ", privateKey);
-console.log("Certificate: ", certificate);
-const credentials = { key: privateKey, cert: certificate };
-const httpsServer = https.createServer(credentials, app);
 
 // app.all('*', (req, res, next) => {
 //     next(new ExpressError('Page not found', 404));
@@ -271,7 +254,7 @@ wssVotes.on('connection', async (ws, req) => {
                     }
                 }
             }
-            const { articleIdArray } = result;
+            const {articleIdArray } = result;
             ws.articleIdArray = articleIdArray;
             const articleVotes = await articleManagement.getArticleVotes(ws.articleIdArray, ws.userId);
             const messageArtVotes = JSON.stringify({ articleVotes: articleVotes });
@@ -327,7 +310,7 @@ wssVotes.on('close', function close() {
 
 // End websocket server votes
 
-httpsServer.listen(port, () => {
+app.listen(port, () => {
     console.log(`Listening port ${port}`);
 })
 

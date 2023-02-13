@@ -34,14 +34,6 @@ RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
     && chown -R pptruser:pptruser /home/pptruser \
     && chown -R pptruser:pptruser /server_and_backend
 
-RUN mkdir -p keys_folder
-
-RUN addgroup nodecert
-RUN adduser pptruser nodecert
-RUN adduser root nodecert
-RUN chgrp -R nodecert /server_and_backend/keys_folder
-RUN chmod -R 755 /server_and_backend/keys_folder
-
 USER pptruser
 
 COPY . .

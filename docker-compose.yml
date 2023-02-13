@@ -33,27 +33,10 @@ services:
     - REACT_APP_WEBSOCKET_URL_VOTES=ws://localhost:4002/
   ports:
    - 80:80
-   - 443:443
   environment:
    - SERVER_PORT=80
-  volumes:
-    - ./nginx/conf/:/etc/nginx/conf.d/:ro
-    - ./certbot/www/:/var/www/certbot/:ro
-    - ./certbot/conf/:/etc/nginx/ssl/:ro
-
- certbot:
-  image: certbot/certbot:latest
-  volumes:
-    - ./certbot/www/:/var/www/certbot/:rw
-    - ./certbot/conf/:/etc/letsencrypt/:rw
 
 volumes:
  mongodb:
  mongodb_config:
  server:
-#  nginx_conf:
-#   driver: "local"
-#   driver_opts:
-#     type: "none"
-#     device: "./nginx_test/conf/"
-#     o: "bind"
