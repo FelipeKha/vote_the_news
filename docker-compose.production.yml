@@ -29,8 +29,17 @@ services:
    - 80:80
   environment:
    - SERVER_PORT=80
+  volumes:
+    - nginx_config:/etc/nginx/conf.d:ro
+
 
 volumes:
  mongodb:
  mongodb_config:
  server:
+ nginx_config:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/nginx/conf/'
