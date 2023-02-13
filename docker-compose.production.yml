@@ -27,10 +27,18 @@ services:
   image: focall/vtn_react_app:${IMAGES_TAG}
   ports:
    - 80:80
+   - 443:443
   environment:
    - SERVER_PORT=80
   volumes:
-    - ./nginx/conf/:/etc/nginx/conf.d:ro
+    - ./nginx/conf/:/etc/nginx/conf.d/:ro
+    - ./certbot/www:/var/www/certbot/:ro
+
+ certbot:
+  image: certbot/certbot:latest
+  volumes:
+    - ./certbot/www/:/var/www/certbot/:rw
+    - ./certbot/conf/:/etc/letsencrypt/:rw
 
 
 volumes:
