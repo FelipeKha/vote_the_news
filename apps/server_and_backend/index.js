@@ -149,7 +149,7 @@ const httpsServer = https.createServer(credentials, app);
 // Start websocket server notifications
 
 
-const wssOptions = { httpsServer }
+const wssOptions = { server: httpsServer }
 // const wssOptions = { port: process.env.WEBSOCKET_SERVER_PORT_NOTIF }
 const wss = new WebSocketServer(wssOptions);
 
