@@ -114,3 +114,17 @@ Will remain open
 - Notify user that new articles have been posted, with button to go to top of the page and load new article cards
 - Implement authentication with social logins (e.g. with Google and Facebook)
 - Reset forgotten password
+
+
+Process for certification:
+SSH into the droplet:
+`ssh root@104.248.194.185`
+Enter passphrase when prompted
+Go to vote_the_news directory:
+`cd vote_the_news`
+Get list of running containers:
+`docker ps`
+If vtn-react-app container running, stop it:
+`docker stop vtn-react-app_name`
+Run vtn-react-app-certif:
+`docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d vtn-react-app-certif`
