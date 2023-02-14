@@ -27,7 +27,7 @@ jobs:
           docker build --build-arg REACT_APP_SERVER_URL=https://server.votethenews.com:4000/ --build-arg REACT_APP_WEBSOCKET_URL_NOTIF=ws://server.votethenews.com:4001/ --build-arg REACT_APP_WEBSOCKET_URL_VOTES=ws://server.votethenews.com:4002/ -t focall/vtn_react_app_certif:$(echo $GITHUB_SHA | head -c7) apps/react_app/
       - name: Add configuration to serve app on port 443 in nginx
         run: |
-          cat apps/react_app/.nginx/nginx_post_certif.conf >> apps/react_app/.nginx/nginx.conf
+          cat apps/react_app/.nginx/nginx_certif.conf >> apps/react_app/.nginx/nginx.conf
       - name:  Build images react app
         run: |
           docker build --build-arg REACT_APP_SERVER_URL=https://server.votethenews.com:4000/ --build-arg REACT_APP_WEBSOCKET_URL_NOTIF=ws://server.votethenews.com:4001/ --build-arg REACT_APP_WEBSOCKET_URL_VOTES=ws://server.votethenews.com:4002/ -t focall/vtn_react_app:$(echo $GITHUB_SHA | head -c7) apps/react_app/
