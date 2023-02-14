@@ -134,5 +134,7 @@ Run certbot to certify target urls:
 `docker compose -f docker-compose.production.yml run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --email felipe.kharaba@icloud.com --agree-tos --no-eff-email -d votethenews.com -d www.votethenews.com -d server.votethenews.com`
 Stop vtn-react-app-certif container:
 `docker stop vtn-react-app-certif_container_ID`
+Make key files readable and executable group and other users:
+`chmod -R 755 certbot/conf/live/`
 Run vtn-react-app:
 `docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d vtn-react-app`

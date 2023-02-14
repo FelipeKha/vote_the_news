@@ -125,6 +125,10 @@ https://stackoverflow.com/questions/11744975/enabling-https-on-express-js
 https://adamtheautomator.com/https-nodejs/
 
 
+File permission:
+https://www.linode.com/docs/guides/modify-file-permissions-with-chmod/
+
+
 Explanation of https:
 https://sectigostore.com/blog/port-443-everything-you-need-to-know-about-https-443/
 
