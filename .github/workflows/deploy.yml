@@ -65,7 +65,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "docker-compose.production.yml,deploy_meta.env,config/digitalocean.env"
           target: "vote_the_news"
-          rm: true
 
   deploy:
     needs: scp_docker_env
