@@ -10,7 +10,7 @@ import jwt from 'jsonwebtoken';
 import os, { type } from 'os';
 import passport from 'passport';
 import session from 'express-session';
-import { Url } from 'url';
+import { parse } from 'url';
 import { WebSocketServer } from 'ws';
 
 import ArticleManagement from './article_management.js';
@@ -149,11 +149,12 @@ const httpsServer = https.createServer(credentials, app);
 // Start websocket server notifications
 
 
-const wssOptions = { server: httpsServer }
+const wssOptions = { noServer: true }
+// const wssOptions = { server: httpsServer }
 // const wssOptions = { port: process.env.WEBSOCKET_SERVER_PORT_NOTIF }
-const wss = new WebSocketServer(wssOptions);
+const wssNotif = new WebSocketServer(wssOptions);
 
-wss.on('connection', async (ws, req) => {
+wssNotif.on('connection', async (ws, req) => {
     ws.isAlive = true;
 
     console.log("New connection to notifications websocket server");
@@ -218,7 +219,7 @@ wss.on('connection', async (ws, req) => {
 })
 
 const intervalCloseBrokenWs = setInterval(function ping() {
-    wss.clients.forEach(function each(ws) {
+    wssNotif.clients.forEach(function each(ws) {
         if (ws.isAlive === false) return ws.terminate();
 
         ws.isAlive = false;
@@ -226,7 +227,7 @@ const intervalCloseBrokenWs = setInterval(function ping() {
     });
 }, 30000);
 
-wss.on('close', function close() {
+wssNotif.on('close', function close() {
     clearInterval(intervalCloseBrokenWs);
 });
 
@@ -234,9 +235,8 @@ wss.on('close', function close() {
 
 // Start websocket server votes
 
-const wssVotesOptions = {
-    port: process.env.WEBSOCKET_SERVER_PORT_VOTES,
-}
+const wssVotesOptions = { noServer: true }
+// const wssVotesOptions = { port: process.env.WEBSOCKET_SERVER_PORT_VOTES }
 const wssVotes = new WebSocketServer(wssVotesOptions);
 
 wssVotes.on('connection', async (ws, req) => {
@@ -320,6 +320,23 @@ const intervalCloseBrokenWsVotes = setInterval(function ping() {
 
 wssVotes.on('close', function close() {
     clearInterval(intervalCloseBrokenWsVotes);
+});
+
+httpsServer.on('upgrade', function upgrade(request, socket, head) {
+    const { pathname } = parse(request.url);
+    console.log(pathname);
+
+    if (pathname === '/notif') {
+        wssNotif.handleUpgrade(request, socket, head, function done(ws) {
+            wssNotif.emit('connection', ws, request);
+        });
+    } else if (pathname === '/votes') {
+        wssVotes.handleUpgrade(request, socket, head, function done(ws) {
+            wssVotes.emit('connection', ws, request);
+        });
+    } else {
+        socket.destroy();
+    }
 });
 
 // End websocket server votes
