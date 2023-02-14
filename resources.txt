@@ -111,6 +111,22 @@ https://developer.chrome.com/blog/new-in-devtools-79/
 https://stackoverflow.com/questions/62749492/set-cookie-was-blocked-because-its-domain-attribute-was-invalid-with-regards-to
 https://stackoverflow.com/questions/59808537/cookies-headers-are-present-but-cookies-are-not-stored-in-browser
 
+https on docker:
+https://hub.docker.com/r/certbot/dns-digitalocean/
+https://eff-certbot.readthedocs.io/en/stable/install.html#running-with-docker
+https://stackoverflow.com/questions/58385340/dockerfile-how-install-snap-snapd-unrecognized-service
+https://geko.cloud/en/nginx-letsencrypt-certbot-docker-alpine/
+
+    second attempt:
+https://mindsers.blog/post/https-using-nginx-certbot-docker/
+https://stackoverflow.com/questions/51399883/adding-ssl-certs-to-nginx-docker-container
+http://www.discoversdk.com/blog/node.js-express-with-https-in-docker
+https://stackoverflow.com/questions/11744975/enabling-https-on-express-js
+https://adamtheautomator.com/https-nodejs/
+
+
+Explanation of https:
+https://sectigostore.com/blog/port-443-everything-you-need-to-know-about-https-443/
 
 
 Command to log into container command line:
