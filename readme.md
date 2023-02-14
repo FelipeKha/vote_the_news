@@ -134,7 +134,13 @@ Run certbot to certify target urls:
 `docker compose -f docker-compose.production.yml run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --email felipe.kharaba@icloud.com --agree-tos --no-eff-email -d votethenews.com -d www.votethenews.com -d server.votethenews.com`
 Stop vtn-react-app-certif container:
 `docker stop vtn-react-app-certif_container_ID`
-Make key files readable and executable group and other users:
-`chmod -R 755 certbot/conf/live/`
+If not already done, create https_keys directory, containing privkey.pem and fullchain.pem:
+`mkdir https_keys`
+`touch https_keys/privkey.pem https_keys/fullchain.pem`
+Copy certificate keys into the new files:
+`sudo cp certbot/conf/live/votethenews.com/privkey.pem https_keys/privkey.pem`
+`sudo cp certbot/conf/live/votethenews.com/fullchain.pem https_keys/fullchain.pem`
+Change permission for https_keys to be readable and executable (r-x):
+`chmod -R 755 https_keys/`
 Run vtn-react-app:
 `docker compose -f docker-compose.production.yml --env-file deploy_meta.env up -d vtn-react-app`
