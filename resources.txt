@@ -132,6 +132,9 @@ https://www.linode.com/docs/guides/modify-file-permissions-with-chmod/
 Explanation of https:
 https://sectigostore.com/blog/port-443-everything-you-need-to-know-about-https-443/
 
+Configure docker to run as non root:
+https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
+
 
 Command to log into container command line:
 docker exec -it vote_the_news-vtn-react-app-1 /bin/bash
