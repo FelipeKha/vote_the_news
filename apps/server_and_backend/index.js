@@ -141,13 +141,16 @@ app.use('/', articlesRouter);
 //     res.status(statusCode).send(err.message)
 // })
 
+const privateKey = fs.readFileSync('/server_and_backend/keys_folder/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/server_and_backend/keys_folder/fullchain.pem', 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+const httpsServer = https.createServer(credentials, app);
 
 // Start websocket server notifications
 
 
-const wssOptions = {
-    port: process.env.WEBSOCKET_SERVER_PORT_NOTIF,
-}
+const wssOptions = { httpsServer }
+// const wssOptions = { port: process.env.WEBSOCKET_SERVER_PORT_NOTIF }
 const wss = new WebSocketServer(wssOptions);
 
 wss.on('connection', async (ws, req) => {
@@ -157,7 +160,7 @@ wss.on('connection', async (ws, req) => {
 
     ws.on('message', async message => {
         const result = JSON.parse(message);
-        // console.log("Message received in notifications:", result);
+        console.log("Message received in notifications:", result);
 
         if (result.userId && result.wsToken) {
             const { userId, wsToken } = result;
@@ -320,11 +323,6 @@ wssVotes.on('close', function close() {
 });
 
 // End websocket server votes
-
-const privateKey = fs.readFileSync('/server_and_backend/keys_folder/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/server_and_backend/keys_folder/fullchain.pem', 'utf8');
-const credentials = { key: privateKey, cert: certificate };
-const httpsServer = https.createServer(credentials, app);
 
 httpsServer.listen(port, () => {
     console.log(`Listening port ${port}`);
