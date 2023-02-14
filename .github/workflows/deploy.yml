@@ -61,8 +61,8 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_KNOWN_HOSTS }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          username: ${{ secrets.SSH_USERNAME_NON_ROOT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_NON_ROOT }}
           source: "docker-compose.production.yml,deploy_meta.env,config/digitalocean.env"
           target: "vote_the_news"
 
@@ -76,8 +76,8 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_KNOWN_HOSTS }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          username: ${{ secrets.SSH_USERNAME_NON_ROOT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_NON_ROOT }}
           script: |
             date >> timestamp.txt
             cd vote_the_news
