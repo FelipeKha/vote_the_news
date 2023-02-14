@@ -323,8 +323,6 @@ wssVotes.on('close', function close() {
 
 const privateKey = fs.readFileSync('/server_and_backend/keys_folder/privkey.pem', 'utf8');
 const certificate = fs.readFileSync('/server_and_backend/keys_folder/fullchain.pem', 'utf8');
-console.log("Private key: ", privateKey);
-console.log("Certificate: ", certificate);
 const credentials = { key: privateKey, cert: certificate };
 const httpsServer = https.createServer(credentials, app);
 
