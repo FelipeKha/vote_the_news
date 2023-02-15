@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 import articleManagementErrorsHandler from './utils/articleManagementErrorsHandler.js';
 import domainsAndLogos from './logos/domainsAndLogos.js';
 import {
-    InvalidURLError,
     ArticleAlreadyHasLinkPreviewError,
-    DomainNotInWhiteListError
+    DomainNotInWhiteListError,
+    InvalidURLError,
 } from './errors.js';
 
 
