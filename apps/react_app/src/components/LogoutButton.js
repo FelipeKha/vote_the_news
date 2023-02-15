@@ -1,4 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 
 import IconButton from '@mui/material/IconButton';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -6,7 +7,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
 import { UserContext } from '../context/UserContext';
-
 
 
 function LogoutButton(props) {
@@ -26,7 +26,7 @@ function LogoutButton(props) {
                 }
             }
         )
-            .then(async response => {
+            .then(() => {
                 const username = userContext.details.nameDisplayed;
                 setUserContext(oldValues => {
                     return { ...oldValues, details: undefined, token: null, wsToken: null };
@@ -52,6 +52,10 @@ function LogoutButton(props) {
         </div>
 
     )
+}
+
+LogoutButton.propTypes = {
+    openInfoAlertHandler: PropTypes.func
 }
 
 export default LogoutButton;

@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
@@ -8,7 +9,6 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
@@ -18,7 +18,6 @@ import Typography from '@mui/material/Typography';
 
 import domainsAndLogos from '../logos/domainsAndLogos.js';
 import { UserContext } from "../context/UserContext";
-import { shadows } from '@mui/system';
 
 
 function ArticleCard(props) {
@@ -274,6 +273,12 @@ function ArticleCard(props) {
       </Card >
     </Badge >
   );
+}
+
+ArticleCard.propTypes = {
+  articleInfo: PropTypes.object,
+  upVoteLocalEffect: PropTypes.func,
+  pageDisplayed: PropTypes.string,
 }
 
 export default ArticleCard;
