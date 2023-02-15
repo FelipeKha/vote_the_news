@@ -1,11 +1,11 @@
 import express from 'express';
-import passport from 'passport';
 import jwt from "jsonwebtoken";
+import passport from 'passport';
 
-import { articleManagement, userManagement } from '../index.js';
-import { COOKIE_OPTIONS, getToken, getRefreshToken, verifyUser } from '../authenticate.js';
 import catchAsync from '../utils/catchAsync.js';
 import isLoggedIn from '../utils/middleware.js';
+import { articleManagement, userManagement } from '../index.js';
+import { COOKIE_OPTIONS, verifyUser } from '../authenticate.js';
 
 const router = express.Router();
 
@@ -40,7 +40,7 @@ router.post('/signup', catchAsync(async (req, res) => {
     }
 }))
 
-router.post('/login', passport.authenticate('local'), async (req, res, next) => {
+router.post('/login', passport.authenticate('local'), async (req, res) => {
     try {
         const userId = req.user._id;
         const { user, token, refreshToken } = await userManagement.loginUser(userId);
@@ -51,7 +51,7 @@ router.post('/login', passport.authenticate('local'), async (req, res, next) => 
     }
 })
 
-router.post("/refreshToken", async (req, res, next) => {
+router.post("/refreshToken", async (req, res) => {
     const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
     const { signedCookies = {} } = req;
     const { refreshToken } = signedCookies;
@@ -80,7 +80,7 @@ router.post("/refreshToken", async (req, res, next) => {
     }
 })
 
-router.get('/wstoken', verifyUser, async (req, res, next) => {
+router.get('/wstoken', verifyUser, async (req, res) => {
     const userId = req.user._id;
     try {
         const wsToken = await userManagement.saveNewWsToken(userId);
@@ -90,12 +90,12 @@ router.get('/wstoken', verifyUser, async (req, res, next) => {
     }
 });
 
-router.get('/me', verifyUser, (req, res, next) => {
+router.get('/me', verifyUser, (req, res) => {
     res.send(req.user);
 })
 
 
-router.get('/logout', verifyUser, async (req, res, next) => {
+router.get('/logout', verifyUser, async (req, res) => {
     const { signedCookies = {} } = req;
     const { refreshToken } = signedCookies;
     const userId = req.user._id;

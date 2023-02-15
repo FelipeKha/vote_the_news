@@ -4,9 +4,9 @@ import { spyOn } from 'jest-mock';
 import ArticleManagement from '../article_management';
 import assert, { AssertionError } from 'node:assert';
 import {
-    InvalidURLError,
-    ArticleAlreadyPostedError,
     ArticleAlreadyHasLinkPreviewError,
+    ArticleAlreadyPostedError,
+    InvalidURLError,
     NoArticleWithThisIDError,
 } from '../errors';
 
