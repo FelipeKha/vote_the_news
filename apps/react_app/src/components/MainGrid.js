@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -17,11 +18,6 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-let fetchCalled = 0;
-let useEffectCalled = 0;
-let observerTrigger = 0;
-let renderNb = 0;
-
 function MainGrid(props) {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -30,7 +26,6 @@ function MainGrid(props) {
   const [articlesVotesObject, setArticlesVotesObject] = useState({});
   const [lastPostTime, setLastPostTime] = useState("");
   const [allArticlesLoaded, setAllArticlesLoaded] = useState(false);
-  const [prevY, setPrevY] = useState(0);
   const [userContext, setUserContext] = useContext(UserContext);
   const [lastArticleCard, setLastArticleCard] = useState(null)
   const [shouldFetch, setShouldFetch] = useState(false)
@@ -44,22 +39,12 @@ function MainGrid(props) {
     new IntersectionObserver((entries) => {
       const first = entries[0];
       if (first.isIntersecting) {
-        observerTrigger++;
-        // console.log(`observer triggered ${observerTrigger}`);
-        // console.log(articlesArray);
-        // const newLastPostTime = articlesArray[articlesArray.length - 1].postTime;
-        // setLastPostTime(newLastPostTime);
-        // fetchArticlesArray();
         setShouldFetch(true);
       }
     })
   );
 
   function fetchArticlesArray(lastPostTimeInput) {
-    fetchCalled++
-    // console.log(`fetchArticlesArray called ${fetchCalled}`);
-    // console.log(lastPostTime);
-
     setLoading(true);
 
     fetch(
@@ -85,11 +70,9 @@ function MainGrid(props) {
               return [...oldValues, ...articlesArray];
             })
             const newLastPostTime = articlesArray[articlesArray.length - 1].postTime;
-            // console.log('newLastPostTime:', newLastPostTime);
             setLastPostTime(newLastPostTime);
             setAllArticlesLoaded(data.lastArticle);
           } else {
-            // console.log('No more articles');
             setAllArticlesLoaded(true);
           }
           setLoading(false);
@@ -99,10 +82,6 @@ function MainGrid(props) {
         setIsLoaded(true);
         setError(err);
       })
-  }
-
-  function handleNewArticlePosted(newArticlesList) {
-    setArticlesArray(newArticlesList)
   }
 
   function upVoteLocalEffect(articleId) {
@@ -140,17 +119,12 @@ function MainGrid(props) {
   }
 
   useEffect(() => {
-    useEffectCalled++
-    // console.log(`useEffect called ${useEffectCalled}`);
-    // console.log(`lastPostTime: ${lastPostTime}`);
     fetchArticlesArray(lastPostTime);
-    // console.log(`lastPostTime: ${lastPostTime}`);
   },
     []
   )
 
   useEffect(() => {
-    // console.log(lastPostTime);
     const currentElement = lastArticleCard;
     const currentObserver = observer.current;
 
@@ -283,6 +257,9 @@ function MainGrid(props) {
   );
 }
 
-export default MainGrid;
+MainGrid.propTypes = {
+  pageDisplayed: PropTypes.string,
+  triedFetchUserDetails: PropTypes.bool,
+}
 
-// https://stackoverflow.com/questions/58341787/intersectionobserver-with-react-hooks
+export default MainGrid;
