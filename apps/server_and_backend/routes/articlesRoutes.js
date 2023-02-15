@@ -1,12 +1,11 @@
 import express from 'express';
 
 import catchAsync from '../utils/catchAsync.js';
-import isLoggedIn from '../utils/middleware.js';
-import {
-    InvalidURLError,
-    DomainNotInWhiteListError
-} from '../errors.js';
 import { articleManagement } from '../index.js';
+import {
+    DomainNotInWhiteListError,
+    InvalidURLError,
+} from '../errors.js';
 import { verifyUser } from '../authenticate.js';
 
 
@@ -50,7 +49,6 @@ router.post('/newarticlepost', verifyUser, catchAsync(async (req, res) => {
     const authorId = req.user._id
     try {
         const newArticle = await articleManagement.postNewArticle(newArticleURL, authorId);
-        // console.log(newArticle);
         res.send(newArticle);
     } catch (e) {
         if (e instanceof InvalidURLError) {

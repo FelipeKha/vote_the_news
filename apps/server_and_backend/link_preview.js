@@ -14,7 +14,6 @@ class LinkPreview {
 
     async linkPreview(
         uri,
-        puppeteerArgs = [],
         puppeteerAgent = 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
         executablePath = this.executablePath
     ) {
@@ -22,7 +21,6 @@ class LinkPreview {
 
         const params = {
             headless: true,
-            // args: [...puppeteerArgs]
             args: ['--no-sandbox']
         };
 
@@ -30,18 +28,11 @@ class LinkPreview {
             params["executablePath"] = executablePath
         }
 
-        // params["executablePath"] = process.env.PUPPETEER_EXECUTABLE_PATH;
-        // params["executablePath"] = 'google-chrome-unstable';
-
-
-        console.log("Puppeteer executable path: ", puppeteer.executablePath());
-
         const browser = await puppeteer.launch(params);
         const page = await browser.newPage();
         page.setUserAgent(puppeteerAgent)
 
         await page.goto(uri);
-        // await page.exposeFunction("urlImageIsAccessible", this.urlImageIsAccessible);
 
         const obj = {};
         obj.domain = await this.getDomainName(page, uri);
@@ -115,15 +106,6 @@ class LinkPreview {
             if (metaDescription != null && metaDescription.content.length > 0) {
                 return metaDescription.content
             }
-            // let paragraphs = document.querySelectorAll('p');
-            // let fstVisibleParagraph = null;
-            // for (let i = 0; i < paragraphs.length; i++) {
-            //     if (paragraphs[i].offsetParent !== null && !paragraphs[i].childElementCount != 0) {
-            //         fstVisibleParagraph = paragraphs[i].textContent;
-            //         break;
-            //     }
-            // }
-            // return fstVisibleParagraph
         });
         return description;
     }
@@ -236,20 +218,4 @@ class LinkPreview {
     }
 }
 
-
-
-
 export default LinkPreview;
-
-// const targetArticleURL = 'https://www.nytimes.com/2022/04/06/technology/online-tracking-privacy.html';
-// const linkPreview = new LinkPreview();
-// console.log(await linkPreview.linkPreview(targetArticleURL));
-// console.log(await linkPreview.urlImageIsAccessible('https://static01.nyt.com/images/2022/05/11/business/10ipod/10ipod-facebookJumbo.jpg'));
-// const targetArticleURL = 'http://localhost:5000/';
-// const linkPreview = new LinkPreview();
-// console.log(await linkPreview.linkPreview(targetArticleURL));
-// const imgUrl = 'https://static01.nyt.com/images/2022/05/11/business/10ipod/10ipod-videoSixteenByNine3000.jpg'
-// const imgUrl = 'https://static01.nyt.com/images/2022/05/11/business/10ipod/10ipod-articleLarge.jpg?quality=75&auto=webp&disable=upscale'
-// console.log(await linkPreview.urlImageIsAccessible(imgUrl));
-
-// console.log(LinkPreview.checkDomainWhiteList("www.nytimes.com"));

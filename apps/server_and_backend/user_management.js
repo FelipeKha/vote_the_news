@@ -31,8 +31,6 @@ class UserManagement {
     async loginUser(userId) {
         const user = await this.database.loadUserWithId(userId);
         const { token, refreshToken } = UserManagement.getNewTokens(userId);
-        // const token = getToken({ _id: userId });
-        // const refreshToken = getRefreshToken({ _id: userId })
         user.refreshToken.push({ refreshToken });
         const userSaved = await this.database.saveUser(user);
         return { user: userSaved, token: token, refreshToken: refreshToken };
@@ -42,13 +40,10 @@ class UserManagement {
         const user = await this.database.loadUserWithId(userId);
         if (user) {
             const refreshTokenIndex = UserManagement.getRefreshTokenIndex(user, refreshToken);
-            // const refreshTokenIndex = user.refreshToken.findIndex(
-            //     item => item.refreshToken === refreshToken
-            // )
             if (refreshTokenIndex !== -1) {
                 user.refreshToken.id(user.refreshToken[refreshTokenIndex]._id).remove()
             }
-            const userSaved = await this.database.saveUser(user);
+            await this.database.saveUser(user);
         }
     }
 
@@ -67,7 +62,7 @@ class UserManagement {
         if (user) {
             const newWsToken = getWsToken({ _id: userId });
             user.wsToken = newWsToken;
-            const updatedUser = await this.database.saveUser(user);
+            await this.database.saveUser(user);
             return newWsToken;
         }
     }
