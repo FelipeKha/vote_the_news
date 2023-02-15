@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import PropTypes from 'prop-types';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -124,6 +125,10 @@ function SignInFormDialog(props) {
             </Dialog>
         </div>
     );
+}
+
+SignInFormDialog.propTypes = {
+    openSuccessAlertHandler: PropTypes.func,
 }
 
 export default SignInFormDialog;

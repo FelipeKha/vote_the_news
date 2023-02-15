@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
 
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import AdbIcon from '@mui/icons-material/Adb';
@@ -38,7 +39,6 @@ function NavAppBar(props) {
   const [notifCount, setNotifCount] = useState(0);
   const [openInfoAlert, setOpenInfoAlert] = useState(false);
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
-  const [socket, setSocket] = useState({});
   const [socketConnected, setSocketConnected] = useState(false);
   const [successMessage, setSuccessMessage] = useState("")
   const [userContext, setUserContext] = useContext(UserContext);
@@ -209,14 +209,6 @@ function NavAppBar(props) {
     }
   },
     [userContext.details, userContext.wsToken]
-  )
-
-  const syncLogout = useCallback(e => {
-    if (e.key === "logout") {
-      window.location.reload();
-    }
-  },
-    []
   )
 
   const handleOpenNavMenu = (event) => {
@@ -552,6 +544,14 @@ function NavAppBar(props) {
       <Snackbars />
     </>
   );
+}
+
+NavAppBar.propTypes = {
+  allArticlesHandler: PropTypes.func,
+  myArticlesHandler: PropTypes.func,
+  myVotesHandler: PropTypes.func,
+  myNotificationsHandler: PropTypes.func,
+  setTryFetchUserDetails: PropTypes.func,
 }
 
 export default NavAppBar;

@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import PropTypes from 'prop-types';
 
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Alert from '@mui/material/Alert';
@@ -6,11 +7,9 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
-import PropTypes from 'prop-types';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
@@ -60,12 +59,10 @@ function a11yProps(index) {
 function UserProfileDialog(props) {
     const [openDialog, setOpenDialog] = useState(false);
     const [value, setValue] = React.useState(0);
-
     const [isSubmittingInfo, setIsSubmittingInfo] = useState(false);
     const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
     const [errorInfo, setErrorInfo] = useState("");
     const [errorPassword, setErrorPassword] = useState("");
-    const [open, setOpen] = useState(false);
     const [firstName, setFirstName] = useState("");
     const [username, setUsername] = useState("");
     const [lastName, setLastName] = useState("");
@@ -81,7 +78,6 @@ function UserProfileDialog(props) {
         setLastName(userContext.details.lastName);
         setUsername(userContext.details.nameDisplayed);
         setEmail(userContext.details.username);
-        // props.handleCloseUserMenu();
     };
 
     const handleClose = () => {
@@ -338,6 +334,10 @@ function UserProfileDialog(props) {
             </Dialog>
         </div >
     );
+}
+
+UserProfileDialog.propTypes = {
+    openSuccessAlertHandler: PropTypes.func,
 }
 
 export default UserProfileDialog;
