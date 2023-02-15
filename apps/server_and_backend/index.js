@@ -4,10 +4,9 @@ import cors from 'cors';
 import * as dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
-import http from 'http';
 import https from 'https';
 import jwt from 'jsonwebtoken';
-import os, { type } from 'os';
+import os from 'os';
 import passport from 'passport';
 import session from 'express-session';
 import { parse } from 'url';
@@ -18,7 +17,6 @@ import LinkPreview from './link_preview.js';
 import UserManagement from './user_management.js';
 import { } from "./strategies/LocalStrategy.js";
 import { } from "./strategies/JwtStrategy.js";
-import { verifyUser } from "./authenticate.js"
 import { database } from './database_object.js';
 import { router as articlesRouter } from './routes/articlesRoutes.js';
 import { router as usersRouter } from './routes/usersRoutes.js';
@@ -29,24 +27,7 @@ dotenv.config();
 const app = express();
 const port = process.env.SERVER_PORT;
 
-const osPlatform = process.platform;
-console.log("OS platform:", osPlatform);
-
 const corsOrigin = getCorsOriginsArray();
-
-// console.log("IP address:", os.networkInterfaces());
-// console.log(getIpAddress());
-// console.log("Running in docker container: ", process.env.RUNNING_IN_DOCKER_CONTAINER);
-// console.log("Running in digital ocean: ", process.env.RUNNING_IN_DIGITAL_OCEAN);
-
-// const database = new Database(
-//     process.env.MONGO_CONNECTION_STRING,
-//     articleSchema,
-//     userSchema,
-//     voteSchema
-// );
-// await database.connectToDatabase();
-// database.associateModelToConnection();
 
 const linkPreview = new LinkPreview(process.env.PUPPETEER_EXECUTABLE_PATH);
 const articleManagement = new ArticleManagement(database, linkPreview);
@@ -69,7 +50,6 @@ const sessionConfig = {
         httpOnly: true,
         secure: false,
         signed: true,
-        // domain: ".votethenews.com",
         expires: Date.now() + eval(process.env.WEEK_IN_MILISECONDS),
         maxAge: eval(process.env.WEEK_IN_MILISECONDS)
     }
@@ -116,7 +96,6 @@ function getCorsOriginsArray() {
         domainUrlS,
         domainUrlSWww
     );
-    console.log("CORS origins: ", corsOriginsArray);
     return corsOriginsArray;
 }
 
@@ -150,18 +129,13 @@ const httpsServer = https.createServer(credentials, app);
 
 
 const wssOptions = { noServer: true }
-// const wssOptions = { server: httpsServer }
-// const wssOptions = { port: process.env.WEBSOCKET_SERVER_PORT_NOTIF }
 const wssNotif = new WebSocketServer(wssOptions);
 
-wssNotif.on('connection', async (ws, req) => {
+wssNotif.on('connection', async (ws) => {
     ws.isAlive = true;
-
-    console.log("New connection to notifications websocket server");
 
     ws.on('message', async message => {
         const result = JSON.parse(message);
-        console.log("Message received in notifications:", result);
 
         if (result.userId && result.wsToken) {
             const { userId, wsToken } = result;
@@ -185,7 +159,6 @@ wssNotif.on('connection', async (ws, req) => {
         } else if (result.pong === true) {
             heartbeat();
         } else {
-            console.log("Closing websocket connection notifications because of invalid message");
             ws.close();
         }
     })
@@ -193,7 +166,6 @@ wssNotif.on('connection', async (ws, req) => {
     const intervalId = setInterval(sendNewNotifCount, 5000);
 
     ws.on('close', () => {
-        console.log('Notification client disconnected');
         clearInterval(intervalId);
     })
 
@@ -204,13 +176,13 @@ wssNotif.on('connection', async (ws, req) => {
 
     async function sendNewNotifCount() {
         if (ws.readyState === 3) return clearInterval(intervalId);
-        const newNotifCount = await userManagement.getNotificationCount(ws.userId);;
+        const newNotifCount = await userManagement.getNotificationCount(ws.userId);
         if (ws.lastNotifCountSent !== newNotifCount) {
             const newMessageNotifCount = JSON.stringify({ "notificationCount": newNotifCount });
             ws.send(newMessageNotifCount);
             ws.lastNotifCountSent = JSON.parse(newMessageNotifCount).notificationCount;
         }
-    };
+    }
 
     function heartbeat() {
         ws.isAlive = true;
@@ -236,13 +208,10 @@ wssNotif.on('close', function close() {
 // Start websocket server votes
 
 const wssVotesOptions = { noServer: true }
-// const wssVotesOptions = { port: process.env.WEBSOCKET_SERVER_PORT_VOTES }
 const wssVotes = new WebSocketServer(wssVotesOptions);
 
-wssVotes.on('connection', async (ws, req) => {
+wssVotes.on('connection', async (ws) => {
     ws.isAlive = true;
-
-    console.log("New connection to votes websocket server");
 
     ws.on('message', async message => {
         const result = JSON.parse(message);
@@ -284,7 +253,6 @@ wssVotes.on('connection', async (ws, req) => {
     const intervalId = setInterval(sendNewVotesObject, 5000);
 
     ws.on('close', () => {
-        console.log('Votes client disconnected');
         clearInterval(intervalId);
     })
 
@@ -301,7 +269,7 @@ wssVotes.on('connection', async (ws, req) => {
             ws.send(newMessageVotes);
             ws.lastArtVotesSent = JSON.parse(newMessageVotes).articleVotes;
         }
-    };
+    }
 
     function heartbeat() {
         ws.isAlive = true;
@@ -324,7 +292,6 @@ wssVotes.on('close', function close() {
 
 httpsServer.on('upgrade', function upgrade(request, socket, head) {
     const { pathname } = parse(request.url);
-    console.log(pathname);
 
     if (pathname === '/notif') {
         wssNotif.handleUpgrade(request, socket, head, function done(ws) {

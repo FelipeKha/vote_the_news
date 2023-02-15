@@ -5,7 +5,7 @@ import {
     NoArticleWithThisIDError,
     NoArticleWithThisUrlError,
     NoUserOrArticleWithIDError,
-    UserNotAuthorError
+    UserNotAuthorError,
 } from "./errors.js";
 
 
@@ -21,19 +21,12 @@ class Database {
         this.userModel;
         this.voteModel;
         this.loadLimit = 7;
-
-        // this.conn = mongoose.createConnection(this.databaseUrl);
-        // this.conn.on('error', (e) => mongoErrorsHandler(e));
-        // this.articleModel = this.conn.model('Article', this.articleSchema);
     }
 
     async connectToDatabase() {
-        // await mongoose.connect(this.databaseUrl);
         this.conn = await mongoose.createConnection();
         await this.conn.openUri(this.databaseUrl, { autoIndex: false });
-        // const conn = mongoose.createConnection(this.databaseUrl, { useNewUrlParser: true });
         this.conn.on('error', (e) => mongoErrorsHandler(e));
-        // conn.catch(e => console.log('got the error'));
         return this.conn;
     }
 
@@ -160,7 +153,7 @@ class Database {
         };
     }
 
-    async loadArticleVotes(articleIdArray, userId) {
+    async loadArticleVotes(articleIdArray) {
         const votesArray = await this.articleModel.find({
             "_id": { $in: articleIdArray }
         })
@@ -441,14 +434,6 @@ class Database {
         return userUpVotes;
     }
 
-    async loadNotificationUpvotesArray(userId) {
-        const notificationUpvotes = await this.userModel.findById(userId)
-            .populate({
-                path: 'notificationUpvotes',
-                populate: { path: 'article' }
-            });
-    }
-
     async deleteArticle(articleId, userId) {
         let deletedArticle;
         const article = await this.articleModel.findById(articleId);
@@ -508,13 +493,3 @@ class Database {
 }
 
 export default Database;
-
-
-// const databaseUrl = 'mongodb://localhost:27017/vote-the-news';
-// const database = new Database(databaseUrl, articleSchema, userSchema, voteSchema);
-// await database.connectToDatabase();
-// database.associateModelToConnection();
-// const articlesArray = await database.loadArticlesArrayInfiniteScroll("");
-// console.log(articlesArray);
-// const allArticles = await database.loadAllArticlesArray();
-// console.log(allArticles);
